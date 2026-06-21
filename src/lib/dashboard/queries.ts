@@ -9,6 +9,8 @@ export interface DashboardStats {
   pendingSamples: number;
   expectedCommissions: number;
   upcomingVisits: number;
+  invoicedAmountMonth: number;
+  openQuotesAmount: number;
 }
 
 export interface DashboardActivityItem {
@@ -62,8 +64,10 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
   const [
     customersRes,
-    quotesRes,
-    ordersRes,
+    quotesCountRes,
+    quotesAmountRes,
+    ordersCountRes,
+    ordersAmountRes,
     samplesRes,
     commissionsRes,
     routesRes,
@@ -78,8 +82,17 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       .select("*", { count: "exact", head: true })
       .in("status", ["aberta", "enviada"]),
     supabase
+      .from("quotes")
+      .select("total")
+      .in("status", ["aberta", "enviada"]),
+    supabase
       .from("orders")
       .select("*", { count: "exact", head: true })
+      .eq("status", "faturado")
+      .gte("invoiced_at", monthStart),
+    supabase
+      .from("orders")
+      .select("total")
       .eq("status", "faturado")
       .gte("invoiced_at", monthStart),
     supabase
@@ -104,8 +117,10 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   ]);
 
   if (customersRes.error) throw new Error(customersRes.error.message);
-  if (quotesRes.error) throw new Error(quotesRes.error.message);
-  if (ordersRes.error) throw new Error(ordersRes.error.message);
+  if (quotesCountRes.error) throw new Error(quotesCountRes.error.message);
+  if (quotesAmountRes.error) throw new Error(quotesAmountRes.error.message);
+  if (ordersCountRes.error) throw new Error(ordersCountRes.error.message);
+  if (ordersAmountRes.error) throw new Error(ordersAmountRes.error.message);
   if (samplesRes.error) throw new Error(samplesRes.error.message);
   if (routesRes.error) throw new Error(routesRes.error.message);
 
@@ -117,14 +132,26 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     );
   }
 
+  const invoicedAmountMonth = (ordersAmountRes.data ?? []).reduce(
+    (sum, row) => sum + Number(row.total),
+    0
+  );
+
+  const openQuotesAmount = (quotesAmountRes.data ?? []).reduce(
+    (sum, row) => sum + Number(row.total),
+    0
+  );
+
   return {
     activeCustomers: customersRes.count ?? 0,
-    openQuotes: quotesRes.count ?? 0,
-    finalizedOrdersMonth: ordersRes.count ?? 0,
+    openQuotes: quotesCountRes.count ?? 0,
+    finalizedOrdersMonth: ordersCountRes.count ?? 0,
     pendingSamples: samplesRes.count ?? 0,
     expectedCommissions: Math.round(expectedCommissions * 100) / 100,
     upcomingVisits:
       (routesRes.count ?? 0) + (visitFollowUpsRes.error ? 0 : visitFollowUpsRes.count ?? 0),
+    invoicedAmountMonth: Math.round(invoicedAmountMonth * 100) / 100,
+    openQuotesAmount: Math.round(openQuotesAmount * 100) / 100,
   };
 }
 

@@ -31,6 +31,17 @@ export function grossFromNet(
   return roundMoney(withIpi * (1 + icmsRate / 100));
 }
 
+/** Converte preço bruto (já com IPI + ICMS) de volta para líquido (NET). */
+export function netFromGross(
+  grossUnitPrice: number,
+  ipiRate = 0,
+  icmsRate = QUOTE_ICMS_RATE
+): number {
+  if (grossUnitPrice <= 0) return 0;
+  const withoutIcms = grossUnitPrice / (1 + icmsRate / 100);
+  return roundMoney(withoutIcms / (1 + ipiRate / 100));
+}
+
 export function resolveQuoteGrossPrices(input: {
   price_usd: number | null;
   price_brl: number | null;

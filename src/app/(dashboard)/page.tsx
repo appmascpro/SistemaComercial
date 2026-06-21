@@ -6,6 +6,8 @@ import {
   Wallet,
   MapPin,
   TrendingUp,
+  CircleDollarSign,
+  Receipt,
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import {
@@ -48,6 +50,20 @@ export default async function DashboardPage() {
       description: "No mês atual",
       icon: ShoppingCart,
       color: "text-emerald-600 bg-emerald-50",
+    },
+    {
+      title: "Valor Faturado",
+      value: formatCurrency(stats.invoicedAmountMonth, "BRL"),
+      description: "Total faturado no mês",
+      icon: CircleDollarSign,
+      color: "text-green-600 bg-green-50",
+    },
+    {
+      title: "Valor em Orçamento",
+      value: formatCurrency(stats.openQuotesAmount, "BRL"),
+      description: "Cotações abertas ou enviadas",
+      icon: Receipt,
+      color: "text-orange-600 bg-orange-50",
     },
     {
       title: "Amostras Pendentes",

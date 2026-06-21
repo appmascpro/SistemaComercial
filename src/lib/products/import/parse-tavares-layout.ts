@@ -2,6 +2,7 @@ import {
   inferCurrencyFromCells,
   resolvePricesFromCurrency,
 } from "@/lib/pricing/currency";
+import { netFromGross } from "@/lib/quotes/quote-pricing-core";
 import type { ImportProfile, ParsedImportResult, ParsedProductRow } from "./types";
 import { normalizeHeader, parseNumeric, parseString } from "./normalize";
 
@@ -14,6 +15,8 @@ export interface TavaresColumnMap {
   moeda: number | null;
   ipi: number | null;
   netPrice: number | null;
+  minPrice: number | null;
+  maxPrice: number | null;
   inci: number | null;
   embalagemCols: number[];
 }
@@ -62,6 +65,24 @@ export function detectTavaresColumns(matrix: unknown[][]): TavaresColumnMap | nu
     "preço net",
     "sem imposto",
   ]) ?? 16;
+  const minPrice = findColInRow(matrix, headerRowIndex, [
+    "preco minimo",
+    "preço mínimo",
+    "preco min",
+    "preço min",
+    "minimo",
+    "mínimo",
+    "min",
+  ]);
+  const maxPrice = findColInRow(matrix, headerRowIndex, [
+    "preco maximo",
+    "preço máximo",
+    "preco max",
+    "preço max",
+    "maximo",
+    "máximo",
+    "max",
+  ]);
   const inci =
     findColInRow(matrix, headerRowIndex, ["inci name", "inci"]) ?? 27;
 
@@ -92,6 +113,8 @@ export function detectTavaresColumns(matrix: unknown[][]): TavaresColumnMap | nu
     moeda,
     ipi,
     netPrice,
+    minPrice,
+    maxPrice,
     inci,
     embalagemCols,
   };
@@ -212,6 +235,20 @@ export function parseTavaresLayout(
     const inci_name =
       colMap.inci !== null ? parseString(line[colMap.inci]) : null;
 
+    const minGross =
+      colMap.minPrice !== null
+        ? parseTavaresDecimal(line[colMap.minPrice], "price")
+        : null;
+    const maxGross =
+      colMap.maxPrice !== null
+        ? parseTavaresDecimal(line[colMap.maxPrice], "price")
+        : null;
+    const ipiForNet = ipi_rate ?? 0;
+    const min_price =
+      minGross != null ? netFromGross(minGross, ipiForNet) : null;
+    const max_price =
+      maxGross != null ? netFromGross(maxGross, ipiForNet) : null;
+
     let packages = extractPackages(line, colMap.embalagemCols);
 
     if (packages.length === 0) {
@@ -250,8 +287,8 @@ export function parseTavaresLayout(
       net_price,
       price_usd: prices.price_usd,
       price_brl: prices.price_brl,
-      min_price: null,
-      max_price: null,
+      min_price,
+      max_price,
       icms_4: null,
       icms_7: defaultIcms?.icms_7 ?? null,
       icms_12: defaultIcms?.icms_12 ?? null,
@@ -304,6 +341,8 @@ export function parseTavaresLayout(
       currency: "MOEDA",
       ipi_rate: "IPI%",
       net_price: "PREÇO NET",
+      min_price: "PREÇO MÍNIMO",
+      max_price: "PREÇO MÁXIMO",
       inci_name: "INCI NAME",
     },
     ignoredHeaders: [

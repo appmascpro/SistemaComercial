@@ -105,14 +105,12 @@ const styles = StyleSheet.create({
     fontSize: 6,
   },
   tableRowAlt: { backgroundColor: "#f8fafc" },
-  colProduct: { width: "22%" },
-  colPackage: { width: "10%" },
-  colQty: { width: "7%", textAlign: "right" },
-  colMin: { width: "10%", textAlign: "right" },
-  colMax: { width: "10%", textAlign: "right" },
-  colUnitUsd: { width: "10%", textAlign: "right" },
-  colUnitBrl: { width: "10%", textAlign: "right" },
-  colTotalUsd: { width: "10%", textAlign: "right" },
+  colProduct: { width: "28%" },
+  colPackage: { width: "12%" },
+  colQty: { width: "10%", textAlign: "right" },
+  colUnitUsd: { width: "14%", textAlign: "right" },
+  colUnitBrl: { width: "14%", textAlign: "right" },
+  colTotalUsd: { width: "11%", textAlign: "right" },
   colTotalBrl: { width: "11%", textAlign: "right" },
   totalsBox: {
     marginTop: 10,
@@ -181,18 +179,6 @@ function companyLine(company: CompanyProfile | null): string {
     company.zip_code ? `CEP ${company.zip_code}` : null,
   ].filter(Boolean);
   return parts.join(" — ");
-}
-
-function formatMinMax(
-  item: QuoteDetail["items"][number],
-  kind: "min" | "max"
-): string {
-  if (item.pricing_currency === "USD") {
-    const usd = kind === "min" ? item.min_price_usd : item.max_price_usd;
-    return usd != null ? formatCurrency(usd, "USD") : "—";
-  }
-  const brl = kind === "min" ? item.min_price : item.max_price;
-  return brl != null ? formatCurrency(brl, "BRL") : "—";
 }
 
 export function QuotePdfDocument({
@@ -270,8 +256,6 @@ export function QuotePdfDocument({
               <Text style={styles.colProduct}>Produto</Text>
               <Text style={styles.colPackage}>Emb.</Text>
               <Text style={styles.colQty}>Qtd kg</Text>
-              <Text style={styles.colMin}>Mín</Text>
-              <Text style={styles.colMax}>Máx</Text>
               <Text style={styles.colUnitUsd}>USD/kg</Text>
               <Text style={styles.colUnitBrl}>BRL/kg</Text>
               <Text style={styles.colTotalUsd}>Total USD</Text>
@@ -291,8 +275,6 @@ export function QuotePdfDocument({
                 </View>
                 <Text style={styles.colPackage}>{item.package_name ?? "—"}</Text>
                 <Text style={styles.colQty}>{formatQuantity(item.quantity)}</Text>
-                <Text style={styles.colMin}>{formatMinMax(item, "min")}</Text>
-                <Text style={styles.colMax}>{formatMinMax(item, "max")}</Text>
                 <Text style={styles.colUnitUsd}>
                   {item.unit_price_usd != null
                     ? formatCurrency(item.unit_price_usd, "USD")

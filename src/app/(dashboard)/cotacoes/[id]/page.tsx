@@ -135,9 +135,7 @@ export default async function CotacaoDetailPage({
                     <th className="px-3 py-2">Produto</th>
                     <th className="px-3 py-2">Emb.</th>
                     <th className="px-3 py-2 text-right">Qtd</th>
-                    <th className="px-3 py-2 text-right">Mín</th>
-                    <th className="px-3 py-2 text-right">Máx</th>
-                    <th className="px-3 py-2 text-right">Unit.</th>
+                    <th className="px-3 py-2 text-right">Preço/kg</th>
                     <th className="px-3 py-2 text-right">Markup %</th>
                     <th className="px-3 py-2 text-right">Markup R$</th>
                     <th className="px-3 py-2 text-right">ICMS</th>
@@ -169,17 +167,7 @@ export default async function CotacaoDetailPage({
                       <td className="px-3 py-2 text-right">
                         {formatQuantity(item.quantity)}
                       </td>
-                      <td className="px-3 py-2 text-right text-xs text-emerald-700">
-                        {item.min_price != null
-                          ? formatCurrency(item.min_price, "BRL")
-                          : "—"}
-                      </td>
-                      <td className="px-3 py-2 text-right text-xs text-blue-700">
-                        {item.max_price != null
-                          ? formatCurrency(item.max_price, "BRL")
-                          : "—"}
-                      </td>
-                      <td className="px-3 py-2 text-right">
+                      <td className="px-3 py-2 text-right font-medium">
                         {formatCurrency(item.unit_price, "BRL")}
                       </td>
                       <td className="px-3 py-2 text-right font-medium text-brand-700">

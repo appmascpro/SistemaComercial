@@ -139,7 +139,7 @@ export const tavaresProfile: ImportProfile = {
   id: "tavares",
   label: "TC Química (Tavares)",
   description:
-    "Planilha oficial Tavares. Leitura inteligente — ignora fórmulas ICMS e importa só o que for válido.",
+    "Planilha oficial Tavares. Importa PREÇO NET e faixas mín/máx (com ICMS 18%) quando presentes.",
   multiRowHeader: true,
   ignoreHeaderPatterns: TAVARES_IGNORED_HEADER_PATTERNS,
   defaultIcmsRates: { icms_7: 7, icms_12: 12, icms_18: 18 },
@@ -202,6 +202,28 @@ export const tavaresProfile: ImportProfile = {
         "preço net/sem imposto",
       ],
       required: true,
+    },
+    {
+      field: "min_price",
+      aliases: [
+        "preco minimo",
+        "preço mínimo",
+        "preco min",
+        "preço min",
+        "minimo",
+        "mínimo",
+      ],
+    },
+    {
+      field: "max_price",
+      aliases: [
+        "preco maximo",
+        "preço máximo",
+        "preco max",
+        "preço max",
+        "maximo",
+        "máximo",
+      ],
     },
     {
       field: "inci_name",
