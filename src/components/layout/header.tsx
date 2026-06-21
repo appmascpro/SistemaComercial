@@ -1,9 +1,11 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Bell, Search, User } from "lucide-react";
+import { Bell, Search } from "lucide-react";
+import { UserMenu } from "@/components/auth/user-menu";
 import { Button } from "@/components/ui/button";
 import { mainNavigation, settingsNavigation } from "@/config/navigation";
+import type { UserProfile } from "@/types/auth";
 
 function getPageTitle(pathname: string): string {
   const allNav = [...mainNavigation, settingsNavigation];
@@ -13,7 +15,11 @@ function getPageTitle(pathname: string): string {
   return match?.title ?? "ConectaInsumos";
 }
 
-export function Header() {
+interface HeaderProps {
+  user: Pick<UserProfile, "full_name" | "email" | "role">;
+}
+
+export function Header({ user }: HeaderProps) {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
   return (
@@ -23,7 +29,7 @@ export function Header() {
           {title}
         </h1>
         <p className="hidden text-xs text-slate-500 sm:block">
-          Bem-vindo ao ConectaInsumos
+          Bem-vindo, {user.full_name.split(" ")[0]}
         </p>
       </div>
 
@@ -42,15 +48,7 @@ export function Header() {
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-brand-500" />
         </Button>
 
-        <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
-          <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium text-slate-900">Usuário Demo</p>
-            <p className="text-xs text-slate-500">Administrador</p>
-          </div>
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700">
-            <User className="h-4 w-4" />
-          </div>
-        </div>
+        <UserMenu user={user} />
       </div>
     </header>
   );

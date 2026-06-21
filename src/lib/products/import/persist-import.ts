@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getCurrentProfile } from "@/lib/auth/session";
 import {
   assignInternalCodes,
   normalizeProductName,
@@ -20,6 +21,9 @@ function packageLabel(pkg: ImportPersistRow["packages"][number]): string {
 }
 
 export async function getTenantId(): Promise<string> {
+  const profile = await getCurrentProfile();
+  if (profile?.tenant_id) return profile.tenant_id;
+
   const fromEnv = process.env.DEFAULT_TENANT_ID?.trim();
   if (fromEnv) return fromEnv;
 
