@@ -9,6 +9,14 @@ function isPublicPath(pathname: string): boolean {
   );
 }
 
+/** Preserva cookies de sessão ao redirecionar (obrigatório no Supabase SSR). */
+function withCookies(source: NextResponse, target: NextResponse): NextResponse {
+  source.cookies.getAll().forEach((cookie) => {
+    target.cookies.set(cookie);
+  });
+  return target;
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -45,18 +53,18 @@ export async function updateSession(request: NextRequest) {
   if (!user && !isPublicPath(pathname)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
-    loginUrl.searchParams.set(
-      "next",
-      pathname + request.nextUrl.search
+    loginUrl.searchParams.set("next", pathname + request.nextUrl.search);
+    return withCookies(
+      supabaseResponse,
+      NextResponse.redirect(loginUrl)
     );
-    return NextResponse.redirect(loginUrl);
   }
 
   if (user && pathname.startsWith("/login")) {
     const homeUrl = request.nextUrl.clone();
     homeUrl.pathname = "/";
     homeUrl.search = "";
-    return NextResponse.redirect(homeUrl);
+    return withCookies(supabaseResponse, NextResponse.redirect(homeUrl));
   }
 
   return supabaseResponse;
