@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -10,7 +9,6 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ nextPath }: LoginFormProps) {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -41,8 +39,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
       return;
     }
 
-    router.push(nextPath.startsWith("/") ? nextPath : "/");
-    router.refresh();
+    window.location.assign(nextPath.startsWith("/") ? nextPath : "/");
   }
 
   return (

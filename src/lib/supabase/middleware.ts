@@ -60,12 +60,5 @@ export async function updateSession(request: NextRequest) {
     );
   }
 
-  if (user && pathname.startsWith("/login")) {
-    const homeUrl = request.nextUrl.clone();
-    homeUrl.pathname = "/";
-    homeUrl.search = "";
-    return withCookies(supabaseResponse, NextResponse.redirect(homeUrl));
-  }
-
   return supabaseResponse;
 }
