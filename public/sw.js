@@ -1,8 +1,14 @@
-const CACHE = "conecta-insumos-v1";
-const STATIC_CACHE = "conecta-insumos-static-v1";
+const CACHE = "conecta-insumos-v2";
+const STATIC_CACHE = "conecta-insumos-static-v2";
 const OFFLINE_URL = "/offline";
 
-const PRECACHE = [OFFLINE_URL, "/icon.svg", "/icon-maskable.svg"];
+const PRECACHE = [
+  OFFLINE_URL,
+  "/icon-192.png",
+  "/icon-512.png",
+  "/icon-maskable-512.png",
+  "/apple-touch-icon.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
