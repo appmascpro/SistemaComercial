@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   FlaskConical,
   MapPin,
+  ClipboardList,
   Wallet,
   Settings,
   UserCog,
@@ -62,7 +63,13 @@ export const mainNavigation: NavItem[] = [
     title: "Rotas",
     href: "/rotas",
     icon: MapPin,
-    description: "Visitas e planejamento",
+    description: "Planejamento de rotas",
+  },
+  {
+    title: "Visitas",
+    href: "/visitas",
+    icon: ClipboardList,
+    description: "Contatos e relatório",
   },
   {
     title: "Comissões",
@@ -110,9 +117,9 @@ export const mobileBottomNavigation: NavItem[] = [
     icon: FlaskConical,
   },
   {
-    title: "Rotas",
-    href: "/rotas",
-    icon: MapPin,
+    title: "Visitas",
+    href: "/visitas",
+    icon: ClipboardList,
   },
 ];
 
@@ -132,6 +139,11 @@ export const mobileOverflowNavigation: NavItem[] = [
     title: "Comissões",
     href: "/comissoes",
     icon: Wallet,
+  },
+  {
+    title: "Rotas",
+    href: "/rotas",
+    icon: MapPin,
   },
   settingsNavigation,
 ];

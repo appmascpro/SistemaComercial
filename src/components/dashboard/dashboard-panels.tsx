@@ -28,7 +28,7 @@ export function DashboardRecentActivity({
 }) {
   if (items.length === 0) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
+      <div className="flex h-full min-h-[240px] items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
         <p className="text-sm text-slate-400">
           Nenhuma movimentação recente ainda.
         </p>
@@ -37,7 +37,7 @@ export function DashboardRecentActivity({
   }
 
   return (
-    <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+    <ul className="max-h-[320px] divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
       {items.map((item) => {
         const meta = TYPE_META[item.type];
         const Icon = meta.icon;
@@ -75,16 +75,16 @@ export function DashboardAgenda({
 }) {
   if (items.length === 0) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
+      <div className="flex h-full min-h-[240px] items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
         <p className="text-sm text-slate-400">
-          Nenhuma rota ou follow-up nos próximos 7 dias.
+          Nenhuma rota, visita ou follow-up nos próximos 7 dias.
         </p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+    <ul className="max-h-[320px] divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
       {items.map((item) => (
         <li key={`${item.kind}-${item.id}`}>
           <Link

@@ -66,7 +66,7 @@ export default async function DashboardPage() {
     {
       title: "Próximas Visitas",
       value: String(stats.upcomingVisits),
-      description: "Rotas nos próximos 7 dias",
+      description: "Rotas e retornos nos próximos 7 dias",
       icon: MapPin,
       color: "text-cyan-600 bg-cyan-50",
     },
@@ -109,8 +109,8 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <Card>
+      <div className="mt-6 grid items-stretch gap-4 lg:grid-cols-2">
+        <Card className="flex h-full flex-col">
           <CardHeader>
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-brand-600" />
@@ -120,22 +120,22 @@ export default async function DashboardPage() {
               Últimas cotações, pedidos, amostras e clientes
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[280px] flex-1">
             <DashboardRecentActivity items={activity} />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="flex h-full flex-col">
           <CardHeader>
             <div className="flex items-center gap-2">
               <MapPin className="h-5 w-5 text-brand-600" />
               <CardTitle>Agenda Comercial</CardTitle>
             </div>
             <CardDescription>
-              Rotas e follow-up de amostras nos próximos 7 dias
+              Rotas, visitas e follow-up nos próximos 7 dias
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[280px] flex-1">
             <DashboardAgenda items={agenda} />
           </CardContent>
         </Card>

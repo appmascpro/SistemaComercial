@@ -22,7 +22,7 @@ export interface DashboardActivityItem {
 
 export interface DashboardAgendaItem {
   id: string;
-  kind: "route" | "sample";
+  kind: "route" | "sample" | "visit";
   title: string;
   subtitle: string;
   date: string;
@@ -67,6 +67,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     samplesRes,
     commissionsRes,
     routesRes,
+    visitFollowUpsRes,
   ] = await Promise.all([
     supabase
       .from("customers")
@@ -95,6 +96,11 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       .in("status", ["planejada", "em_andamento"])
       .gte("planned_date", today)
       .lte("planned_date", weekEnd),
+    supabase
+      .from("visits")
+      .select("*", { count: "exact", head: true })
+      .gte("next_action_date", today)
+      .lte("next_action_date", weekEnd),
   ]);
 
   if (customersRes.error) throw new Error(customersRes.error.message);
@@ -117,7 +123,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     finalizedOrdersMonth: ordersRes.count ?? 0,
     pendingSamples: samplesRes.count ?? 0,
     expectedCommissions: Math.round(expectedCommissions * 100) / 100,
-    upcomingVisits: routesRes.count ?? 0,
+    upcomingVisits:
+      (routesRes.count ?? 0) + (visitFollowUpsRes.error ? 0 : visitFollowUpsRes.count ?? 0),
   };
 }
 
@@ -236,7 +243,7 @@ export async function getDashboardAgenda(
   const today = todayDateOnly();
   const weekEnd = dateInDays(7);
 
-  const [routes, samples] = await Promise.all([
+  const [routes, samples, visits] = await Promise.all([
     supabase
       .from("routes")
       .select("id, name, city, state, planned_date, status")
@@ -260,6 +267,21 @@ export async function getDashboardAgenda(
       .gte("follow_up_date", today)
       .lte("follow_up_date", weekEnd)
       .order("follow_up_date", { ascending: true })
+      .limit(limit),
+    supabase
+      .from("visits")
+      .select(
+        `
+        id,
+        next_action_date,
+        contact_type,
+        contact_person_name,
+        customers ( company_name )
+      `
+      )
+      .gte("next_action_date", today)
+      .lte("next_action_date", weekEnd)
+      .order("next_action_date", { ascending: true })
       .limit(limit),
   ]);
 
@@ -288,6 +310,25 @@ export async function getDashboardAgenda(
       subtitle: unwrapCustomerName(row.customers),
       date: row.follow_up_date,
       href: `/amostras/${row.id}`,
+    });
+  }
+
+  for (const row of visits.data ?? []) {
+    if (!row.next_action_date) continue;
+    const contactLabel =
+      row.contact_type === "whatsapp" ? "WhatsApp" : "Presencial";
+    items.push({
+      id: row.id,
+      kind: "visit",
+      title: `Retorno · ${unwrapCustomerName(row.customers)}`,
+      subtitle: [
+        contactLabel,
+        row.contact_person_name ? `com ${row.contact_person_name}` : null,
+      ]
+        .filter(Boolean)
+        .join(" · "),
+      date: row.next_action_date,
+      href: "/visitas?aba=relatorio&periodo=7d",
     });
   }
 

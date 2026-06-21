@@ -1,0 +1,47 @@
+export type VisitContactType = "presencial" | "whatsapp";
+
+export type VisitReportPeriod = "hoje" | "7d" | "15d" | "mes";
+
+export interface VisitFormInput {
+  customer_id: string;
+  contact_type: VisitContactType;
+  visited_at: string;
+  conversation_summary: string;
+  contact_person_name: string;
+  contact_person_phone: string;
+  next_action_date: string;
+  notes?: string;
+}
+
+export interface VisitListItem {
+  id: string;
+  visited_at: string;
+  contact_type: VisitContactType;
+  conversation_summary: string | null;
+  contact_person_name: string | null;
+  contact_person_phone: string | null;
+  next_action_date: string | null;
+  city: string | null;
+  state: string | null;
+  customer: {
+    id: string;
+    company_name: string;
+    city: string | null;
+    state: string | null;
+  };
+  seller: {
+    id: string;
+    full_name: string | null;
+  } | null;
+}
+
+export interface VisitReportDayGroup {
+  date: string;
+  visits: VisitListItem[];
+}
+
+export interface VisitReportSummary {
+  total: number;
+  presencial: number;
+  whatsapp: number;
+}
