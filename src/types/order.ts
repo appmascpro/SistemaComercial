@@ -53,13 +53,27 @@ export interface OrderDetail {
 export interface OrderItemDetail {
   id: string;
   product_id: string;
+  package_id: string | null;
   product_code: string;
   product_name: string;
   package_name: string | null;
   quantity: number;
   unit_price: number;
+  min_price: number | null;
+  max_price: number | null;
   discount_percent: number;
   icms_rate: number;
   ipi_rate: number;
   line_total: number;
+}
+
+export interface OrderFormInput {
+  notes?: string;
+  payment_terms?: string;
+  items: Array<{
+    product_id: string;
+    package_id?: string | null;
+    quantity: number;
+    unit_price: number;
+  }>;
 }

@@ -98,6 +98,7 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
       order_items (
         id,
         product_id,
+        package_id,
         quantity,
         unit_price,
         discount_percent,
@@ -139,11 +140,14 @@ export async function getOrderById(id: string): Promise<OrderDetail | null> {
       return {
         id: String(item.id),
         product_id: String(item.product_id),
+        package_id: item.package_id ? String(item.package_id) : null,
         product_code: product?.internal_code ?? "—",
         product_name: product?.commercial_name ?? "—",
         package_name: pkg?.name ?? null,
         quantity: Number(item.quantity),
         unit_price: Number(item.unit_price),
+        min_price: null,
+        max_price: null,
         discount_percent: Number(item.discount_percent),
         icms_rate: Number(item.icms_rate),
         ipi_rate: Number(item.ipi_rate),

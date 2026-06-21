@@ -12,7 +12,7 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
   return (
     <div className="flex h-[100dvh] overflow-hidden bg-slate-50">
       <div className="hidden lg:flex">
-        <Sidebar />
+        <Sidebar user={user} />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">

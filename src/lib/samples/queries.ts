@@ -89,6 +89,7 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
       sample_items (
         id,
         product_id,
+        package_id,
         quantity,
         status,
         feedback,
@@ -119,6 +120,7 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
       return {
         id: String(item.id),
         product_id: String(item.product_id),
+        package_id: item.package_id ? String(item.package_id) : null,
         product_code: product?.internal_code ?? "—",
         product_name: product?.commercial_name ?? "—",
         package_name: pkg?.name ?? null,

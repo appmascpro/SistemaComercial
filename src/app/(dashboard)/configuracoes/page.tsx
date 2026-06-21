@@ -1,14 +1,19 @@
+import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PtaxForm } from "@/components/settings/ptax-form";
 import { getCompanyProfile } from "@/lib/company/get-company";
 import { seedTavaresCompany } from "@/lib/company/seed-tavares-company";
+import { getCurrentProfile } from "@/lib/auth/session";
 import { getRequiredTenantId } from "@/lib/auth/tenant";
 import { getActivePtaxRate, getPtaxHistory } from "@/lib/pricing/ptax";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConfiguracoesPage() {
+  const profile = await getCurrentProfile();
+  const isAdmin = profile?.role === "admin";
+
   let companyData = await getCompanyProfile();
 
   if (!companyData.company) {
@@ -29,6 +34,16 @@ export default async function ConfiguracoesPage() {
       <PageHeader
         title="Configurações"
         description="Dados da empresa, PTAX venda e informações para cotações."
+        action={
+          isAdmin ? (
+            <Link
+              href="/usuarios"
+              className="inline-flex h-8 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Gerenciar usuários
+            </Link>
+          ) : undefined
+        }
       />
 
       <Card className="mb-6">

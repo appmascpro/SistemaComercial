@@ -209,6 +209,122 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
   };
 }
 
+function mapProductRow(
+  product: Record<string, unknown>,
+  ptaxRate: number
+): ProductSearchResult {
+  const activePrices = ((product.product_prices ?? []) as Array<{
+    price_usd: number | null;
+    price_brl: number | null;
+    min_price: number | null;
+    max_price: number | null;
+    package_id: string | null;
+    status: string;
+  }>).filter((p) => p.status === "ativo");
+  const activePrice =
+    activePrices.find((p) => !p.package_id) ?? activePrices[0];
+  const priceUsd = activePrice?.price_usd ?? null;
+  const priceBrl = activePrice?.price_brl ?? null;
+  const listPrice =
+    priceBrl ??
+    (priceUsd != null
+      ? calculateBrlFromUsd(Number(priceUsd), ptaxRate)
+      : null);
+  const bounds =
+    listPrice != null
+      ? resolvePriceBounds(
+          listPrice,
+          activePrice?.min_price != null
+            ? Number(activePrice.min_price)
+            : null,
+          activePrice?.max_price != null
+            ? Number(activePrice.max_price)
+            : null
+        )
+      : null;
+
+  return {
+    id: String(product.id),
+    internal_code: String(product.internal_code),
+    commercial_name: String(product.commercial_name),
+    description: resolveProductDescription(
+      product.description as string | null,
+      product.technical_notes as string | null
+    ),
+    inci_name: (product.inci_name as string | null) ?? null,
+    unit: String(product.unit),
+    price_brl_display: listPrice,
+    min_price: bounds?.min ?? null,
+    max_price: bounds?.max ?? null,
+    pricing_currency: priceUsd != null ? "USD" : "BRL",
+    packages: ((product.product_packages ?? []) as Array<{
+      id: string;
+      name: string;
+      is_default: boolean;
+      status: string;
+    }>)
+      .filter((p) => p.status === "ativo")
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        is_default: p.is_default,
+      })),
+  };
+}
+
+export async function getProductsByIds(
+  ids: string[]
+): Promise<ProductSearchResult[]> {
+  if (ids.length === 0) return [];
+
+  const { supabase } = await createTenantClient();
+  const ptax = await getActivePtaxRate();
+  const uniqueIds = [...new Set(ids)];
+
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      `
+      id,
+      internal_code,
+      commercial_name,
+      inci_name,
+      description,
+      technical_notes,
+      unit,
+      product_prices (
+        price_usd,
+        price_brl,
+        min_price,
+        max_price,
+        package_id,
+        status
+      ),
+      product_packages (
+        id,
+        name,
+        is_default,
+        status
+      )
+    `
+    )
+    .in("id", uniqueIds)
+    .eq("status", "ativo");
+
+  if (error) throw new Error(error.message);
+
+  const productMap = new Map(
+    (data ?? []).map((product) => [
+      product.id,
+      mapProductRow(product as Record<string, unknown>, ptax.rate),
+    ])
+  );
+
+  return uniqueIds
+    .map((id) => productMap.get(id))
+    .filter((product): product is ProductSearchResult => product != null);
+}
+
 export async function searchProducts(query: string): Promise<ProductSearchResult[]> {
   const { supabase } = await createTenantClient();
   const ptax = await getActivePtaxRate();
@@ -257,56 +373,9 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
     productMatchesAllTokens(product, tokens)
   );
 
-  return filtered.slice(0, 20).map((product) => {
-    const activePrices = (product.product_prices ?? []).filter(
-      (p: { status: string }) => p.status === "ativo"
-    );
-    const activePrice =
-      activePrices.find((p: { package_id: string | null }) => !p.package_id) ??
-      activePrices[0];
-    const priceUsd = activePrice?.price_usd ?? null;
-    const priceBrl = activePrice?.price_brl ?? null;
-    const listPrice =
-      priceBrl ??
-      (priceUsd != null
-        ? calculateBrlFromUsd(Number(priceUsd), ptax.rate)
-        : null);
-    const bounds =
-      listPrice != null
-        ? resolvePriceBounds(
-            listPrice,
-            activePrice?.min_price != null
-              ? Number(activePrice.min_price)
-              : null,
-            activePrice?.max_price != null
-              ? Number(activePrice.max_price)
-              : null
-          )
-        : null;
-
-    return {
-      id: product.id,
-      internal_code: product.internal_code,
-      commercial_name: product.commercial_name,
-      description: resolveProductDescription(
-        product.description,
-        product.technical_notes
-      ),
-      inci_name: product.inci_name,
-      unit: product.unit,
-      price_brl_display: listPrice,
-      min_price: bounds?.min ?? null,
-      max_price: bounds?.max ?? null,
-      pricing_currency: priceUsd != null ? "USD" : "BRL",
-      packages: (product.product_packages ?? [])
-        .filter((p: { status: string }) => p.status === "ativo")
-        .map((p: { id: string; name: string; is_default: boolean }) => ({
-          id: p.id,
-          name: p.name,
-          is_default: p.is_default,
-        })),
-    };
-  });
+  return filtered.slice(0, 20).map((product) =>
+    mapProductRow(product as Record<string, unknown>, ptax.rate)
+  );
 }
 
 export async function searchCustomers(

@@ -80,6 +80,82 @@ export async function createSampleAction(
   }
 }
 
+export async function updateSampleAction(
+  sampleId: string,
+  input: SampleFormInput
+): Promise<SampleActionState> {
+  try {
+    if (!input.items.length) {
+      return { error: "Adicione ao menos um produto à amostra." };
+    }
+
+    const { supabase, tenantId } = await createTenantClient();
+
+    const { data: existing, error: fetchError } = await supabase
+      .from("samples")
+      .select("id, status")
+      .eq("id", sampleId)
+      .maybeSingle();
+
+    if (fetchError || !existing) {
+      return { error: "Amostra não encontrada." };
+    }
+
+    if (existing.status !== "pendente") {
+      return { error: "Esta amostra não pode mais ser editada." };
+    }
+
+    const { error: updateError } = await supabase
+      .from("samples")
+      .update({
+        customer_id: input.customer_id,
+        follow_up_date: input.follow_up_date || defaultFollowUpDate(),
+        auto_follow_up: input.auto_follow_up ?? true,
+        notes: input.notes?.trim() || null,
+      })
+      .eq("id", sampleId);
+
+    if (updateError) throw new Error(updateError.message);
+
+    const { error: deleteItemsError } = await supabase
+      .from("sample_items")
+      .delete()
+      .eq("sample_id", sampleId);
+
+    if (deleteItemsError) throw new Error(deleteItemsError.message);
+
+    const sampleItems = input.items.map((item) => ({
+      tenant_id: tenantId,
+      sample_id: sampleId,
+      product_id: item.product_id,
+      package_id: item.package_id ?? null,
+      quantity: item.quantity,
+      status: "pendente",
+    }));
+
+    const { error: itemsError } = await supabase
+      .from("sample_items")
+      .insert(sampleItems);
+
+    if (itemsError) throw new Error(itemsError.message);
+
+    revalidatePath("/amostras");
+    revalidatePath(`/amostras/${sampleId}`);
+
+    return {
+      success: "Amostra atualizada com sucesso.",
+      sampleId,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Não foi possível atualizar a amostra.",
+    };
+  }
+}
+
 export async function updateSampleStatusAction(
   sampleId: string,
   status: SampleStatus,

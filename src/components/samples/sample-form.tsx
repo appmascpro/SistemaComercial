@@ -8,12 +8,12 @@ import {
   searchCustomersAction,
   searchProductsAction,
 } from "@/app/actions/customers";
-import { createSampleAction } from "@/app/actions/samples";
+import { createSampleAction, updateSampleAction } from "@/app/actions/samples";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { CustomerSearchResult } from "@/types/quote";
 import type { ProductSearchResult } from "@/types/quote";
-import type { SampleFormInput } from "@/types/sample";
+import type { SampleDetail, SampleFormInput } from "@/types/sample";
 
 interface DraftItem {
   key: string;
@@ -28,7 +28,14 @@ function defaultFollowUpDate(): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function SampleForm() {
+export function SampleForm({
+  sample,
+  initialProducts,
+}: {
+  sample?: SampleDetail;
+  initialProducts?: ProductSearchResult[];
+}) {
+  const isEditing = Boolean(sample);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +64,39 @@ export function SampleForm() {
     }, 250);
     return () => clearTimeout(timer);
   }, [productQuery]);
+
+  useEffect(() => {
+    if (!sample || !initialProducts?.length || items.length > 0) return;
+
+    setSelectedCustomer({
+      id: sample.customer.id,
+      company_name: sample.customer.company_name,
+      city: sample.customer.city,
+      state: sample.customer.state,
+      document: sample.customer.document,
+    });
+    setFollowUpDate(
+      sample.follow_up_date?.slice(0, 10) ?? defaultFollowUpDate()
+    );
+    setNotes(sample.notes ?? "");
+
+    const productMap = new Map(initialProducts.map((p) => [p.id, p]));
+    const draftItems: DraftItem[] = [];
+
+    for (const item of sample.items) {
+      const product = productMap.get(item.product_id);
+      if (!product) continue;
+
+      draftItems.push({
+        key: item.id,
+        product,
+        package_id: item.package_id,
+        quantity: item.quantity,
+      });
+    }
+
+    setItems(draftItems);
+  }, [sample, initialProducts, items.length]);
 
   function addProduct(product: ProductSearchResult) {
     const defaultPackage =
@@ -98,7 +138,9 @@ export function SampleForm() {
     };
 
     startTransition(async () => {
-      const result = await createSampleAction(payload);
+      const result = isEditing
+        ? await updateSampleAction(sample!.id, payload)
+        : await createSampleAction(payload);
       if (result.error) {
         setError(result.error);
         return;
@@ -320,7 +362,7 @@ export function SampleForm() {
 
       <Button type="button" onClick={handleSubmit} disabled={isPending} size="lg">
         <Plus className="h-4 w-4" />
-        {isPending ? "Salvando..." : "Registrar amostra"}
+        {isPending ? "Salvando..." : isEditing ? "Salvar alterações" : "Registrar amostra"}
       </Button>
     </div>
   );

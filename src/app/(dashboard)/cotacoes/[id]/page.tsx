@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileDown } from "lucide-react";
+import { FileDown, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { ConvertQuoteButton } from "@/components/orders/convert-quote-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { canEditQuote } from "@/lib/edit/status";
 import { getOrderByQuoteId } from "@/lib/orders/queries";
 import { getQuoteById } from "@/lib/quotes/queries";
 import { calculateMarkup, formatMarkupPercent } from "@/lib/quotes/markup";
@@ -29,6 +30,8 @@ export default async function CotacaoDetailPage({
 
   if (!quote) notFound();
 
+  const editable = canEditQuote(quote, linkedOrder);
+
   const totalMarkupBrl = quote.items.reduce((sum, item) => {
     if (item.min_price == null || item.max_price == null) return sum;
     return (
@@ -49,6 +52,15 @@ export default async function CotacaoDetailPage({
         description={`Proposta para ${quote.customer.company_name} · ${formatDate(quote.created_at)}`}
         action={
           <div className="flex flex-wrap gap-2">
+            {editable ? (
+              <Link
+                href={`/cotacoes/${quote.id}/editar`}
+                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <Pencil className="h-4 w-4" />
+                Editar
+              </Link>
+            ) : null}
             <ConvertQuoteButton
               quoteId={quote.id}
               existingOrderId={linkedOrder?.id}

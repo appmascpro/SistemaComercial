@@ -8,6 +8,7 @@ import {
   MapPin,
   Wallet,
   Settings,
+  UserCog,
   type LucideIcon,
 } from "lucide-react";
 
@@ -78,6 +79,13 @@ export const settingsNavigation: NavItem = {
   description: "Empresa e preferências",
 };
 
+export const usersNavigation: NavItem = {
+  title: "Usuários",
+  href: "/usuarios",
+  icon: UserCog,
+  description: "Equipe e vendedores",
+};
+
 /** Barra inferior mobile — 2 + destaque + 2 */
 export const mobileBottomNavigation: NavItem[] = [
   {
@@ -132,6 +140,7 @@ export function getPageTitle(pathname: string): string {
   const allNav = [
     ...mainNavigation,
     settingsNavigation,
+    usersNavigation,
     ...mobileBottomNavigation,
   ];
   const match = allNav.find((item) =>

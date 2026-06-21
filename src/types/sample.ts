@@ -23,6 +23,7 @@ export interface SampleListItem {
 export interface SampleItemDetail {
   id: string;
   product_id: string;
+  package_id: string | null;
   product_code: string;
   product_name: string;
   package_name: string | null;

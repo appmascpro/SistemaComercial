@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LogOut, Menu } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
-import { mobileOverflowNavigation } from "@/config/navigation";
+import { mobileOverflowNavigation, usersNavigation } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { UserProfile } from "@/types/auth";
@@ -23,6 +23,10 @@ export function MobileAppMenu({ user }: MobileAppMenuProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const menuItems =
+    user.role === "admin"
+      ? [...mobileOverflowNavigation, usersNavigation]
+      : mobileOverflowNavigation;
 
   useEffect(() => {
     setOpen(false);
@@ -69,7 +73,7 @@ export function MobileAppMenu({ user }: MobileAppMenuProps) {
           </div>
 
           <nav className="p-1.5">
-            {mobileOverflowNavigation.map((item) => {
+            {menuItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href, pathname);
               return (

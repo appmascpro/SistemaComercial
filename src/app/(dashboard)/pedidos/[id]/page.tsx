@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { OrderStatusSelect } from "@/components/orders/order-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { canEditOrder } from "@/lib/edit/status";
 import { getOrderById } from "@/lib/orders/queries";
 import {
   formatCurrency,
@@ -24,12 +25,27 @@ export default async function PedidoDetailPage({
 
   if (!order) notFound();
 
+  const editable = canEditOrder(order);
+
   return (
     <div>
       <PageHeader
         title={order.order_number}
         description={`Pedido de ${order.customer.company_name} · ${formatDate(order.ordered_at ?? order.created_at)}`}
-        action={<OrderStatusSelect orderId={order.id} currentStatus={order.status} />}
+        action={
+          <div className="flex flex-wrap gap-2">
+            {editable ? (
+              <Link
+                href={`/pedidos/${order.id}/editar`}
+                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <Pencil className="h-4 w-4" />
+                Editar
+              </Link>
+            ) : null}
+            <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+          </div>
+        }
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

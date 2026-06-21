@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileDown } from "lucide-react";
+import { FileDown, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { SampleStatusSelect } from "@/components/samples/sample-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { canEditSample } from "@/lib/edit/status";
 import {
   formatCustomerAddress,
   formatDocumentLabel,
@@ -28,6 +29,7 @@ export default async function AmostraDetailPage({
     sample.customer.document,
     sample.customer.document_type
   );
+  const editable = canEditSample(sample);
 
   return (
     <div>
@@ -36,6 +38,15 @@ export default async function AmostraDetailPage({
         description={`Cliente: ${sample.customer.company_name}`}
         action={
           <div className="flex flex-wrap gap-2">
+            {editable ? (
+              <Link
+                href={`/amostras/${sample.id}/editar`}
+                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+              >
+                <Pencil className="h-4 w-4" />
+                Editar
+              </Link>
+            ) : null}
             <SampleStatusSelect sampleId={sample.id} currentStatus={sample.status} />
             <a
               href={`/api/samples/${sample.id}/pdf`}

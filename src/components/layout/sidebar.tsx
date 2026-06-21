@@ -6,10 +6,12 @@ import { cn } from "@/lib/utils";
 import {
   mainNavigation,
   settingsNavigation,
+  usersNavigation,
   type NavItem,
 } from "@/config/navigation";
 import { ChevronLeft, ChevronRight, Hexagon } from "lucide-react";
 import { useState } from "react";
+import type { UserProfile } from "@/types/auth";
 
 function NavLink({
   item,
@@ -47,8 +49,9 @@ function NavLink({
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ user }: { user: Pick<UserProfile, "role"> }) {
   const [collapsed, setCollapsed] = useState(false);
+  const isAdmin = user.role === "admin";
 
   return (
     <aside
@@ -92,6 +95,9 @@ export function Sidebar() {
             </p>
           )}
           <NavLink item={settingsNavigation} collapsed={collapsed} />
+          {isAdmin ? (
+            <NavLink item={usersNavigation} collapsed={collapsed} />
+          ) : null}
         </div>
       </nav>
 

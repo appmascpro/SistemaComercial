@@ -12,6 +12,7 @@ import {
 import {
   createQuoteAction,
   getProductQuotePricingAction,
+  updateQuoteAction,
 } from "@/app/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import { formatCurrency } from "@/lib/utils";
 import type {
   CustomerSearchResult,
   ProductSearchResult,
+  QuoteDetail,
   QuoteFormInput,
 } from "@/types/quote";
 
@@ -49,7 +51,16 @@ function getItemMarkup(item: DraftItem) {
   );
 }
 
-export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string }) {
+export function QuoteForm({
+  initialCustomerId,
+  quote,
+  initialProducts,
+}: {
+  initialCustomerId?: string;
+  quote?: QuoteDetail;
+  initialProducts?: ProductSearchResult[];
+}) {
+  const isEditing = Boolean(quote);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -86,6 +97,43 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
       if (customer) setSelectedCustomer(customer);
     });
   }, [initialCustomerId, selectedCustomer]);
+
+  useEffect(() => {
+    if (!quote || !initialProducts?.length || items.length > 0) return;
+
+    setSelectedCustomer({
+      id: quote.customer.id,
+      company_name: quote.customer.company_name,
+      city: quote.customer.city,
+      state: quote.customer.state,
+      document: quote.customer.document,
+    });
+    setValidUntil(
+      quote.valid_until?.slice(0, 10) ?? defaultValidUntil()
+    );
+    setNotes(quote.notes ?? "");
+
+    const productMap = new Map(initialProducts.map((p) => [p.id, p]));
+    const draftItems: DraftItem[] = [];
+
+    for (const item of quote.items) {
+      const product = productMap.get(item.product_id);
+      if (!product) continue;
+
+      draftItems.push({
+        key: item.id,
+        product,
+        package_id: item.package_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        list_price: item.min_price ?? item.unit_price,
+        min_price: item.min_price ?? item.unit_price,
+        max_price: item.max_price ?? item.unit_price,
+      });
+    }
+
+    setItems(draftItems);
+  }, [quote, initialProducts, items.length]);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -217,7 +265,9 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
     };
 
     startTransition(async () => {
-      const result = await createQuoteAction(payload);
+      const result = isEditing
+        ? await updateQuoteAction(quote!.id, payload)
+        : await createQuoteAction(payload);
       if (result.error) {
         setError(result.error);
         return;
@@ -595,7 +645,7 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
           size="lg"
         >
           <Plus className="h-4 w-4" />
-          {isPending ? "Salvando..." : "Gerar cotação"}
+          {isPending ? "Salvando..." : isEditing ? "Salvar alterações" : "Gerar cotação"}
         </Button>
       </div>
     </div>
