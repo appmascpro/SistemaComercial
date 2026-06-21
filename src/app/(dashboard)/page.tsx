@@ -109,33 +109,33 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      <div className="mt-6 grid items-stretch gap-4 lg:grid-cols-2">
-        <Card className="flex h-full flex-col">
-          <CardHeader>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2 lg:items-stretch">
+        <Card className="flex flex-col lg:h-full">
+          <CardHeader className="min-h-[6.75rem] shrink-0">
             <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-brand-600" />
+              <TrendingUp className="h-5 w-5 shrink-0 text-brand-600" />
               <CardTitle>Atividade Recente</CardTitle>
             </div>
             <CardDescription>
               Últimas cotações, pedidos, amostras e clientes
             </CardDescription>
           </CardHeader>
-          <CardContent className="min-h-[280px] flex-1">
+          <CardContent className="mt-auto shrink-0 p-6 pt-0">
             <DashboardRecentActivity items={activity} />
           </CardContent>
         </Card>
 
-        <Card className="flex h-full flex-col">
-          <CardHeader>
+        <Card className="flex flex-col lg:h-full">
+          <CardHeader className="min-h-[6.75rem] shrink-0">
             <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-brand-600" />
+              <MapPin className="h-5 w-5 shrink-0 text-brand-600" />
               <CardTitle>Agenda Comercial</CardTitle>
             </div>
             <CardDescription>
               Rotas, visitas e follow-up nos próximos 7 dias
             </CardDescription>
           </CardHeader>
-          <CardContent className="min-h-[280px] flex-1">
+          <CardContent className="mt-auto shrink-0 p-6 pt-0">
             <DashboardAgenda items={agenda} />
           </CardContent>
         </Card>

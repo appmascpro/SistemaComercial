@@ -21,6 +21,18 @@ const TYPE_META: Record<
   customer: { icon: Users, label: "Cliente" },
 };
 
+/** Altura fixa da área de conteúdo — mantém as duas caixas alinhadas na base. */
+const PANEL_BODY_CLASS =
+  "h-[280px] overflow-hidden rounded-lg border border-slate-200";
+
+function DashboardPanelEmpty({ message }: { message: string }) {
+  return (
+    <div className="flex h-full items-center justify-center border-dashed bg-slate-50">
+      <p className="px-4 text-center text-sm text-slate-400">{message}</p>
+    </div>
+  );
+}
+
 export function DashboardRecentActivity({
   items,
 }: {
@@ -28,16 +40,14 @@ export function DashboardRecentActivity({
 }) {
   if (items.length === 0) {
     return (
-      <div className="flex h-full min-h-[240px] items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
-        <p className="text-sm text-slate-400">
-          Nenhuma movimentação recente ainda.
-        </p>
+      <div className={PANEL_BODY_CLASS}>
+        <DashboardPanelEmpty message="Nenhuma movimentação recente ainda." />
       </div>
     );
   }
 
   return (
-    <ul className="max-h-[320px] divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100 overflow-y-auto`}>
       {items.map((item) => {
         const meta = TYPE_META[item.type];
         const Icon = meta.icon;
@@ -75,16 +85,14 @@ export function DashboardAgenda({
 }) {
   if (items.length === 0) {
     return (
-      <div className="flex h-full min-h-[240px] items-center justify-center rounded-lg border border-dashed border-slate-200 bg-slate-50">
-        <p className="text-sm text-slate-400">
-          Nenhuma rota, visita ou follow-up nos próximos 7 dias.
-        </p>
+      <div className={PANEL_BODY_CLASS}>
+        <DashboardPanelEmpty message="Nenhuma rota, visita ou follow-up nos próximos 7 dias." />
       </div>
     );
   }
 
   return (
-    <ul className="max-h-[320px] divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100 overflow-y-auto`}>
       {items.map((item) => (
         <li key={`${item.kind}-${item.id}`}>
           <Link
