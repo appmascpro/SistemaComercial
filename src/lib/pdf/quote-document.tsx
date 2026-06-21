@@ -1,6 +1,7 @@
 import {
   Document,
   Font,
+  Image,
   Page,
   StyleSheet,
   Text,
@@ -42,11 +43,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   brandBlock: { maxWidth: "58%" },
-  brandName: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: "#0070c4",
-    marginBottom: 4,
+  logo: {
+    height: 52,
+    width: 220,
+    marginBottom: 6,
+    objectFit: "contain",
+    objectPosition: "left",
   },
   brandSub: { fontSize: 8, color: "#475569", lineHeight: 1.4 },
   quoteMeta: { alignItems: "flex-end", maxWidth: "38%" },
@@ -168,6 +170,8 @@ interface QuotePdfDocumentProps {
   quote: QuoteDetail;
   company: CompanyProfile | null;
   payment: PaymentAccountProfile | null;
+  logoSrc: string;
+  documentTitle?: string;
 }
 
 function companyLine(company: CompanyProfile | null): string {
@@ -185,8 +189,9 @@ export function QuotePdfDocument({
   quote,
   company,
   payment,
+  logoSrc,
+  documentTitle = "PROPOSTA COMERCIAL",
 }: QuotePdfDocumentProps) {
-  const tradeName = company?.trade_name ?? "tcQUÍMICA - Tavares Companhia Química";
   const ptax = quote.metadata.ptax;
   const totalUsd = quote.items.reduce((sum, item) => {
     if (item.unit_price_usd == null) return sum;
@@ -199,8 +204,7 @@ export function QuotePdfDocument({
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View style={styles.brandBlock}>
-            <Text style={styles.brandName}>tcQUÍMICA</Text>
-            <Text style={styles.brandSub}>{tradeName}</Text>
+            <Image src={logoSrc} style={styles.logo} />
             <Text style={styles.brandSub}>
               {company?.legal_name ?? "TAVARES CHEMICAL LTDA"}
             </Text>
@@ -213,7 +217,7 @@ export function QuotePdfDocument({
           </View>
 
           <View style={styles.quoteMeta}>
-            <Text style={styles.quoteTitle}>PROPOSTA COMERCIAL</Text>
+            <Text style={styles.quoteTitle}>{documentTitle}</Text>
             <Text style={styles.metaLine}>Nº {quote.quote_number}</Text>
             <Text style={styles.metaLine}>
               Emissão: {formatDate(quote.created_at)}

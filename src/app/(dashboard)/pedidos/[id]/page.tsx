@@ -49,7 +49,7 @@ export default async function PedidoDetailPage({
             ) : null}
             {order.quote_id ? (
               <Link
-                href={`/cotacoes/${order.quote_id}/pdf`}
+                href={`/cotacoes/${order.quote_id}/pdf?tipo=pedido`}
                 className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
               >
                 <FileDown className="h-4 w-4" />

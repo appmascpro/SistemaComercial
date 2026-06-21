@@ -7,10 +7,14 @@ export const dynamic = "force-dynamic";
 
 export default async function CotacaoPdfPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tipo?: string }>;
 }) {
   const { id } = await params;
+  const { tipo } = await searchParams;
+  const isOrder = tipo === "pedido";
   const [quote, linkedOrder] = await Promise.all([
     getQuoteById(id),
     getOrderByQuoteId(id),
@@ -22,7 +26,9 @@ export default async function CotacaoPdfPage({
     <QuotePdfViewer
       quoteId={quote.id}
       quoteNumber={quote.quote_number}
-      backHref={`/cotacoes/${quote.id}`}
+      backHref={isOrder && linkedOrder ? `/pedidos/${linkedOrder.id}` : `/cotacoes/${quote.id}`}
+      backLabel={isOrder ? "Voltar para pedido" : "Voltar para cotação"}
+      documentType={isOrder ? "pedido" : "cotacao"}
       orderHref={linkedOrder ? `/pedidos/${linkedOrder.id}` : null}
       orderNumber={linkedOrder?.order_number ?? null}
     />

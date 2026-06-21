@@ -13,6 +13,7 @@ export function QuotePdfViewer({
   quoteNumber,
   backHref,
   backLabel = "Voltar para cotação",
+  documentType = "cotacao",
   orderHref,
   orderNumber,
 }: {
@@ -20,18 +21,23 @@ export function QuotePdfViewer({
   quoteNumber: string;
   backHref: string;
   backLabel?: string;
+  documentType?: "cotacao" | "pedido";
   orderHref?: string | null;
   orderNumber?: string | null;
 }) {
-  const pdfUrl = `/api/quotes/${quoteId}/pdf`;
-  const fileName = `cotacao-${quoteNumber}.pdf`;
+  const pdfQuery = documentType === "pedido" ? "?tipo=pedido" : "";
+  const pdfUrl = `/api/quotes/${quoteId}/pdf${pdfQuery}`;
+  const filePrefix = documentType === "pedido" ? "pedido" : "cotacao";
+  const fileName = `${filePrefix}-${quoteNumber}.pdf`;
+  const title =
+    documentType === "pedido"
+      ? `Pedido ${quoteNumber}`
+      : `Proposta ${quoteNumber}`;
 
   return (
     <div className="-mx-4 -mb-24 flex min-h-[calc(100dvh-7rem)] flex-col sm:-mx-6 lg:mb-0 lg:min-h-[calc(100dvh-5rem)]">
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3">
-        <p className="text-sm font-semibold text-slate-900">
-          Proposta {quoteNumber}
-        </p>
+        <p className="text-sm font-semibold text-slate-900">{title}</p>
         <div className="flex flex-wrap items-center gap-2">
           <a href={pdfUrl} download={fileName} className={btnOutline}>
             <Download className="h-3.5 w-3.5" />
@@ -51,7 +57,7 @@ export function QuotePdfViewer({
 
       <iframe
         src={pdfUrl}
-        title={`Cotação ${quoteNumber}`}
+        title={title}
         className="min-h-0 flex-1 w-full border-0 bg-slate-100"
       />
     </div>
