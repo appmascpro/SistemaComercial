@@ -111,6 +111,7 @@ export interface ProductSearchResult {
   packages: Array<{
     id: string;
     name: string;
+    size_value: number | null;
     is_default: boolean;
   }>;
 }

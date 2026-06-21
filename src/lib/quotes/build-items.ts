@@ -8,6 +8,7 @@ import {
   resolveQuoteGrossPrices,
   usdFromBrlGross,
 } from "@/lib/quotes/quote-pricing-core";
+import { getPackageSizeKg, lineWeightKg } from "@/lib/quotes/package-weight";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import type {
   QuoteFormInput,
@@ -131,6 +132,7 @@ export async function buildQuoteItems(
       product_packages (
         id,
         name,
+        size_value,
         status
       ),
       tax_rules (
@@ -164,14 +166,20 @@ export async function buildQuoteItems(
     const packages = (product.product_packages ?? []) as Array<{
       id: string;
       name: string;
+      size_value: number | null;
       status: string;
     }>;
 
     const packageId = item.package_id ?? null;
-    const packageName =
-      packages.find((p) => p.id === packageId)?.name ??
-      packages.find((p) => p.status === "ativo")?.name ??
+    const packageRow =
+      packages.find((p) => p.id === packageId) ??
+      packages.find((p) => p.status === "ativo") ??
       null;
+    const packageName = packageRow?.name ?? null;
+    const packageSizeKg = packageRow
+      ? getPackageSizeKg(packageRow)
+      : 1;
+    const weightKg = lineWeightKg(item.quantity, packageSizeKg);
 
     const ipiRate = resolveIpiRate(rules);
     const gross = resolveUnitPrice(prices, packageId, ipiRate, ptax.rate);
@@ -185,7 +193,7 @@ export async function buildQuoteItems(
     }
 
     const calculated = calculateQuoteLine({
-      quantity: item.quantity,
+      quantity: weightKg,
       unitPrice: chosenUnitPriceBrl,
       listPrice: gross.gross_max_brl,
       minPrice: gross.gross_min_brl,

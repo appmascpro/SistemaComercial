@@ -325,6 +325,7 @@ function mapProductRow(
       packages: ((product.product_packages ?? []) as Array<{
         id: string;
         name: string;
+        size_value: number | null;
         is_default: boolean;
         status: string;
       }>)
@@ -332,6 +333,8 @@ function mapProductRow(
         .map((p) => ({
           id: p.id,
           name: p.name,
+          size_value:
+            p.size_value != null ? Number(p.size_value) : null,
           is_default: p.is_default,
         })),
     };
@@ -388,6 +391,7 @@ export async function getProductsByIds(
       product_packages (
         id,
         name,
+        size_value,
         is_default,
         status
       ),
@@ -442,6 +446,7 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
       product_packages (
         id,
         name,
+        size_value,
         is_default,
         status
       ),

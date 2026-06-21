@@ -16,7 +16,9 @@ import {
 } from "@/app/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DecimalInput } from "@/components/ui/decimal-input";
 import { calculateMarkup, formatMarkupPercent } from "@/lib/quotes/markup";
+import { getPackageSizeKg, lineWeightKg } from "@/lib/quotes/package-weight";
 import { QUOTE_ICMS_RATE } from "@/lib/quotes/quote-pricing-core";
 import { formatCurrency } from "@/lib/utils";
 import type {
@@ -41,7 +43,16 @@ interface DraftItem {
   max_price_usd: number | null;
 }
 
+function getItemWeightKg(item: DraftItem): number {
+  const pkg =
+    item.product.packages.find((p) => p.id === item.package_id) ??
+    item.product.packages[0];
+  const sizeKg = pkg ? getPackageSizeKg(pkg) : 1;
+  return lineWeightKg(item.quantity, sizeKg);
+}
+
 function getItemMarkup(item: DraftItem) {
+  const weightKg = getItemWeightKg(item);
   const unit =
     item.pricing_currency === "USD" && item.unit_price_usd != null
       ? item.unit_price_usd
@@ -55,7 +66,7 @@ function getItemMarkup(item: DraftItem) {
       ? item.max_price_usd
       : item.max_price;
 
-  return calculateMarkup(unit, min, max, item.quantity);
+  return calculateMarkup(unit, min, max, weightKg);
 }
 
 function formatPriceRange(item: DraftItem, kind: "min" | "max"): string {
@@ -97,6 +108,7 @@ export function QuoteForm({
     state: "",
     city: "",
     email: "",
+    phone: "",
   });
 
   const [productQuery, setProductQuery] = useState("");
@@ -287,7 +299,7 @@ export function QuoteForm({
     if (result.customer) {
       setSelectedCustomer(result.customer);
       setShowNewCustomer(false);
-      setNewCustomer({ company_name: "", state: "", city: "", email: "" });
+      setNewCustomer({ company_name: "", state: "", city: "", email: "", phone: "" });
     }
   }
 
@@ -461,7 +473,15 @@ export function QuoteForm({
                       setNewCustomer((c) => ({ ...c, email: e.target.value }))
                     }
                     placeholder="E-mail"
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm sm:col-span-2"
+                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm"
+                  />
+                  <input
+                    value={newCustomer.phone}
+                    onChange={(e) =>
+                      setNewCustomer((c) => ({ ...c, phone: e.target.value }))
+                    }
+                    placeholder="WhatsApp / telefone"
+                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm"
                   />
                   <Button
                     type="button"
@@ -555,7 +575,8 @@ export function QuoteForm({
                     <tr>
                       <th className="px-2 py-2">Produto</th>
                       <th className="px-2 py-2">Emb.</th>
-                      <th className="px-2 py-2 text-right">Qtd</th>
+                      <th className="px-2 py-2 text-right">Qtd emb.</th>
+                      <th className="px-2 py-2 text-right">Kg total</th>
                       <th className="px-2 py-2 text-right">Mín (ICMS {QUOTE_ICMS_RATE}%)</th>
                       <th className="px-2 py-2 text-right">Máx (ICMS {QUOTE_ICMS_RATE}%)</th>
                       <th className="px-2 py-2 text-right">Preço/kg</th>
@@ -577,6 +598,8 @@ export function QuoteForm({
                           ? item.unit_price_usd
                           : item.unit_price;
                       const aboveMax = refUnit > refMax;
+                      const weightKg = getItemWeightKg(item);
+                      const lineTotal = weightKg * item.unit_price;
 
                       return (
                         <tr key={item.key}>
@@ -613,18 +636,23 @@ export function QuoteForm({
                             )}
                           </td>
                           <td className="px-2 py-2">
-                            <input
-                              type="number"
-                              min="0.0001"
-                              step="any"
+                            <DecimalInput
                               value={item.quantity}
-                              onChange={(e) =>
-                                updateItem(item.key, {
-                                  quantity: Number(e.target.value),
-                                })
+                              onChange={(quantity) =>
+                                updateItem(item.key, { quantity })
                               }
+                              min={0.0001}
                               className="h-8 w-16 rounded border border-slate-200 px-1 text-right text-xs"
                             />
+                          </td>
+                          <td className="px-2 py-2 text-right text-xs text-slate-600">
+                            {weightKg.toLocaleString("pt-BR", {
+                              maximumFractionDigits: 2,
+                            })}{" "}
+                            kg
+                            <span className="block text-[10px] text-slate-400">
+                              {formatCurrency(lineTotal, "BRL")}
+                            </span>
                           </td>
                           <td className="px-2 py-2 text-right text-xs text-emerald-700">
                             {formatPriceRange(item, "min")}
@@ -634,17 +662,12 @@ export function QuoteForm({
                           </td>
                           <td className="px-2 py-2">
                             {item.pricing_currency === "USD" ? (
-                              <input
-                                type="number"
-                                min={item.min_price_usd ?? 0}
-                                step="0.0001"
-                                value={item.unit_price_usd ?? ""}
-                                onChange={(e) =>
-                                  updateUnitPriceUsd(
-                                    item.key,
-                                    Number(e.target.value)
-                                  )
+                              <DecimalInput
+                                value={item.unit_price_usd ?? 0}
+                                onChange={(usdValue) =>
+                                  updateUnitPriceUsd(item.key, usdValue)
                                 }
+                                min={item.min_price_usd ?? 0}
                                 className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
                                   aboveMax
                                     ? "border-amber-300 bg-amber-50 text-amber-900"
@@ -652,17 +675,12 @@ export function QuoteForm({
                                 }`}
                               />
                             ) : (
-                              <input
-                                type="number"
-                                min={item.min_price}
-                                step="0.01"
+                              <DecimalInput
                                 value={item.unit_price}
-                                onChange={(e) =>
-                                  updateUnitPriceBrl(
-                                    item.key,
-                                    Number(e.target.value)
-                                  )
+                                onChange={(brlValue) =>
+                                  updateUnitPriceBrl(item.key, brlValue)
                                 }
+                                min={item.min_price}
                                 className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
                                   aboveMax
                                     ? "border-amber-300 bg-amber-50 text-amber-900"
@@ -719,7 +737,7 @@ export function QuoteForm({
                 </div>
                 <p className="text-xs text-emerald-700">
                   Soma do markup positivo de todas as linhas (preço − mínimo) ×
-                  quantidade
+                  kg total
                 </p>
               </div>
             </>

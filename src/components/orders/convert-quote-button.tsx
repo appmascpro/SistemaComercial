@@ -23,13 +23,21 @@ export function ConvertQuoteButton({
 
   if (existingOrderId) {
     return (
-      <Link
-        href={`/pedidos/${existingOrderId}`}
-        className="inline-flex h-8 items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
-      >
-        <ShoppingCart className="h-4 w-4" />
-        Pedido {existingOrderNumber}
-      </Link>
+      <div className="flex flex-wrap items-center gap-2">
+        <Link
+          href={`/pedidos/${existingOrderId}`}
+          className="inline-flex h-8 items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Pedido {existingOrderNumber}
+        </Link>
+        <Link
+          href={`/cotacoes/${quoteId}/pdf`}
+          className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+        >
+          Ver PDF
+        </Link>
+      </div>
     );
   }
 

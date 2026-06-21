@@ -112,12 +112,14 @@ export async function createCustomerQuickAction(input: {
   state?: string;
   city?: string;
   email?: string;
+  phone?: string;
 }): Promise<CustomerActionState> {
   const result = await createCustomerAction({
     company_name: input.company_name,
     state: input.state,
     city: input.city,
     email: input.email,
+    phone: input.phone,
   });
 
   if (result.error || !result.customerId) {

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FileText, Pencil } from "lucide-react";
+import { FileDown, FileText, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { OrderStatusSelect } from "@/components/orders/order-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +41,15 @@ export default async function PedidoDetailPage({
               >
                 <Pencil className="h-4 w-4" />
                 Editar
+              </Link>
+            ) : null}
+            {order.quote_id ? (
+              <Link
+                href={`/cotacoes/${order.quote_id}/pdf`}
+                className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+              >
+                <FileDown className="h-4 w-4" />
+                Ver PDF
               </Link>
             ) : null}
             <OrderStatusSelect orderId={order.id} currentStatus={order.status} />

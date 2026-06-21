@@ -30,3 +30,35 @@ export function formatQuantity(value: number): string {
     maximumFractionDigits: 4,
   }).format(value);
 }
+
+/** Aceita "18,30", "18.30", "1.234,56" etc. */
+export function parseDecimalInput(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  let normalized = trimmed.replace(/\s/g, "");
+
+  if (normalized.includes(",") && normalized.includes(".")) {
+    normalized = normalized.replace(/\./g, "").replace(",", ".");
+  } else if (normalized.includes(",")) {
+    normalized = normalized.replace(",", ".");
+  }
+
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function formatDecimalInput(value: number): string {
+  if (!Number.isFinite(value)) return "";
+  return String(value).replace(".", ",");
+}
+
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+export function dateDaysFromNow(days: number): string {
+  return addDays(new Date(), days).toISOString().slice(0, 10);
+}

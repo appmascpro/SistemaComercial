@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth/session";
 import { buildQuoteItems } from "@/lib/quotes/build-items";
 import { generateOrderNumber } from "@/lib/orders/numbering";
+import { createOrderVisitAndFollowups } from "@/lib/orders/order-followup";
 import {
   getOrderByQuoteId,
   getQuoteForConversion,
@@ -119,6 +120,22 @@ export async function createOrderFromQuoteAction(
       throw new Error(itemsError.message);
     }
 
+    const { data: customerRow } = await supabase
+      .from("customers")
+      .select("city, state")
+      .eq("id", quote.customer_id)
+      .maybeSingle();
+
+    await createOrderVisitAndFollowups(supabase, {
+      tenantId,
+      orderId: order.id,
+      orderNumber,
+      customerId: quote.customer_id,
+      sellerId: quote.seller_id ?? profile.id,
+      city: customerRow?.city ?? null,
+      state: customerRow?.state ?? null,
+    });
+
     await supabase
       .from("quotes")
       .update({ status: "aprovada" })
@@ -127,6 +144,7 @@ export async function createOrderFromQuoteAction(
     revalidatePath("/");
     revalidatePath("/pedidos");
     revalidatePath("/cotacoes");
+    revalidatePath("/visitas");
     revalidatePath(`/cotacoes/${quoteId}`);
 
     return {
