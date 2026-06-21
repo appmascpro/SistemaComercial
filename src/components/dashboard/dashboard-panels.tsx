@@ -5,8 +5,10 @@ import {
   ShoppingCart,
   Users,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { DashboardActivityItem } from "@/lib/dashboard/queries";
+import type {
+  DashboardActivityItem,
+  DashboardAgendaItem,
+} from "@/lib/dashboard/queries";
 import { formatDate } from "@/lib/utils";
 
 const TYPE_META: Record<
@@ -69,7 +71,7 @@ export function DashboardRecentActivity({
 export function DashboardAgenda({
   items,
 }: {
-  items: import("@/lib/dashboard/queries").DashboardAgendaItem[];
+  items: DashboardAgendaItem[];
 }) {
   if (items.length === 0) {
     return (
