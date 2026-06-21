@@ -1,13 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { searchCustomersAction } from "@/app/actions/customers";
 import { createRouteAction } from "@/app/actions/routes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BRAZILIAN_STATES } from "@/types/customer";
+import type { ServiceCityWithRegion } from "@/lib/service-cities/queries";
+import type { MicroRegion } from "@/lib/service-cities/micro-regions";
 import type { CustomerSearchResult } from "@/types/quote";
 import type { RouteFormInput, RoutePriority } from "@/types/route";
 
@@ -21,15 +22,21 @@ interface DraftStop {
 const inputClass =
   "h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
 
-export function RouteForm() {
+interface RouteFormProps {
+  serviceCities: ServiceCityWithRegion[];
+  microRegions: MicroRegion[];
+}
+
+export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [polo, setPolo] = useState("");
+  const [microRegionSlug, setMicroRegionSlug] = useState("");
   const [city, setCity] = useState("");
-  const [state, setState] = useState("");
+  const [state, setState] = useState("SP");
   const [plannedDate, setPlannedDate] = useState("");
   const [priority, setPriority] = useState<RoutePriority>("normal");
   const [notes, setNotes] = useState("");
@@ -38,12 +45,75 @@ export function RouteForm() {
   const [customers, setCustomers] = useState<CustomerSearchResult[]>([]);
   const [stops, setStops] = useState<DraftStop[]>([]);
 
+  const selectedMicroRegion = useMemo(
+    () => microRegions.find((r) => r.slug === microRegionSlug),
+    [microRegions, microRegionSlug]
+  );
+
+  const citiesInRegion = useMemo(() => {
+    if (!microRegionSlug) return [];
+    return serviceCities.filter((item) => item.region === microRegionSlug);
+  }, [serviceCities, microRegionSlug]);
+
+  const customerFilterLabel = useMemo(() => {
+    if (!microRegionSlug) return null;
+    if (city) return `${city} / ${state}`;
+    return selectedMicroRegion?.name ?? "Micro-região";
+  }, [microRegionSlug, city, state, selectedMicroRegion]);
+
   useEffect(() => {
     const timer = setTimeout(async () => {
-      setCustomers(await searchCustomersAction(customerQuery));
+      if (!microRegionSlug) {
+        setCustomers([]);
+        return;
+      }
+
+      const filters: { city?: string; cities?: string[]; state?: string } = {
+        state: state || "SP",
+      };
+
+      if (city.trim()) {
+        filters.city = city.trim();
+      } else if (citiesInRegion.length > 0) {
+        filters.cities = citiesInRegion.map((item) => item.city);
+      }
+
+      setCustomers(await searchCustomersAction(customerQuery, filters));
     }, 250);
     return () => clearTimeout(timer);
-  }, [customerQuery]);
+  }, [customerQuery, city, state, microRegionSlug, citiesInRegion]);
+
+  function handleMicroRegionChange(slug: string) {
+    setMicroRegionSlug(slug);
+    setCity("");
+    setState("SP");
+
+    const region = microRegions.find((r) => r.slug === slug);
+    if (region) {
+      setPolo(region.name);
+      if (!name.trim()) {
+        setName(`Rota — ${region.name}`);
+      }
+    }
+  }
+
+  function handleCityChange(value: string) {
+    if (!value) {
+      setCity("");
+      setState("SP");
+      if (selectedMicroRegion && !name.trim()) {
+        setName(`Rota — ${selectedMicroRegion.name}`);
+      }
+      return;
+    }
+
+    const [selectedCity, selectedState] = value.split("|");
+    setCity(selectedCity);
+    setState(selectedState);
+    if (!name.trim()) {
+      setName(`Rota — ${selectedCity}`);
+    }
+  }
 
   function addStop(customer: CustomerSearchResult) {
     if (stops.some((s) => s.customer.id === customer.id)) return;
@@ -63,9 +133,14 @@ export function RouteForm() {
   function handleSubmit() {
     setError(null);
 
+    if (!microRegionSlug) {
+      setError("Selecione a micro-região de atuação.");
+      return;
+    }
+
     const payload: RouteFormInput = {
       name,
-      polo,
+      polo: polo || selectedMicroRegion?.name || "",
       city,
       state,
       planned_date: plannedDate || undefined,
@@ -107,15 +182,58 @@ export function RouteForm() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Polo SP — Zona Leste"
+              placeholder="Ex.: Rota — Marília e entorno"
               className={inputClass}
             />
           </label>
+
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">
+              Micro-região * ({microRegions.length} eixos — ordem de expansão)
+            </span>
+            <select
+              value={microRegionSlug}
+              onChange={(e) => handleMicroRegionChange(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">Selecione a micro-região</option>
+              {microRegions.map((region) => (
+                <option key={region.slug} value={region.slug}>
+                  {region.expansionPriority}. {region.name} ({region.cities.length}{" "}
+                  cidades)
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">Cidade foco</span>
+            <select
+              value={city ? `${city}|${state}` : ""}
+              onChange={(e) => handleCityChange(e.target.value)}
+              disabled={!microRegionSlug}
+              className={inputClass}
+            >
+              <option value="">
+                Toda a micro-região
+                {citiesInRegion.length > 0
+                  ? ` (${citiesInRegion.length} cidades)`
+                  : ""}
+              </option>
+              {citiesInRegion.map((item) => (
+                <option key={item.id} value={`${item.city}|${item.state}`}>
+                  {item.city} / {item.state}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <label className="block text-sm">
             <span className="mb-1 block text-slate-600">Polo</span>
             <input
               value={polo}
               onChange={(e) => setPolo(e.target.value)}
+              placeholder="Preenchido pela micro-região"
               className={inputClass}
             />
           </label>
@@ -129,25 +247,6 @@ export function RouteForm() {
               <option value="baixa">Baixa</option>
               <option value="normal">Normal</option>
               <option value="alta">Alta</option>
-            </select>
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">Cidade</span>
-            <input value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">UF</span>
-            <select
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className={inputClass}
-            >
-              <option value="">Selecione</option>
-              {BRAZILIAN_STATES.map((uf) => (
-                <option key={uf} value={uf}>
-                  {uf}
-                </option>
-              ))}
             </select>
           </label>
           <label className="block text-sm">
@@ -165,7 +264,7 @@ export function RouteForm() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
         </CardContent>
@@ -176,18 +275,32 @@ export function RouteForm() {
           <CardTitle>Clientes na rota</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {microRegionSlug ? (
+            <p className="text-xs text-slate-500">
+              Buscando clientes em{" "}
+              <strong>{customerFilterLabel}</strong>
+              {city ? "" : " (todas as cidades da micro-região)"}
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500">
+              Selecione a micro-região acima para filtrar clientes da área de
+              atuação.
+            </p>
+          )}
+
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               value={customerQuery}
               onChange={(e) => setCustomerQuery(e.target.value)}
               placeholder="Adicionar cliente à rota..."
-              className="h-10 w-full rounded-lg border pl-9 pr-3 text-sm"
+              disabled={!microRegionSlug}
+              className="h-10 w-full rounded-lg border border-slate-300 pl-9 pr-3 text-sm disabled:bg-slate-50"
             />
           </div>
 
           {customers.length > 0 ? (
-            <ul className="max-h-40 divide-y divide-slate-300 overflow-y-auto rounded-lg border">
+            <ul className="max-h-40 divide-y divide-slate-200 overflow-y-auto rounded-lg border border-slate-300">
               {customers.map((c) => (
                 <li key={c.id}>
                   <button

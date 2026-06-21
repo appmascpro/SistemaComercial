@@ -1,0 +1,2228 @@
+[
+  {
+    "city": "Álvaro de Carvalho",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Alvinlândia",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Duartina",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Fernão",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Gália",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Garça",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Herculândia",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Júlio Mesquita",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Lupércio",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Marília",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Ocauçu",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Oriente",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Pompéia",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Quintana",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Tupã",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Ubirajara",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Vera Cruz",
+    "state": "SP",
+    "region": "marilia",
+    "regionName": "Base Marília e entorno direto",
+    "expansionPriority": 1
+  },
+  {
+    "city": "Agudos",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Arealva",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Areiópolis",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Balbinos",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Barra Bonita",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Bauru",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Bocaina",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Boracéia",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Botucatu",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Brotas",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Cabrália Paulista",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Dois Córregos",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Iacanga",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Igaraçu do Tietê",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Jaú",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Lençóis Paulista",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Macatuba",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Mineiros do Tietê",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Pederneiras",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Pirajuí",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Piratininga",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Pongaí",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Pratânia",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Presidente Alves",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Reginópolis",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "São Manuel",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Torrinha",
+    "state": "SP",
+    "region": "bauru-jau-botucatu",
+    "regionName": "Eixo Bauru, Jaú e Botucatu",
+    "expansionPriority": 2
+  },
+  {
+    "city": "Adamantina",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Assis",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Bastos",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Bernardino de Campos",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Cândido Mota",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Chavantes",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Iacri",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Inúbia Paulista",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Ipaussu",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Lucélia",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Maracaí",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Osvaldo Cruz",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Ourinhos",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Palmital",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Paraguaçu Paulista",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Parapuã",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Pedrinhas Paulista",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Piraju",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Pracinha",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Queiroz",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Rinópolis",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Sagres",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Salmourão",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Santa Cruz do Rio Pardo",
+    "state": "SP",
+    "region": "tupa-assis-ourinhos",
+    "regionName": "Eixo Tupã, Assis e Ourinhos",
+    "expansionPriority": 3
+  },
+  {
+    "city": "Alto Alegre",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Andradina",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Araçatuba",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Avanhandava",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Barbosa",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Bento de Abreu",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Bilac",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Birigui",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Buritama",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Castilho",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Clementina",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Gabriel Monteiro",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Glicério",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Guaraçaí",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Guararapes",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Ilha Solteira",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Lavínia",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Luiziânia",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Mirandópolis",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Murutinga do Sul",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Nova Independência",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Penápolis",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Pereira Barreto",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Piacatu",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Rubiácea",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Santópolis do Aguapeí",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Sud Mennucci",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Suzanápolis",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Valparaíso",
+    "state": "SP",
+    "region": "aracatuba-birigui",
+    "regionName": "Eixo Araçatuba, Birigui e Andradina",
+    "expansionPriority": 4
+  },
+  {
+    "city": "Álvares Machado",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Caiabu",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Caiuá",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Dracena",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Emilianópolis",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Euclides da Cunha Paulista",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Flórida Paulista",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Indiana",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Irapuru",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Junqueirópolis",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Marabá Paulista",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Martinópolis",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Mirante do Paranapanema",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Monte Castelo",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Narandiba",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Nova Guataporanga",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Ouro Verde",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Pacaembu",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Panorama",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Paulicéia",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Piquerobi",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Pirapozinho",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Presidente Bernardes",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Presidente Epitácio",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Presidente Prudente",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Presidente Venceslau",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Rancharia",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Regente Feijó",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Ribeirão dos Índios",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Rosana",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Sandovalina",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Santa Mercedes",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Santo Anastácio",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Santo Expedito",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "São João do Pau d'Alho",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Tarabai",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Teodoro Sampaio",
+    "state": "SP",
+    "region": "presidente-prudente",
+    "regionName": "Eixo Presidente Prudente e Oeste Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Tupi Paulista",
+    "state": "SP",
+    "region": "dracena-adamantina",
+    "regionName": "Eixo Dracena, Adamantina e Alta Paulista",
+    "expansionPriority": 5
+  },
+  {
+    "city": "Álvares Florence",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Américo de Campos",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Ariranha",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Auriflama",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Bady Bassitt",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Bálsamo",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Cardoso",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Catanduva",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Cedral",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Cosmorama",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Estrela d'Oeste",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Fernandópolis",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Floreal",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Gastão Vidigal",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "General Salgado",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Guapiaçu",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Ibirá",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Ipiguá",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Irapuã",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Itajobi",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Jales",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "José Bonifácio",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Macaubal",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Magda",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Mendonça",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Mirassol",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Mirassolândia",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Monções",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Monte Aprazível",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Neves Paulista",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Nhandeara",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Nipoã",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Novais",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Novo Horizonte",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Onda Verde",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Paraíso",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Pindorama",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Planalto",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Poloni",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Pontes Gestal",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Sales",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Santa Adélia",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Santa Fé do Sul",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "São José do Rio Preto",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Sebastianópolis do Sul",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Tanabi",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Uchoa",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "União Paulista",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Urupês",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Valentim Gentil",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Votuporanga",
+    "state": "SP",
+    "region": "sao-jose-rio-preto",
+    "regionName": "Eixo São José do Rio Preto",
+    "expansionPriority": 6
+  },
+  {
+    "city": "Altair",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Altinópolis",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Aramina",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Barretos",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Barrinha",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Batatais",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Bebedouro",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Brodowski",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Buritizal",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Cajobi",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Cajuru",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Colina",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Colômbia",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Cravinhos",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Cristais Paulista",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Dumont",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Franca",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Guaíra",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Guará",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Guaraci",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Guatapará",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Icém",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Igarapava",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Itirapuã",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Ituverava",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Jaborandi",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Jaboticabal",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Jardinópolis",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Jeriquara",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Luís Antônio",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Miguelópolis",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Monte Azul Paulista",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Morro Agudo",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Nuporanga",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Olímpia",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Orindiúva",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Orlândia",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Patrocínio Paulista",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Paulo de Faria",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Pedregulho",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Pirangi",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Pitangueiras",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Pontal",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Pradópolis",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Restinga",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Ribeirão Corrente",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Ribeirão Preto",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Rifaina",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Sales Oliveira",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Santa Rita do Passa Quatro",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Santa Rosa de Viterbo",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Santo Antônio da Alegria",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "São Joaquim da Barra",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "São José da Bela Vista",
+    "state": "SP",
+    "region": "franca",
+    "regionName": "Eixo Franca",
+    "expansionPriority": 7
+  },
+  {
+    "city": "São Simão",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Serra Azul",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Serrana",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Sertãozinho",
+    "state": "SP",
+    "region": "ribeirao-preto",
+    "regionName": "Eixo Ribeirão Preto",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Severínia",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Taiaçu",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Taiúva",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Terra Roxa",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Viradouro",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Vista Alegre do Alto",
+    "state": "SP",
+    "region": "barretos-bebedouro",
+    "regionName": "Eixo Barretos, Bebedouro e Olímpia",
+    "expansionPriority": 7
+  },
+  {
+    "city": "Américo Brasiliense",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Analândia",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Araraquara",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Boa Esperança do Sul",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Borborema",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Descalvado",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Dourado",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Gavião Peixoto",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Ibaté",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Ibitinga",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Itaju",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Itápolis",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Itirapina",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Matão",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Motuca",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Nova Europa",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Porto Ferreira",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Ribeirão Bonito",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Rincão",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Santa Lúcia",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "São Carlos",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Tabatinga",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Trabiju",
+    "state": "SP",
+    "region": "araraquara-sao-carlos",
+    "regionName": "Eixo Araraquara, São Carlos e Central",
+    "expansionPriority": 8
+  },
+  {
+    "city": "Águas de Santa Bárbara",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Avaré",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Barão de Antonina",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Buri",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Capão Bonito",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Cerqueira César",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Coronel Macedo",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Fartura",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Guapiara",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Iaras",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Itaberá",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Itapeva",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Itaporanga",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Itararé",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Itatinga",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Pardinho",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Ribeirão Branco",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Ribeirão Grande",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Sarutaiá",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Taguaí",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Taquarituba",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Tejupá",
+    "state": "SP",
+    "region": "avare-itapeva",
+    "regionName": "Eixo Avaré, Botucatu e Itapeva",
+    "expansionPriority": 9
+  },
+  {
+    "city": "Alambari",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Americana",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Angatuba",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Anhembi",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Araras",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Bofete",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Capela do Alto",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Cesário Lange",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Conchal",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Conchas",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Guareí",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Itapetininga",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Leme",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Limeira",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Pereiras",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Piracicaba",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Pirassununga",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Porangaba",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Quadra",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Rio Claro",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Santa Bárbara d'Oeste",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Tatuí",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  },
+  {
+    "city": "Torre de Pedra",
+    "state": "SP",
+    "region": "borda-campinas",
+    "regionName": "Borda Campinas / Piracicaba / Sorocaba",
+    "expansionPriority": 10
+  }
+]

@@ -1,5 +1,5 @@
-const CACHE = "faro-v1";
-const STATIC_CACHE = "faro-static-v1";
+const CACHE = "faro-v2";
+const STATIC_CACHE = "faro-static-v2";
 const OFFLINE_URL = "/offline";
 
 const PRECACHE = [

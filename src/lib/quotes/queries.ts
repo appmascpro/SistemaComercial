@@ -479,7 +479,8 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
 }
 
 export async function searchCustomers(
-  query: string
+  query: string,
+  filters?: { city?: string; cities?: string[]; state?: string }
 ): Promise<CustomerSearchResult[]> {
   const { supabase } = await createTenantClient();
   const term = query.trim();
@@ -490,6 +491,15 @@ export async function searchCustomers(
     .eq("status", "ativo")
     .order("company_name", { ascending: true })
     .limit(20);
+
+  if (filters?.cities && filters.cities.length > 0) {
+    builder = builder.in("city", filters.cities);
+  } else if (filters?.city) {
+    builder = builder.ilike("city", filters.city);
+  }
+  if (filters?.state) {
+    builder = builder.eq("state", filters.state);
+  }
 
   if (term) {
     builder = builder.or(

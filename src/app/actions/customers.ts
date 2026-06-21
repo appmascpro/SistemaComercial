@@ -155,10 +155,11 @@ export async function getCustomerForQuoteAction(customerId: string) {
 }
 
 export async function searchCustomersAction(
-  query: string
+  query: string,
+  filters?: { city?: string; cities?: string[]; state?: string }
 ): Promise<CustomerSearchResult[]> {
   const { searchCustomers } = await import("@/lib/quotes/queries");
-  return searchCustomers(query);
+  return searchCustomers(query, filters);
 }
 
 export async function searchProductsAction(query: string) {
