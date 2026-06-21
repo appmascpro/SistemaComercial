@@ -62,8 +62,8 @@ export function MobileAppMenu({ user }: MobileAppMenuProps) {
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
-          <div className="border-b border-slate-100 px-4 py-3">
+        <div className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-xl shadow-slate-200/50">
+          <div className="border-b border-slate-300 px-4 py-3">
             <p className="truncate text-sm font-medium text-slate-900">
               {user.full_name}
             </p>
@@ -94,7 +94,7 @@ export function MobileAppMenu({ user }: MobileAppMenuProps) {
             })}
           </nav>
 
-          <div className="border-t border-slate-100 p-1.5">
+          <div className="border-t border-slate-300 p-1.5">
             <form action={logoutAction}>
               <button
                 type="submit"

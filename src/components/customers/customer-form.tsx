@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { BRAZILIAN_STATES, type CustomerDetail, type CustomerFormInput } from "@/types/customer";
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
+  "h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
 
 interface CustomerFormProps {
   customer?: CustomerDetail;
@@ -74,7 +74,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         </div>
       ) : null}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
+      <section className="rounded-xl border border-slate-300 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-slate-900">Identificação</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm sm:col-span-2">
@@ -143,7 +143,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
+      <section className="rounded-xl border border-slate-300 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-slate-900">Contato</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">
@@ -166,7 +166,7 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
+      <section className="rounded-xl border border-slate-300 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-slate-900">Endereço</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm sm:col-span-2">
@@ -235,13 +235,13 @@ export function CustomerForm({ customer }: CustomerFormProps) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
+      <section className="rounded-xl border border-slate-300 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-slate-900">Observações</h3>
         <textarea
           value={form.notes}
           onChange={(e) => updateField("notes", e.target.value)}
           rows={3}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
         />
         {customer ? (
           <label className="mt-4 block text-sm">

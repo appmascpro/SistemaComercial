@@ -101,7 +101,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
         <div className="space-y-2">
           <label className="text-sm font-medium text-slate-700">Cliente</label>
           {selectedCustomer ? (
-            <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+            <div className="flex items-center justify-between rounded-lg border border-slate-300 bg-slate-50 px-3 py-2">
               <div>
                 <p className="text-sm font-medium">{selectedCustomer.company_name}</p>
                 <p className="text-xs text-slate-500">
@@ -126,10 +126,10 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
                 value={customerQuery}
                 onChange={(e) => setCustomerQuery(e.target.value)}
                 placeholder="Buscar cliente..."
-                className="h-10 w-full rounded-lg border border-slate-200 pl-9 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                className="h-10 w-full rounded-lg border border-slate-300 pl-9 pr-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               />
               {customers.length > 0 && customerQuery.trim() && (
-                <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
+                <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-y-auto rounded-lg border border-slate-300 bg-white shadow-lg">
                   {customers.map((customer) => (
                     <li key={customer.id}>
                       <button
@@ -172,7 +172,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
                 className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
                   contactType === option.value
                     ? "border-brand-600 bg-brand-50 text-brand-700"
-                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                    : "border-slate-300 text-slate-600 hover:bg-slate-50"
                 }`}
               >
                 {option.label}
@@ -190,7 +190,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
               type="date"
               value={visitedAt}
               onChange={(e) => setVisitedAt(e.target.value)}
-              className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
           </div>
           <div className="space-y-2">
@@ -201,7 +201,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
               type="date"
               value={nextActionDate}
               onChange={(e) => setNextActionDate(e.target.value)}
-              className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
           </div>
         </div>
@@ -216,7 +216,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
               value={contactPersonName}
               onChange={(e) => setContactPersonName(e.target.value)}
               placeholder="Nome do contato"
-              className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
           </div>
           <div className="space-y-2">
@@ -228,7 +228,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
               value={contactPersonPhone}
               onChange={(e) => setContactPersonPhone(e.target.value)}
               placeholder="(00) 00000-0000"
-              className="h-10 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              className="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
           </div>
         </div>
@@ -242,7 +242,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
             onChange={(e) => setConversationSummary(e.target.value)}
             rows={4}
             placeholder="Resumo da conversa, interesse, objeções, próximos passos..."
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           />
         </div>
 
@@ -255,7 +255,7 @@ export function VisitForm({ onSuccess }: { onSuccess?: () => void }) {
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
             placeholder="Opcional"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           />
         </div>
 

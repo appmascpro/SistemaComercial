@@ -57,7 +57,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
           type="email"
           autoComplete="email"
           required
-          className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+          className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           placeholder="seu@email.com"
         />
       </div>
@@ -75,7 +75,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
           type="password"
           autoComplete="current-password"
           required
-          className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+          className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           placeholder="••••••••"
         />
       </div>

@@ -19,7 +19,7 @@ interface DraftStop {
 }
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
+  "h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
 
 export function RouteForm() {
   const router = useRouter();
@@ -187,7 +187,7 @@ export function RouteForm() {
           </div>
 
           {customers.length > 0 ? (
-            <ul className="max-h-40 divide-y divide-slate-100 overflow-y-auto rounded-lg border">
+            <ul className="max-h-40 divide-y divide-slate-300 overflow-y-auto rounded-lg border">
               {customers.map((c) => (
                 <li key={c.id}>
                   <button
@@ -210,7 +210,7 @@ export function RouteForm() {
               {stops.map((stop, index) => (
                 <li
                   key={stop.key}
-                  className="flex items-start gap-3 rounded-lg border border-slate-200 p-3"
+                  className="flex items-start gap-3 rounded-lg border border-slate-300 p-3"
                 >
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">
                     {index + 1}

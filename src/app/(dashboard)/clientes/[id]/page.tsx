@@ -89,7 +89,7 @@ export default async function ClienteDetailPage({
                     <li key={quote.id}>
                       <Link
                         href={`/cotacoes/${quote.id}`}
-                        className="block rounded-lg border border-slate-100 p-2 hover:bg-slate-50"
+                        className="block rounded-lg border border-slate-300 p-2 hover:bg-slate-50"
                       >
                         <p className="text-sm font-medium">{quote.quote_number}</p>
                         <p className="text-xs text-slate-500">
@@ -119,7 +119,7 @@ export default async function ClienteDetailPage({
                     <li key={order.id}>
                       <Link
                         href={`/pedidos/${order.id}`}
-                        className="block rounded-lg border border-slate-100 p-2 hover:bg-slate-50"
+                        className="block rounded-lg border border-slate-300 p-2 hover:bg-slate-50"
                       >
                         <p className="text-sm font-medium">{order.order_number}</p>
                         <p className="text-xs text-slate-500">

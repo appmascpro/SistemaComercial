@@ -188,11 +188,11 @@ export function SampleForm({
                   value={customerQuery}
                   onChange={(e) => setCustomerQuery(e.target.value)}
                   placeholder="Buscar cliente..."
-                  className="h-10 w-full rounded-lg border border-slate-200 pl-9 pr-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-slate-300 pl-9 pr-3 text-sm"
                 />
               </div>
               {customers.length > 0 ? (
-                <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-lg border">
+                <ul className="max-h-48 divide-y divide-slate-300 overflow-y-auto rounded-lg border">
                   {customers.map((c) => (
                     <li key={c.id}>
                       <button
@@ -226,12 +226,12 @@ export function SampleForm({
               value={productQuery}
               onChange={(e) => setProductQuery(e.target.value)}
               placeholder="Buscar produto, descrição ou INCI..."
-              className="h-10 w-full rounded-lg border border-slate-200 pl-9 pr-3 text-sm"
+              className="h-10 w-full rounded-lg border border-slate-300 pl-9 pr-3 text-sm"
             />
           </div>
 
           {products.length > 0 ? (
-            <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-lg border">
+            <ul className="max-h-48 divide-y divide-slate-300 overflow-y-auto rounded-lg border">
               {products.map((product) => (
                 <li key={product.id}>
                   <button
@@ -260,7 +260,7 @@ export function SampleForm({
                     <th className="px-3 py-2"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-300">
                   {items.map((item) => (
                     <tr key={item.key}>
                       <td className="px-3 py-2 font-medium">

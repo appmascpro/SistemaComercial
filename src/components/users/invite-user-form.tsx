@@ -8,7 +8,7 @@ import { USER_ROLE_LABELS, type UserRole } from "@/types/auth";
 import { INVITABLE_ROLES } from "@/types/team";
 
 const inputClass =
-  "h-9 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
+  "h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
 
 export function InviteUserForm() {
   const router = useRouter();

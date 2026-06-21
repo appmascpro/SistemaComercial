@@ -52,7 +52,7 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
               inputMode="decimal"
               placeholder="5.078"
               required
-              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
           <div>
@@ -67,7 +67,7 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
               name="valid_from"
               type="date"
               defaultValue={today}
-              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
         </div>
@@ -93,7 +93,7 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-400">
             Histórico recente
           </p>
-          <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+          <ul className="divide-y divide-slate-300 rounded-lg border border-slate-300">
             {history.map((item) => (
               <li
                 key={`${item.valid_from}-${item.rate}`}

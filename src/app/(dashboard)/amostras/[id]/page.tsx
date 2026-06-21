@@ -41,7 +41,7 @@ export default async function AmostraDetailPage({
             {editable ? (
               <Link
                 href={`/amostras/${sample.id}/editar`}
-                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
               >
                 <Pencil className="h-4 w-4" />
                 Editar
@@ -104,7 +104,7 @@ export default async function AmostraDetailPage({
                     <th className="px-3 py-2 text-left">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-200">
                   {sample.items.map((item) => (
                     <tr key={item.id}>
                       <td className="px-3 py-2">

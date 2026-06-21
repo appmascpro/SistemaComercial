@@ -27,8 +27,8 @@ export function UsersTable({ members, currentUserId }: UsersTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
+    <div className="overflow-x-auto rounded-lg border border-slate-300">
+      <table className="min-w-full divide-y divide-slate-300 text-sm">
         <thead className="bg-slate-50">
           <tr>
             <th className="px-3 py-2 text-left font-medium text-slate-600">
@@ -48,7 +48,7 @@ export function UsersTable({ members, currentUserId }: UsersTableProps) {
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 bg-white">
+        <tbody className="divide-y divide-slate-300 bg-white">
           {members.map((member) => (
             <UserRow
               key={member.id}
@@ -139,7 +139,7 @@ function UserRow({
             value={member.role}
             disabled={isPending || (isSelf && member.role === "admin")}
             onChange={(e) => handleRoleChange(e.target.value as UserRole)}
-            className="h-8 min-w-[8rem] rounded-lg border border-slate-200 bg-white px-2 text-xs disabled:opacity-50"
+            className="h-8 min-w-[8rem] rounded-lg border border-slate-300 bg-white px-2 text-xs disabled:opacity-50"
           >
             {INVITABLE_ROLES.map((role) => (
               <option key={role} value={role}>
@@ -201,7 +201,7 @@ function UserRow({
                   onChange={(e) => setNewPassword(e.target.value)}
                   minLength={8}
                   placeholder="Mínimo 8 caracteres"
-                  className="h-9 w-full rounded-lg border border-slate-200 px-3 text-sm outline-none ring-brand-500 focus:ring-2"
+                  className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2"
                 />
               </label>
               <Button

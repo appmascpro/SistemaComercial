@@ -22,7 +22,7 @@ export function Header({ user }: HeaderProps) {
   const showBack = !onDashboard;
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-slate-200 bg-white/90 px-3 backdrop-blur-md sm:h-16 sm:gap-4 sm:px-6 lg:bg-white/80">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-slate-300 bg-white/90 px-3 backdrop-blur-md sm:h-16 sm:gap-4 sm:px-6 lg:bg-white/80">
       <div className="flex min-w-0 flex-1 items-center gap-2">
         {showBack && (
           <Link
@@ -65,7 +65,7 @@ export function Header({ user }: HeaderProps) {
           <input
             type="search"
             placeholder="Buscar clientes, produtos..."
-            className="h-9 w-64 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="h-9 w-64 rounded-lg border border-slate-300 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           />
         </div>
 

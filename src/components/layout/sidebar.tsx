@@ -61,13 +61,17 @@ export function Sidebar({ user }: { user: Pick<UserProfile, "role"> }) {
         collapsed ? "w-[72px]" : "w-64"
       )}
     >
-      <div className="flex h-[4.5rem] items-center border-b border-sidebar-border px-3 sm:h-16 sm:px-4">
+      <div className="flex h-16 w-full items-center justify-center border-b border-sidebar-border px-2">
         {collapsed ? (
           <Link href="/" title="FARO" className="mx-auto">
             <BrandLogo variant="sidebar-collapsed" />
           </Link>
         ) : (
-          <Link href="/" className="min-w-0" title="FARO">
+          <Link
+            href="/"
+            className="flex h-14 w-full items-center justify-center"
+            title="FARO"
+          >
             <BrandLogo variant="sidebar" />
           </Link>
         )}

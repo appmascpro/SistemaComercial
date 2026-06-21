@@ -26,19 +26,19 @@ const PERIOD_OPTIONS: { value: FollowupReportPeriod; label: string }[] = [
 function SummaryCards({ summary }: { summary: FollowupReportSummary }) {
   return (
     <div className="grid gap-3 sm:grid-cols-4">
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="rounded-lg border border-slate-300 bg-white p-4">
         <p className="text-xs font-medium uppercase text-slate-500">Total</p>
         <p className="mt-1 text-2xl font-bold text-slate-900">{summary.total}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="rounded-lg border border-slate-300 bg-white p-4">
         <p className="text-xs font-medium uppercase text-slate-500">Pendentes</p>
         <p className="mt-1 text-2xl font-bold text-amber-700">{summary.pendentes}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="rounded-lg border border-slate-300 bg-white p-4">
         <p className="text-xs font-medium uppercase text-slate-500">Concluídos</p>
         <p className="mt-1 text-2xl font-bold text-emerald-700">{summary.concluidos}</p>
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white p-4">
+      <div className="rounded-lg border border-slate-300 bg-white p-4">
         <p className="text-xs font-medium uppercase text-slate-500">Atrasados</p>
         <p className="mt-1 text-2xl font-bold text-red-700">{summary.atrasados}</p>
       </div>
@@ -95,7 +95,7 @@ function FollowupCompleteForm({
   }
 
   return (
-    <div className="mt-3 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+    <div className="mt-3 space-y-3 rounded-lg border border-slate-300 bg-slate-50 p-3">
       <div className="flex flex-wrap gap-2">
         {(
           [
@@ -110,7 +110,7 @@ function FollowupCompleteForm({
             className={`rounded-lg border px-3 py-1 text-xs font-medium ${
               contactType === opt.value
                 ? "border-brand-600 bg-brand-50 text-brand-700"
-                : "border-slate-200 text-slate-600"
+                : "border-slate-300 text-slate-600"
             }`}
           >
             {opt.label}
@@ -122,21 +122,21 @@ function FollowupCompleteForm({
         value={contactName}
         onChange={(e) => setContactName(e.target.value)}
         placeholder="Com quem falou"
-        className="h-9 w-full rounded-lg border border-slate-200 px-3 text-sm"
+        className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
       />
       <input
         type="text"
         value={contactPhone}
         onChange={(e) => setContactPhone(e.target.value)}
         placeholder="WhatsApp / telefone"
-        className="h-9 w-full rounded-lg border border-slate-200 px-3 text-sm"
+        className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
       />
       <textarea
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
         rows={2}
         placeholder="Como foi o contato..."
-        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
       />
       {error ? <p className="text-xs text-red-600">{error}</p> : null}
       <div className="flex gap-2">
@@ -244,7 +244,7 @@ export function OrderFollowupsPanel({
       );
     }
     return (
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-slate-300">
         {items.map((item) => (
           <FollowupRow
             key={item.id}
@@ -267,7 +267,7 @@ export function OrderFollowupsPanel({
               className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
                 period === option.value
                   ? "border-brand-600 bg-brand-50 text-brand-700"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-50"
               }`}
             >
               {option.label}
@@ -279,7 +279,7 @@ export function OrderFollowupsPanel({
       {summary ? <SummaryCards summary={summary} /> : null}
 
       {!groups?.length ? (
-        <div className="rounded-lg border border-dashed border-slate-200 py-12 text-center">
+        <div className="rounded-lg border border-dashed border-slate-300 py-12 text-center">
           <p className="text-sm text-slate-500">
             Nenhum follow-up de pedido neste período.
           </p>
@@ -292,14 +292,14 @@ export function OrderFollowupsPanel({
           {groups.map((group) => (
             <div
               key={group.date}
-              className="overflow-hidden rounded-lg border border-slate-200"
+              className="overflow-hidden rounded-lg border border-slate-300"
             >
-              <div className="border-b border-slate-200 bg-slate-50 px-4 py-2">
+              <div className="border-b border-slate-300 bg-slate-50 px-4 py-2">
                 <p className="text-sm font-semibold text-slate-800">
                   {formatDate(group.date + "T12:00:00")}
                 </p>
               </div>
-              <ul className="divide-y divide-slate-100 bg-white">
+              <ul className="divide-y divide-slate-300 bg-white">
                 {group.items.map((item) => (
                   <FollowupRow
                     key={item.id}

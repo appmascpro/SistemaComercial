@@ -11,7 +11,7 @@ interface UserMenuProps {
 
 export function UserMenu({ user }: UserMenuProps) {
   return (
-    <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
+    <div className="flex items-center gap-3 border-l border-slate-300 pl-3">
       <div className="hidden text-right sm:block">
         <p className="text-sm font-medium text-slate-900">{user.full_name}</p>
         <p className="text-xs text-slate-500">

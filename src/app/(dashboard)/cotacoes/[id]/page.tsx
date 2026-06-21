@@ -55,7 +55,7 @@ export default async function CotacaoDetailPage({
             {editable ? (
               <Link
                 href={`/cotacoes/${quote.id}/editar`}
-                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
               >
                 <Pencil className="h-4 w-4" />
                 Editar
@@ -126,7 +126,7 @@ export default async function CotacaoDetailPage({
             <CardTitle>Itens</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <div className="overflow-x-auto rounded-lg border border-slate-300">
               <table className="min-w-full text-sm">
                 <thead className="bg-slate-50 text-left text-xs text-slate-600">
                   <tr>
@@ -141,7 +141,7 @@ export default async function CotacaoDetailPage({
                     <th className="px-3 py-2 text-right">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-200">
                   {quote.items.map((item) => {
                     const markup =
                       item.min_price != null && item.max_price != null
@@ -206,7 +206,7 @@ export default async function CotacaoDetailPage({
                   <dt className="text-slate-500">ICMS</dt>
                   <dd>{formatCurrency(quote.icms_total, "BRL")}</dd>
                 </div>
-                <div className="flex justify-between border-t border-slate-200 pt-2 font-semibold">
+                <div className="flex justify-between border-t border-slate-300 pt-2 font-semibold">
                   <dt>Total</dt>
                   <dd>{formatCurrency(quote.total, "BRL")}</dd>
                 </div>

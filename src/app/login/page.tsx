@@ -13,11 +13,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-brand-50/40 p-4">
       <div className="w-full max-w-lg">
-        <div className="mb-5 text-center">
-          <div className="mx-auto flex justify-center px-1">
-            <BrandLogo variant="login" />
-          </div>
-          <p className="mt-1 text-sm text-slate-500">
+        <div className="mb-5 flex flex-col items-center text-center">
+          <BrandLogo variant="login" className="max-w-[min(100%,380px)]" />
+          <p className="-mt-1 text-sm text-slate-500">
             Acesse sua conta para continuar
           </p>
         </div>
@@ -45,7 +43,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </Card>
 
         <p className="mt-6 text-center text-xs text-slate-400">
-          TC Química · Tavares Chemical
+          Ative seu Faro comercial.
         </p>
       </div>
     </div>

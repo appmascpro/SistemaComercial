@@ -398,12 +398,12 @@ export function QuoteForm({
                   value={customerQuery}
                   onChange={(e) => setCustomerQuery(e.target.value)}
                   placeholder="Buscar cliente por nome ou documento..."
-                  className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
+                  className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
                 />
               </div>
 
               {customers.length > 0 ? (
-                <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+                <ul className="max-h-48 divide-y divide-slate-300 overflow-y-auto rounded-lg border border-slate-300">
                   {customers.map((customer) => (
                     <li key={customer.id}>
                       <button
@@ -438,7 +438,7 @@ export function QuoteForm({
               </button>
 
               {showNewCustomer ? (
-                <div className="grid gap-3 rounded-lg border border-slate-200 p-4 sm:grid-cols-2">
+                <div className="grid gap-3 rounded-lg border border-slate-300 p-4 sm:grid-cols-2">
                   <input
                     value={newCustomer.company_name}
                     onChange={(e) =>
@@ -448,7 +448,7 @@ export function QuoteForm({
                       }))
                     }
                     placeholder="Nome / razão social *"
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm sm:col-span-2"
+                    className="h-9 rounded-lg border border-slate-300 px-3 text-sm sm:col-span-2"
                   />
                   <input
                     value={newCustomer.city}
@@ -456,7 +456,7 @@ export function QuoteForm({
                       setNewCustomer((c) => ({ ...c, city: e.target.value }))
                     }
                     placeholder="Cidade"
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm"
+                    className="h-9 rounded-lg border border-slate-300 px-3 text-sm"
                   />
                   <input
                     value={newCustomer.state}
@@ -465,7 +465,7 @@ export function QuoteForm({
                     }
                     placeholder="UF"
                     maxLength={2}
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm uppercase"
+                    className="h-9 rounded-lg border border-slate-300 px-3 text-sm uppercase"
                   />
                   <input
                     value={newCustomer.email}
@@ -473,7 +473,7 @@ export function QuoteForm({
                       setNewCustomer((c) => ({ ...c, email: e.target.value }))
                     }
                     placeholder="E-mail"
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm"
+                    className="h-9 rounded-lg border border-slate-300 px-3 text-sm"
                   />
                   <input
                     value={newCustomer.phone}
@@ -481,7 +481,7 @@ export function QuoteForm({
                       setNewCustomer((c) => ({ ...c, phone: e.target.value }))
                     }
                     placeholder="WhatsApp / telefone"
-                    className="h-9 rounded-lg border border-slate-200 px-3 text-sm"
+                    className="h-9 rounded-lg border border-slate-300 px-3 text-sm"
                   />
                   <Button
                     type="button"
@@ -514,12 +514,12 @@ export function QuoteForm({
               value={productQuery}
               onChange={(e) => setProductQuery(e.target.value)}
               placeholder="Buscar por produto, descrição ou INCI..."
-              className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
             />
           </div>
 
           {products.length > 0 ? (
-            <ul className="max-h-56 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+            <ul className="max-h-56 divide-y divide-slate-300 overflow-y-auto rounded-lg border border-slate-300">
               {products.map((product) => (
                 <li key={product.id}>
                   <button
@@ -569,7 +569,7 @@ export function QuoteForm({
             </p>
           ) : (
             <>
-              <div className="overflow-x-auto rounded-lg border border-slate-200">
+              <div className="overflow-x-auto rounded-lg border border-slate-300">
                 <table className="min-w-full text-sm">
                   <thead className="bg-slate-50 text-left text-xs text-slate-600">
                     <tr>
@@ -586,7 +586,7 @@ export function QuoteForm({
                       <th className="px-2 py-2"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-300">
                     {items.map((item) => {
                       const markup = getItemMarkup(item);
                       const refMax =
@@ -623,7 +623,7 @@ export function QuoteForm({
                                     e.target.value || null
                                   )
                                 }
-                                className="h-8 w-full min-w-[100px] rounded border border-slate-200 px-1 text-xs"
+                                className="h-8 w-full min-w-[100px] rounded border border-slate-300 px-1 text-xs"
                               >
                                 {item.product.packages.map((pkg) => (
                                   <option key={pkg.id} value={pkg.id}>
@@ -642,7 +642,7 @@ export function QuoteForm({
                                 updateItem(item.key, { quantity })
                               }
                               min={0.0001}
-                              className="h-8 w-16 rounded border border-slate-200 px-1 text-right text-xs"
+                              className="h-8 w-16 rounded border border-slate-300 px-1 text-right text-xs"
                             />
                           </td>
                           <td className="px-2 py-2 text-right text-xs text-slate-600">
@@ -671,7 +671,7 @@ export function QuoteForm({
                                 className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
                                   aboveMax
                                     ? "border-amber-300 bg-amber-50 text-amber-900"
-                                    : "border-slate-200"
+                                    : "border-slate-300"
                                 }`}
                               />
                             ) : (
@@ -686,7 +686,7 @@ export function QuoteForm({
                                     ? "border-amber-300 bg-amber-50 text-amber-900"
                                     : item.unit_price <= item.min_price
                                       ? "border-emerald-200 bg-emerald-50"
-                                      : "border-slate-200"
+                                      : "border-slate-300"
                                 }`}
                               />
                             )}
@@ -756,7 +756,7 @@ export function QuoteForm({
               type="date"
               value={validUntil}
               onChange={(e) => setValidUntil(e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 px-3"
+              className="h-9 w-full rounded-lg border border-slate-300 px-3"
             />
           </label>
           <label className="block text-sm sm:col-span-2">
@@ -766,7 +766,7 @@ export function QuoteForm({
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Informações adicionais para o cliente..."
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
         </CardContent>

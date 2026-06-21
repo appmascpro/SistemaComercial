@@ -35,7 +35,7 @@ export function RouteStatusSelect({
       value={currentStatus}
       disabled={isPending}
       onChange={(e) => handleChange(e.target.value as RouteStatus)}
-      className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm capitalize disabled:opacity-50"
+      className="h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm capitalize disabled:opacity-50"
     >
       {STATUS_OPTIONS.map((option) => (
         <option key={option.value} value={option.value}>

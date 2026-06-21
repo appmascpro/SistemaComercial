@@ -216,7 +216,7 @@ export function OrderForm({
           <CardTitle>Cliente</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3">
+          <div className="rounded-lg border border-slate-300 bg-slate-50/60 p-3">
             <p className="font-medium text-slate-900">
               {order.customer.company_name}
             </p>
@@ -245,12 +245,12 @@ export function OrderForm({
               value={productQuery}
               onChange={(e) => setProductQuery(e.target.value)}
               placeholder="Buscar por produto, descrição ou INCI..."
-              className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
+              className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
             />
           </div>
 
           {products.length > 0 ? (
-            <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+            <ul className="max-h-48 divide-y divide-slate-300 overflow-y-auto rounded-lg border border-slate-300">
               {products.map((product) => (
                 <li key={product.id}>
                   <button
@@ -272,7 +272,7 @@ export function OrderForm({
             <p className="text-sm text-slate-500">Adicione produtos ao pedido.</p>
           ) : (
             <>
-              <div className="overflow-x-auto rounded-lg border border-slate-200">
+              <div className="overflow-x-auto rounded-lg border border-slate-300">
                 <table className="min-w-full text-sm">
                   <thead className="bg-slate-50 text-left text-xs text-slate-600">
                     <tr>
@@ -286,7 +286,7 @@ export function OrderForm({
                       <th className="px-2 py-2"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-300">
                     {items.map((item) => {
                       const markup = getItemMarkup(item);
                       return (
@@ -393,7 +393,7 @@ export function OrderForm({
             <input
               value={paymentTerms}
               onChange={(e) => setPaymentTerms(e.target.value)}
-              className="h-9 w-full rounded-lg border border-slate-200 px-3 text-sm"
+              className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
             />
           </label>
           <label className="block text-sm sm:col-span-2">
@@ -402,7 +402,7 @@ export function OrderForm({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
         </CardContent>

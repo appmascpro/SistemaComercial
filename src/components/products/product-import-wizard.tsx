@@ -149,7 +149,7 @@ export function ProductImportWizard() {
         action={
           <Link
             href="/produtos"
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             <ArrowLeft className="h-4 w-4" />
             Voltar
@@ -175,7 +175,7 @@ export function ProductImportWizard() {
                 onChange={(e) =>
                   handleProfileChange(e.target.value as ImportProfileId)
                 }
-                className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
               >
                 {importProfiles.map((profile) => (
                   <option key={profile.id} value={profile.id}>
@@ -200,7 +200,7 @@ export function ProductImportWizard() {
                   "flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 transition-colors",
                   file
                     ? "border-brand-300 bg-brand-50/50"
-                    : "border-slate-200 bg-slate-50 hover:border-brand-300 hover:bg-brand-50/30"
+                    : "border-slate-300 bg-slate-50 hover:border-brand-300 hover:bg-brand-50/30"
                 )}
               >
                 <input
@@ -232,7 +232,7 @@ export function ProductImportWizard() {
             )}
 
             {parsed && (
-              <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+              <div className="space-y-2 rounded-lg border border-slate-300 bg-slate-50 p-3 text-sm">
                 <p>
                   <span className="font-medium">Linhas lidas:</span>{" "}
                   {parsed.rows.length}
@@ -355,8 +355,8 @@ export function ProductImportWizard() {
                   </Button>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto rounded-lg border border-slate-200">
-                    <table className="min-w-full divide-y divide-slate-200 text-sm">
+                  <div className="overflow-x-auto rounded-lg border border-slate-300">
+                    <table className="min-w-full divide-y divide-slate-300 text-sm">
                       <thead className="bg-slate-50">
                         <tr>
                           <th className="px-3 py-2 text-left font-medium text-slate-600">
@@ -394,7 +394,7 @@ export function ProductImportWizard() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 bg-white">
+                      <tbody className="divide-y divide-slate-300 bg-white">
                         {previewRows.map((row) => {
                           const rowErrors = criticalIssues.filter(
                             (issue) => issue.rowNumber === row.rowNumber
@@ -487,17 +487,17 @@ export function ProductImportWizard() {
                   {importResult.message}
                 </div>
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-lg border border-slate-200 p-3">
+                  <div className="rounded-lg border border-slate-300 p-3">
                     <p className="text-xs text-slate-500">Total</p>
                     <p className="text-xl font-semibold">{importResult.totalRows}</p>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-3">
+                  <div className="rounded-lg border border-slate-300 p-3">
                     <p className="text-xs text-slate-500">Importados</p>
                     <p className="text-xl font-semibold text-emerald-600">
                       {importResult.successRows}
                     </p>
                   </div>
-                  <div className="rounded-lg border border-slate-200 p-3">
+                  <div className="rounded-lg border border-slate-300 p-3">
                     <p className="text-xs text-slate-500">Erros</p>
                     <p className="text-xl font-semibold text-red-600">
                       {importResult.errorRows}

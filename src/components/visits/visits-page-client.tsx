@@ -52,7 +52,7 @@ export function VisitsPageClient({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-1 overflow-x-auto rounded-lg border border-slate-200 bg-slate-50 p-1">
+      <div className="flex gap-1 overflow-x-auto rounded-lg border border-slate-300 bg-slate-50 p-1">
         {TABS.map((item) => (
           <Link
             key={item.value}

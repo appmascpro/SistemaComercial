@@ -34,7 +34,7 @@ export default async function EditarPedidoPage({
         action={
           <Link
             href={`/pedidos/${order.id}`}
-            className="inline-flex h-8 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            className="inline-flex h-8 items-center rounded-lg border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
           >
             Voltar
           </Link>

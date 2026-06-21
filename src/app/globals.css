@@ -8,12 +8,18 @@
     --foreground: 15 23 42;
     --card: 255 255 255;
     --card-foreground: 15 23 42;
-    --border: 226 232 240;
+    --border: 203 213 225;
     --ring: 12 142 230;
   }
 
   * {
-    @apply border-slate-200;
+    @apply border-slate-300;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    @apply border-slate-300;
   }
 
   body {

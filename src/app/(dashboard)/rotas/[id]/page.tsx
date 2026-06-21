@@ -75,7 +75,7 @@ export default async function RotaDetailPage({
               {route.stops.map((stop) => (
                 <li
                   key={stop.id}
-                  className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 p-4"
+                  className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-300 p-4"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700">
                     {stop.stop_order}

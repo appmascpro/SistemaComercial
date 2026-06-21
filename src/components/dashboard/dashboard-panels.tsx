@@ -23,7 +23,7 @@ const TYPE_META: Record<
 
 /** Área de conteúdo com altura fixa e rolagem vertical interna. */
 const PANEL_BODY_CLASS =
-  "scrollbar-thin h-[280px] w-full min-w-0 overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200";
+  "scrollbar-thin h-[280px] w-full min-w-0 overflow-x-hidden overflow-y-auto rounded-lg border border-slate-300";
 
 function DashboardPanelEmpty({ message }: { message: string }) {
   return (
@@ -49,7 +49,7 @@ export function DashboardRecentActivity({
   }
 
   return (
-    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100`}>
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-300`}>
       {items.map((item) => {
         const meta = TYPE_META[item.type];
         const Icon = meta.icon;
@@ -97,7 +97,7 @@ export function DashboardAgenda({
   }
 
   return (
-    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100`}>
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-300`}>
       {items.map((item) => (
         <li key={`${item.kind}-${item.id}`} className="min-w-0">
           <Link
