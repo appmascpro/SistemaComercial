@@ -24,7 +24,7 @@ export interface DashboardActivityItem {
 
 export interface DashboardAgendaItem {
   id: string;
-  kind: "route" | "sample" | "visit";
+  kind: "route" | "sample" | "visit" | "order_followup";
   title: string;
   subtitle: string;
   date: string;
@@ -270,7 +270,7 @@ export async function getDashboardAgenda(
   const today = todayDateOnly();
   const weekEnd = dateInDays(7);
 
-  const [routes, samples, visits] = await Promise.all([
+  const [routes, samples, visits, orderFollowups] = await Promise.all([
     supabase
       .from("routes")
       .select("id, name, city, state, planned_date, status")
@@ -309,6 +309,15 @@ export async function getDashboardAgenda(
       .gte("next_action_date", today)
       .lte("next_action_date", weekEnd)
       .order("next_action_date", { ascending: true })
+      .limit(limit),
+    supabase
+      .from("followups")
+      .select("id, title, due_at, status, related_id")
+      .eq("related_type", "order")
+      .eq("status", "pendente")
+      .gte("due_at", `${today}T00:00:00`)
+      .lte("due_at", `${weekEnd}T23:59:59`)
+      .order("due_at", { ascending: true })
       .limit(limit),
   ]);
 
@@ -356,6 +365,18 @@ export async function getDashboardAgenda(
         .join(" · "),
       date: row.next_action_date,
       href: "/visitas?aba=relatorio&periodo=7d",
+    });
+  }
+
+  for (const row of orderFollowups.data ?? []) {
+    if (!row.due_at) continue;
+    items.push({
+      id: row.id,
+      kind: "order_followup",
+      title: row.title ?? "Follow-up pedido",
+      subtitle: "Acompanhamento de pedido",
+      date: String(row.due_at).slice(0, 10),
+      href: "/visitas?aba=followups&periodo=15d",
     });
   }
 

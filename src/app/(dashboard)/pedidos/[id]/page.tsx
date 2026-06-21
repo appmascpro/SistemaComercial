@@ -4,7 +4,9 @@ import { FileDown, FileText, Pencil } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { OrderStatusSelect } from "@/components/orders/order-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OrderFollowupsPanel } from "@/components/followups/order-followups-panel";
 import { canEditOrder } from "@/lib/edit/status";
+import { getOrderFollowupsByOrderId } from "@/lib/followups/queries";
 import { getOrderById } from "@/lib/orders/queries";
 import {
   formatCurrency,
@@ -24,6 +26,8 @@ export default async function PedidoDetailPage({
   const order = await getOrderById(id);
 
   if (!order) notFound();
+
+  const followups = await getOrderFollowupsByOrderId(id);
 
   const editable = canEditOrder(order);
 
@@ -204,6 +208,23 @@ export default async function PedidoDetailPage({
               </CardContent>
             </Card>
           ) : null}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Follow-ups do pedido</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <OrderFollowupsPanel
+                compact
+                groups={[
+                  {
+                    date: new Date().toISOString().slice(0, 10),
+                    items: followups,
+                  },
+                ]}
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
