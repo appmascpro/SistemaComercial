@@ -86,6 +86,7 @@ export async function createQuoteAction(
       throw new Error(itemsError.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/cotacoes");
     return {
       success: `Cotação ${quoteNumber} criada com sucesso.`,
@@ -113,6 +114,7 @@ export async function deleteQuoteAction(id: string): Promise<QuoteActionState> {
 
     if (error) throw new Error(error.message);
 
+    revalidatePath("/");
     revalidatePath("/cotacoes");
     return { success: "Cotação excluída." };
   } catch (error) {
@@ -209,6 +211,7 @@ export async function updateQuoteAction(
 
     if (itemsError) throw new Error(itemsError.message);
 
+    revalidatePath("/");
     revalidatePath("/cotacoes");
     revalidatePath(`/cotacoes/${quoteId}`);
 

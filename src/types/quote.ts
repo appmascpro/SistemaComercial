@@ -37,8 +37,12 @@ export interface ResolvedQuoteItem {
   package_name: string | null;
   quantity: number;
   unit_price: number;
+  unit_price_usd: number | null;
+  pricing_currency: "USD" | "BRL";
   min_price: number | null;
   max_price: number | null;
+  min_price_usd: number | null;
+  max_price_usd: number | null;
   discount_percent: number;
   discount_amount: number;
   icms_rate: number;
@@ -96,9 +100,14 @@ export interface ProductSearchResult {
   inci_name: string | null;
   unit: string;
   price_brl_display: number | null;
+  price_usd_display: number | null;
   min_price: number | null;
   max_price: number | null;
+  min_price_usd: number | null;
+  max_price_usd: number | null;
   pricing_currency: "USD" | "BRL";
+  ipi_rate: number;
+  icms_rate: number;
   packages: Array<{
     id: string;
     name: string;

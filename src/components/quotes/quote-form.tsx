@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { calculateMarkup, formatMarkupPercent } from "@/lib/quotes/markup";
+import { QUOTE_ICMS_RATE } from "@/lib/quotes/quote-pricing-core";
 import { formatCurrency } from "@/lib/utils";
 import type {
   CustomerSearchResult,
@@ -30,25 +31,46 @@ interface DraftItem {
   product: ProductSearchResult;
   package_id: string | null;
   quantity: number;
+  pricing_currency: "USD" | "BRL";
+  ptax_rate: number;
   unit_price: number;
-  list_price: number;
+  unit_price_usd: number | null;
   min_price: number;
   max_price: number;
+  min_price_usd: number | null;
+  max_price_usd: number | null;
+}
+
+function getItemMarkup(item: DraftItem) {
+  const unit =
+    item.pricing_currency === "USD" && item.unit_price_usd != null
+      ? item.unit_price_usd
+      : item.unit_price;
+  const min =
+    item.pricing_currency === "USD" && item.min_price_usd != null
+      ? item.min_price_usd
+      : item.min_price;
+  const max =
+    item.pricing_currency === "USD" && item.max_price_usd != null
+      ? item.max_price_usd
+      : item.max_price;
+
+  return calculateMarkup(unit, min, max, item.quantity);
+}
+
+function formatPriceRange(item: DraftItem, kind: "min" | "max"): string {
+  if (item.pricing_currency === "USD") {
+    const usd = kind === "min" ? item.min_price_usd : item.max_price_usd;
+    if (usd == null) return "—";
+    return formatCurrency(usd, "USD");
+  }
+  return formatCurrency(kind === "min" ? item.min_price : item.max_price, "BRL");
 }
 
 function defaultValidUntil(): string {
   const date = new Date();
   date.setDate(date.getDate() + 30);
   return date.toISOString().slice(0, 10);
-}
-
-function getItemMarkup(item: DraftItem) {
-  return calculateMarkup(
-    item.unit_price,
-    item.min_price,
-    item.max_price,
-    item.quantity
-  );
 }
 
 export function QuoteForm({
@@ -125,10 +147,14 @@ export function QuoteForm({
         product,
         package_id: item.package_id,
         quantity: item.quantity,
+        pricing_currency: item.pricing_currency,
+        ptax_rate: quote.metadata.ptax,
         unit_price: item.unit_price,
-        list_price: item.min_price ?? item.unit_price,
+        unit_price_usd: item.unit_price_usd,
         min_price: item.min_price ?? item.unit_price,
         max_price: item.max_price ?? item.unit_price,
+        min_price_usd: item.min_price_usd,
+        max_price_usd: item.max_price_usd,
       });
     }
 
@@ -172,10 +198,14 @@ export function QuoteForm({
         product,
         package_id: defaultPackage?.id ?? null,
         quantity: 1,
+        pricing_currency: pricing.pricing_currency,
+        ptax_rate: pricing.ptax_rate,
         unit_price: pricing.max_price,
-        list_price: pricing.list_price,
+        unit_price_usd: pricing.max_price_usd,
         min_price: pricing.min_price,
         max_price: pricing.max_price,
+        min_price_usd: pricing.min_price_usd,
+        max_price_usd: pricing.max_price_usd,
       },
     ]);
     setProductQuery("");
@@ -196,13 +226,44 @@ export function QuoteForm({
           ? {
               ...item,
               package_id: packageId,
-              list_price: pricing.list_price,
               min_price: pricing.min_price,
               max_price: pricing.max_price,
+              min_price_usd: pricing.min_price_usd,
+              max_price_usd: pricing.max_price_usd,
+              ptax_rate: pricing.ptax_rate,
+              pricing_currency: pricing.pricing_currency,
               unit_price: pricing.max_price,
+              unit_price_usd: pricing.max_price_usd,
             }
           : item
       )
+    );
+  }
+
+  function updateUnitPriceUsd(key: string, usdValue: number) {
+    setItems((current) =>
+      current.map((item) => {
+        if (item.key !== key) return item;
+        return {
+          ...item,
+          unit_price_usd: usdValue,
+          unit_price: Math.round(usdValue * item.ptax_rate * 100) / 100,
+        };
+      })
+    );
+  }
+
+  function updateUnitPriceBrl(key: string, brlValue: number) {
+    setItems((current) =>
+      current.map((item) => {
+        if (item.key !== key) return item;
+        const patch: Partial<DraftItem> = { unit_price: brlValue };
+        if (item.pricing_currency === "USD" && item.ptax_rate > 0) {
+          patch.unit_price_usd =
+            Math.round((brlValue / item.ptax_rate) * 100) / 100;
+        }
+        return { ...item, ...patch };
+      })
     );
   }
 
@@ -245,8 +306,12 @@ export function QuoteForm({
 
     for (const item of items) {
       if (item.unit_price < item.min_price) {
+        const minLabel =
+          item.pricing_currency === "USD" && item.min_price_usd != null
+            ? formatCurrency(item.min_price_usd, "USD")
+            : formatCurrency(item.min_price, "BRL");
         setError(
-          `Preço de "${item.product.commercial_name}" abaixo do mínimo (${formatCurrency(item.min_price, "BRL")}).`
+          `Preço de "${item.product.commercial_name}" abaixo do mínimo com ICMS ${QUOTE_ICMS_RATE}% (${minLabel}/kg).`
         );
         return;
       }
@@ -419,8 +484,8 @@ export function QuoteForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-xs text-slate-500">
-            Markup: 0% no preço mínimo · 100% no preço máximo · acima do máximo
-            continua subindo (101%, 102%…).
+            Preços com ICMS {QUOTE_ICMS_RATE}% incluso. Produtos em dólar: referência
+            USD/kg; conversão BRL pela PTAX vigente. Markup: 0% no mín · 100% no máx.
           </p>
 
           <div className="relative">
@@ -446,15 +511,31 @@ export function QuoteForm({
                       <p className="font-medium">{product.commercial_name}</p>
                       <p className="text-xs text-slate-500">
                         {product.internal_code}
-                        {product.min_price != null && product.max_price != null
-                          ? ` · Mín ${formatCurrency(product.min_price, "BRL")} · Máx ${formatCurrency(product.max_price, "BRL")}`
-                          : ""}
+                        {product.pricing_currency === "USD" &&
+                        product.min_price_usd != null &&
+                        product.max_price_usd != null
+                          ? ` · Mín ${formatCurrency(product.min_price_usd, "USD")} · Máx ${formatCurrency(product.max_price_usd, "USD")} (ICMS ${QUOTE_ICMS_RATE}%)`
+                          : product.min_price != null && product.max_price != null
+                            ? ` · Mín ${formatCurrency(product.min_price, "BRL")} · Máx ${formatCurrency(product.max_price, "BRL")} (ICMS ${QUOTE_ICMS_RATE}%)`
+                            : ""}
                       </p>
                     </div>
-                    <span className="shrink-0 text-xs font-medium text-brand-700">
-                      {product.price_brl_display != null
-                        ? formatCurrency(product.price_brl_display, "BRL")
-                        : "—"}
+                    <span className="shrink-0 text-right text-xs font-medium text-brand-700">
+                      {product.pricing_currency === "USD" &&
+                      product.price_usd_display != null ? (
+                        <>
+                          {formatCurrency(product.price_usd_display, "USD")}/kg
+                          {product.price_brl_display != null ? (
+                            <span className="block text-[10px] font-normal text-slate-500">
+                              {formatCurrency(product.price_brl_display, "BRL")}/kg
+                            </span>
+                          ) : null}
+                        </>
+                      ) : product.price_brl_display != null ? (
+                        formatCurrency(product.price_brl_display, "BRL")
+                      ) : (
+                        "—"
+                      )}
                     </span>
                   </button>
                 </li>
@@ -475,18 +556,27 @@ export function QuoteForm({
                       <th className="px-2 py-2">Produto</th>
                       <th className="px-2 py-2">Emb.</th>
                       <th className="px-2 py-2 text-right">Qtd</th>
-                      <th className="px-2 py-2 text-right">Mín</th>
-                      <th className="px-2 py-2 text-right">Máx</th>
-                      <th className="px-2 py-2 text-right">Preço unit.</th>
+                      <th className="px-2 py-2 text-right">Mín (ICMS {QUOTE_ICMS_RATE}%)</th>
+                      <th className="px-2 py-2 text-right">Máx (ICMS {QUOTE_ICMS_RATE}%)</th>
+                      <th className="px-2 py-2 text-right">Preço/kg</th>
+                      <th className="px-2 py-2 text-right">BRL/kg</th>
                       <th className="px-2 py-2 text-right">Markup %</th>
-                      <th className="px-2 py-2 text-right">Markup R$</th>
+                      <th className="px-2 py-2 text-right">Markup</th>
                       <th className="px-2 py-2"></th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {items.map((item) => {
                       const markup = getItemMarkup(item);
-                      const aboveMax = item.unit_price > item.max_price;
+                      const refMax =
+                        item.pricing_currency === "USD" && item.max_price_usd != null
+                          ? item.max_price_usd
+                          : item.max_price;
+                      const refUnit =
+                        item.pricing_currency === "USD" && item.unit_price_usd != null
+                          ? item.unit_price_usd
+                          : item.unit_price;
+                      const aboveMax = refUnit > refMax;
 
                       return (
                         <tr key={item.key}>
@@ -496,6 +586,7 @@ export function QuoteForm({
                             </p>
                             <p className="text-[10px] text-slate-500">
                               {item.product.internal_code}
+                              {item.pricing_currency === "USD" ? " · USD" : ""}
                             </p>
                           </td>
                           <td className="px-2 py-2">
@@ -536,30 +627,54 @@ export function QuoteForm({
                             />
                           </td>
                           <td className="px-2 py-2 text-right text-xs text-emerald-700">
-                            {formatCurrency(item.min_price, "BRL")}
+                            {formatPriceRange(item, "min")}
                           </td>
                           <td className="px-2 py-2 text-right text-xs text-blue-700">
-                            {formatCurrency(item.max_price, "BRL")}
+                            {formatPriceRange(item, "max")}
                           </td>
                           <td className="px-2 py-2">
-                            <input
-                              type="number"
-                              min={item.min_price}
-                              step="0.01"
-                              value={item.unit_price}
-                              onChange={(e) =>
-                                updateItem(item.key, {
-                                  unit_price: Number(e.target.value),
-                                })
-                              }
-                              className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
-                                aboveMax
-                                  ? "border-amber-300 bg-amber-50 text-amber-900"
-                                  : item.unit_price <= item.min_price
-                                    ? "border-emerald-200 bg-emerald-50"
+                            {item.pricing_currency === "USD" ? (
+                              <input
+                                type="number"
+                                min={item.min_price_usd ?? 0}
+                                step="0.0001"
+                                value={item.unit_price_usd ?? ""}
+                                onChange={(e) =>
+                                  updateUnitPriceUsd(
+                                    item.key,
+                                    Number(e.target.value)
+                                  )
+                                }
+                                className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
+                                  aboveMax
+                                    ? "border-amber-300 bg-amber-50 text-amber-900"
                                     : "border-slate-200"
-                              }`}
-                            />
+                                }`}
+                              />
+                            ) : (
+                              <input
+                                type="number"
+                                min={item.min_price}
+                                step="0.01"
+                                value={item.unit_price}
+                                onChange={(e) =>
+                                  updateUnitPriceBrl(
+                                    item.key,
+                                    Number(e.target.value)
+                                  )
+                                }
+                                className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
+                                  aboveMax
+                                    ? "border-amber-300 bg-amber-50 text-amber-900"
+                                    : item.unit_price <= item.min_price
+                                      ? "border-emerald-200 bg-emerald-50"
+                                      : "border-slate-200"
+                                }`}
+                              />
+                            )}
+                          </td>
+                          <td className="px-2 py-2 text-right text-xs text-slate-600">
+                            {formatCurrency(item.unit_price, "BRL")}
                           </td>
                           <td
                             className={`px-2 py-2 text-right text-xs font-semibold ${
@@ -573,7 +688,9 @@ export function QuoteForm({
                             {formatMarkupPercent(markup.markupPercent)}
                           </td>
                           <td className="px-2 py-2 text-right text-xs font-medium text-slate-700">
-                            {formatCurrency(markup.markupBrlLine, "BRL")}
+                            {item.pricing_currency === "USD"
+                              ? formatCurrency(markup.markupBrlLine, "USD")
+                              : formatCurrency(markup.markupBrlLine, "BRL")}
                           </td>
                           <td className="px-2 py-2">
                             <button

@@ -62,6 +62,7 @@ export async function createCustomerAction(
       throw new Error(error?.message ?? "Erro ao cadastrar cliente.");
     }
 
+    revalidatePath("/");
     revalidatePath("/clientes");
     revalidatePath("/cotacoes");
 
@@ -92,6 +93,7 @@ export async function updateCustomerAction(
 
     if (error) throw new Error(error.message);
 
+    revalidatePath("/");
     revalidatePath("/clientes");
     revalidatePath(`/clientes/${id}`);
     revalidatePath("/cotacoes");

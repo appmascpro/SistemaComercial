@@ -1,14 +1,22 @@
 import "server-only";
 
-import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
-import { resolvePriceBounds } from "@/lib/quotes/markup";
+import { getActivePtaxRate } from "@/lib/pricing/ptax";
+import { resolveQuoteGrossPrices } from "@/lib/quotes/quote-pricing-core";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 
 export interface ProductQuotePricing {
+  pricing_currency: "USD" | "BRL";
+  ipi_rate: number;
+  icms_rate: number;
+  ptax_rate: number;
+  /** Bruto com ICMS 18% — moeda de referência na cotação */
+  unit_price_usd: number | null;
+  min_price_usd: number | null;
+  max_price_usd: number | null;
+  /** Bruto com ICMS 18% em BRL (PTAX atual) */
   list_price: number;
   min_price: number;
   max_price: number;
-  pricing_currency: "USD" | "BRL";
 }
 
 export async function getProductQuotePricing(
@@ -29,6 +37,11 @@ export async function getProductQuotePricing(
         min_price,
         max_price,
         package_id,
+        status
+      ),
+      tax_rules (
+        region,
+        ipi_rate,
         status
       )
     `
@@ -54,24 +67,37 @@ export async function getProductQuotePricing(
 
   if (!match) return null;
 
-  const priceUsd = match.price_usd != null ? Number(match.price_usd) : null;
-  const priceBrl = match.price_brl != null ? Number(match.price_brl) : null;
-  const listPrice =
-    priceBrl ??
-    (priceUsd != null ? calculateBrlFromUsd(priceUsd, ptax.rate) : null);
+  const ipiRule = ((data.tax_rules ?? []) as Array<{
+    region: string;
+    ipi_rate: number;
+    status: string;
+  }>).find((r) => r.region === "ipi" && r.status === "ativo");
 
-  if (listPrice == null) return null;
+  const ipiRate = Number(ipiRule?.ipi_rate ?? 0);
 
-  const bounds = resolvePriceBounds(
-    listPrice,
-    match.min_price != null ? Number(match.min_price) : null,
-    match.max_price != null ? Number(match.max_price) : null
-  );
+  try {
+    const gross = resolveQuoteGrossPrices({
+      price_usd: match.price_usd != null ? Number(match.price_usd) : null,
+      price_brl: match.price_brl != null ? Number(match.price_brl) : null,
+      min_price: match.min_price != null ? Number(match.min_price) : null,
+      max_price: match.max_price != null ? Number(match.max_price) : null,
+      ipi_rate: ipiRate,
+      ptax_rate: ptax.rate,
+    });
 
-  return {
-    list_price: bounds.list,
-    min_price: bounds.min,
-    max_price: bounds.max,
-    pricing_currency: priceUsd != null ? "USD" : "BRL",
-  };
+    return {
+      pricing_currency: gross.pricing_currency,
+      ipi_rate: gross.ipi_rate,
+      icms_rate: gross.icms_rate,
+      ptax_rate: ptax.rate,
+      unit_price_usd: gross.gross_usd,
+      min_price_usd: gross.gross_min_usd,
+      max_price_usd: gross.gross_max_usd,
+      list_price: gross.gross_brl,
+      min_price: gross.gross_min_brl,
+      max_price: gross.gross_max_brl,
+    };
+  } catch {
+    return null;
+  }
 }

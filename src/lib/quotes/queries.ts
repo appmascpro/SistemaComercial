@@ -1,13 +1,13 @@
 import "server-only";
 
-import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
+import { getActivePtaxRate } from "@/lib/pricing/ptax";
 import { resolveProductDescription } from "@/lib/products/description";
 import {
   buildProductSearchOrFilter,
   productMatchesAllTokens,
   tokenizeSearchQuery,
 } from "@/lib/products/search";
-import { resolvePriceBounds } from "@/lib/quotes/markup";
+import { QUOTE_ICMS_RATE, resolveQuoteGrossPrices } from "@/lib/quotes/quote-pricing-core";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { parseMetadata } from "@/lib/quotes/build-items";
 import type {
@@ -119,7 +119,11 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
         sort_order,
         products (
           internal_code,
-          commercial_name
+          commercial_name,
+          product_prices (
+            price_usd,
+            status
+          )
         ),
         product_packages (
           name
@@ -149,6 +153,8 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
     state: string | null;
   };
 
+  const metadata = parseMetadata(data.internal_notes);
+
   const items = ((data.quote_items ?? []) as Array<Record<string, unknown>>)
     .sort(
       (a, b) =>
@@ -156,8 +162,16 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
     )
     .map((item) => {
       const productRaw = item.products as
-        | { internal_code: string; commercial_name: string }
-        | { internal_code: string; commercial_name: string }[]
+        | {
+            internal_code: string;
+            commercial_name: string;
+            product_prices?: Array<{ price_usd: number | null; status: string }>;
+          }
+        | Array<{
+            internal_code: string;
+            commercial_name: string;
+            product_prices?: Array<{ price_usd: number | null; status: string }>;
+          }>
         | null;
       const product = Array.isArray(productRaw) ? productRaw[0] : productRaw;
       const pkgRaw = item.product_packages as
@@ -165,6 +179,15 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
         | { name: string }[]
         | null;
       const pkg = Array.isArray(pkgRaw) ? pkgRaw[0] : pkgRaw;
+
+      const activePrices = (product?.product_prices ?? []).filter(
+        (p) => p.status === "ativo"
+      );
+      const hasUsd = activePrices.some((p) => p.price_usd != null);
+      const unitPrice = Number(item.unit_price);
+      const minPrice = item.min_price != null ? Number(item.min_price) : null;
+      const maxPrice = item.max_price != null ? Number(item.max_price) : null;
+      const ptax = metadata.ptax;
 
       return {
         id: String(item.id),
@@ -174,9 +197,19 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
         product_name: product?.commercial_name ?? "—",
         package_name: pkg?.name ?? null,
         quantity: Number(item.quantity),
-        unit_price: Number(item.unit_price),
-        min_price: item.min_price != null ? Number(item.min_price) : null,
-        max_price: item.max_price != null ? Number(item.max_price) : null,
+        unit_price: unitPrice,
+        unit_price_usd: hasUsd ? Math.round((unitPrice / ptax) * 100) / 100 : null,
+        pricing_currency: hasUsd ? ("USD" as const) : ("BRL" as const),
+        min_price: minPrice,
+        max_price: maxPrice,
+        min_price_usd:
+          hasUsd && minPrice != null
+            ? Math.round((minPrice / ptax) * 100) / 100
+            : null,
+        max_price_usd:
+          hasUsd && maxPrice != null
+            ? Math.round((maxPrice / ptax) * 100) / 100
+            : null,
         discount_percent: Number(item.discount_percent),
         discount_amount: Number(item.discount_amount),
         icms_rate: Number(item.icms_rate),
@@ -203,7 +236,7 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
     tax_total: Number(data.tax_total),
     total: Number(data.total),
     created_at: data.created_at,
-    metadata: parseMetadata(data.internal_notes),
+    metadata,
     customer,
     items,
   };
@@ -223,53 +256,105 @@ function mapProductRow(
   }>).filter((p) => p.status === "ativo");
   const activePrice =
     activePrices.find((p) => !p.package_id) ?? activePrices[0];
-  const priceUsd = activePrice?.price_usd ?? null;
-  const priceBrl = activePrice?.price_brl ?? null;
-  const listPrice =
-    priceBrl ??
-    (priceUsd != null
-      ? calculateBrlFromUsd(Number(priceUsd), ptaxRate)
-      : null);
-  const bounds =
-    listPrice != null
-      ? resolvePriceBounds(
-          listPrice,
-          activePrice?.min_price != null
-            ? Number(activePrice.min_price)
-            : null,
-          activePrice?.max_price != null
-            ? Number(activePrice.max_price)
-            : null
-        )
-      : null;
 
-  return {
-    id: String(product.id),
-    internal_code: String(product.internal_code),
-    commercial_name: String(product.commercial_name),
-    description: resolveProductDescription(
-      product.description as string | null,
-      product.technical_notes as string | null
-    ),
-    inci_name: (product.inci_name as string | null) ?? null,
-    unit: String(product.unit),
-    price_brl_display: listPrice,
-    min_price: bounds?.min ?? null,
-    max_price: bounds?.max ?? null,
-    pricing_currency: priceUsd != null ? "USD" : "BRL",
-    packages: ((product.product_packages ?? []) as Array<{
-      id: string;
-      name: string;
-      is_default: boolean;
-      status: string;
-    }>)
-      .filter((p) => p.status === "ativo")
-      .map((p) => ({
-        id: p.id,
-        name: p.name,
-        is_default: p.is_default,
-      })),
-  };
+  const ipiRule = ((product.tax_rules ?? []) as Array<{
+    region: string;
+    ipi_rate: number;
+    status: string;
+  }>).find((r) => r.region === "ipi" && r.status === "ativo");
+
+  const ipiRate = Number(ipiRule?.ipi_rate ?? 0);
+
+  if (!activePrice) {
+    return {
+      id: String(product.id),
+      internal_code: String(product.internal_code),
+      commercial_name: String(product.commercial_name),
+      description: resolveProductDescription(
+        product.description as string | null,
+        product.technical_notes as string | null
+      ),
+      inci_name: (product.inci_name as string | null) ?? null,
+      unit: String(product.unit),
+      price_brl_display: null,
+      price_usd_display: null,
+      min_price: null,
+      max_price: null,
+      min_price_usd: null,
+      max_price_usd: null,
+      pricing_currency: "BRL",
+      ipi_rate: ipiRate,
+      icms_rate: QUOTE_ICMS_RATE,
+      packages: [],
+    };
+  }
+
+  try {
+    const gross = resolveQuoteGrossPrices({
+      price_usd:
+        activePrice.price_usd != null ? Number(activePrice.price_usd) : null,
+      price_brl:
+        activePrice.price_brl != null ? Number(activePrice.price_brl) : null,
+      min_price:
+        activePrice.min_price != null ? Number(activePrice.min_price) : null,
+      max_price:
+        activePrice.max_price != null ? Number(activePrice.max_price) : null,
+      ipi_rate: ipiRate,
+      ptax_rate: ptaxRate,
+    });
+
+    return {
+      id: String(product.id),
+      internal_code: String(product.internal_code),
+      commercial_name: String(product.commercial_name),
+      description: resolveProductDescription(
+        product.description as string | null,
+        product.technical_notes as string | null
+      ),
+      inci_name: (product.inci_name as string | null) ?? null,
+      unit: String(product.unit),
+      price_brl_display: gross.gross_brl,
+      price_usd_display: gross.gross_usd,
+      min_price: gross.gross_min_brl,
+      max_price: gross.gross_max_brl,
+      min_price_usd: gross.gross_min_usd,
+      max_price_usd: gross.gross_max_usd,
+      pricing_currency: gross.pricing_currency,
+      ipi_rate: gross.ipi_rate,
+      icms_rate: gross.icms_rate,
+      packages: ((product.product_packages ?? []) as Array<{
+        id: string;
+        name: string;
+        is_default: boolean;
+        status: string;
+      }>)
+        .filter((p) => p.status === "ativo")
+        .map((p) => ({
+          id: p.id,
+          name: p.name,
+          is_default: p.is_default,
+        })),
+    };
+  } catch {
+    return {
+      id: String(product.id),
+      internal_code: String(product.internal_code),
+      commercial_name: String(product.commercial_name),
+      description: null,
+      inci_name: null,
+      unit: String(product.unit),
+      price_brl_display: null,
+      price_usd_display: null,
+      min_price: null,
+      max_price: null,
+      min_price_usd: null,
+      max_price_usd: null,
+      pricing_currency: "BRL",
+      ipi_rate: ipiRate,
+      icms_rate: QUOTE_ICMS_RATE,
+      packages: [],
+    };
+  }
 }
 
 export async function getProductsByIds(
@@ -304,6 +389,11 @@ export async function getProductsByIds(
         id,
         name,
         is_default,
+        status
+      ),
+      tax_rules (
+        region,
+        ipi_rate,
         status
       )
     `
@@ -353,6 +443,11 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
         id,
         name,
         is_default,
+        status
+      ),
+      tax_rules (
+        region,
+        ipi_rate,
         status
       )
     `

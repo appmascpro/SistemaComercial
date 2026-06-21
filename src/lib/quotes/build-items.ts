@@ -1,11 +1,14 @@
 import "server-only";
 
-import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
+import { calculateQuoteLine, roundMoney, sumQuoteTotals } from "@/lib/quotes/calculate";
+import { getActivePtaxRate } from "@/lib/pricing/ptax";
 import { tavaresCompanyData } from "@/lib/company/tavares-company";
-import { resolvePriceBounds } from "@/lib/quotes/markup";
+import {
+  QUOTE_ICMS_RATE,
+  resolveQuoteGrossPrices,
+  usdFromBrlGross,
+} from "@/lib/quotes/quote-pricing-core";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
-import { calculateQuoteLine, sumQuoteTotals } from "@/lib/quotes/calculate";
-import { resolveIcmsRegion } from "@/lib/quotes/icms-region";
 import type {
   QuoteFormInput,
   QuoteMetadata,
@@ -55,12 +58,9 @@ function parseMetadata(raw: string | null): QuoteMetadata {
 function resolveUnitPrice(
   prices: ProductPriceRow[],
   packageId: string | null,
+  ipiRate: number,
   ptaxRate: number
-): {
-  listPrice: number;
-  minPrice: number;
-  maxPrice: number;
-} {
+): ReturnType<typeof resolveQuoteGrossPrices> {
   const active = prices.filter((p) => p.status === "ativo");
   const match =
     (packageId
@@ -71,41 +71,19 @@ function resolveUnitPrice(
     throw new Error("Produto sem preço ativo.");
   }
 
-  const listPrice =
-    match.price_brl ??
-    (match.price_usd != null
-      ? calculateBrlFromUsd(Number(match.price_usd), ptaxRate)
-      : null);
-
-  if (listPrice == null) {
-    throw new Error("Não foi possível calcular o preço do produto.");
-  }
-
-  const bounds = resolvePriceBounds(
-    listPrice,
-    match.min_price != null ? Number(match.min_price) : null,
-    match.max_price != null ? Number(match.max_price) : null
-  );
-
-  return {
-    listPrice: bounds.list,
-    minPrice: bounds.min,
-    maxPrice: bounds.max,
-  };
+  return resolveQuoteGrossPrices({
+    price_usd: match.price_usd != null ? Number(match.price_usd) : null,
+    price_brl: match.price_brl != null ? Number(match.price_brl) : null,
+    min_price: match.min_price != null ? Number(match.min_price) : null,
+    max_price: match.max_price != null ? Number(match.max_price) : null,
+    ipi_rate: ipiRate,
+    ptax_rate: ptaxRate,
+  });
 }
 
-function resolveTaxRates(
-  rules: TaxRuleRow[],
-  customerState: string | null
-): { icmsRate: number; ipiRate: number } {
-  const region = resolveIcmsRegion(customerState);
-  const icmsRule = rules.find((r) => r.region === region);
+function resolveIpiRate(rules: TaxRuleRow[]): number {
   const ipiRule = rules.find((r) => r.region === "ipi");
-
-  return {
-    icmsRate: Number(icmsRule?.icms_rate ?? 0),
-    ipiRate: Number(ipiRule?.ipi_rate ?? 0),
-  };
+  return Number(ipiRule?.ipi_rate ?? 0);
 }
 
 export async function buildQuoteItems(
@@ -195,23 +173,30 @@ export async function buildQuoteItems(
       packages.find((p) => p.status === "ativo")?.name ??
       null;
 
-    const { listPrice, minPrice, maxPrice } = resolveUnitPrice(
-      prices,
-      packageId,
-      ptax.rate
-    );
-    const { icmsRate, ipiRate } = resolveTaxRates(rules, customer.state);
+    const ipiRate = resolveIpiRate(rules);
+    const gross = resolveUnitPrice(prices, packageId, ipiRate, ptax.rate);
 
-    const chosenUnitPrice = item.unit_price;
+    const chosenUnitPriceBrl = roundMoney(item.unit_price);
+
+    if (chosenUnitPriceBrl < gross.gross_min_brl) {
+      throw new Error(
+        `Preço de "${product.commercial_name}" abaixo do mínimo com ICMS ${QUOTE_ICMS_RATE}% (R$ ${gross.gross_min_brl.toFixed(2)}/kg).`
+      );
+    }
 
     const calculated = calculateQuoteLine({
       quantity: item.quantity,
-      unitPrice: chosenUnitPrice,
-      listPrice,
-      minPrice,
-      icmsRate,
-      ipiRate,
+      unitPrice: chosenUnitPriceBrl,
+      listPrice: gross.gross_max_brl,
+      minPrice: gross.gross_min_brl,
+      icmsRate: 0,
+      ipiRate: 0,
     });
+
+    const unitPriceUsd =
+      gross.pricing_currency === "USD"
+        ? usdFromBrlGross(calculated.unitPriceAfterDiscount, ptax.rate)
+        : null;
 
     resolvedItems.push({
       product_id: product.id,
@@ -221,14 +206,18 @@ export async function buildQuoteItems(
       package_name: packageName,
       quantity: item.quantity,
       unit_price: calculated.unitPriceAfterDiscount,
-      min_price: minPrice,
-      max_price: maxPrice,
+      unit_price_usd: unitPriceUsd,
+      pricing_currency: gross.pricing_currency,
+      min_price: gross.gross_min_brl,
+      max_price: gross.gross_max_brl,
+      min_price_usd: gross.gross_min_usd,
+      max_price_usd: gross.gross_max_usd,
       discount_percent: calculated.discountPercent,
       discount_amount: calculated.discountAmount,
-      icms_rate: icmsRate,
-      icms_amount: calculated.icmsAmount,
+      icms_rate: QUOTE_ICMS_RATE,
+      icms_amount: 0,
       ipi_rate: ipiRate,
-      ipi_amount: calculated.ipiAmount,
+      ipi_amount: 0,
       line_subtotal: calculated.lineSubtotal,
       line_total: calculated.lineTotal,
       sort_order: index,

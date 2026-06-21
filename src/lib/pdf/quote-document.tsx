@@ -7,8 +7,9 @@ import {
   View,
 } from "@react-pdf/renderer";
 import type { CompanyProfile, PaymentAccountProfile } from "@/lib/company/get-company";
+import { QUOTE_ICMS_RATE, lineTotalUsd } from "@/lib/quotes/quote-pricing-core";
 import type { QuoteDetail } from "@/types/quote";
-import { formatCurrency, formatDate, formatPercent, formatQuantity } from "@/lib/utils";
+import { formatCurrency, formatDate, formatQuantity } from "@/lib/utils";
 
 Font.register({
   family: "Roboto",
@@ -27,7 +28,7 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Roboto",
-    fontSize: 9,
+    fontSize: 8,
     color: "#1e293b",
     padding: 32,
     paddingBottom: 48,
@@ -40,38 +41,23 @@ const styles = StyleSheet.create({
     borderBottomColor: "#0070c4",
     paddingBottom: 12,
   },
-  brandBlock: {
-    maxWidth: "58%",
-  },
+  brandBlock: { maxWidth: "58%" },
   brandName: {
     fontSize: 18,
     fontWeight: 700,
     color: "#0070c4",
     marginBottom: 4,
   },
-  brandSub: {
-    fontSize: 8,
-    color: "#475569",
-    lineHeight: 1.4,
-  },
-  quoteMeta: {
-    alignItems: "flex-end",
-    maxWidth: "38%",
-  },
+  brandSub: { fontSize: 8, color: "#475569", lineHeight: 1.4 },
+  quoteMeta: { alignItems: "flex-end", maxWidth: "38%" },
   quoteTitle: {
     fontSize: 14,
     fontWeight: 700,
     color: "#0f172a",
     marginBottom: 6,
   },
-  metaLine: {
-    fontSize: 8,
-    color: "#475569",
-    marginBottom: 2,
-  },
-  section: {
-    marginBottom: 14,
-  },
+  metaLine: { fontSize: 8, color: "#475569", marginBottom: 2 },
+  section: { marginBottom: 14 },
   sectionTitle: {
     fontSize: 10,
     fontWeight: 700,
@@ -79,10 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     textTransform: "uppercase",
   },
-  infoGrid: {
-    flexDirection: "row",
-    gap: 12,
-  },
+  infoGrid: { flexDirection: "row", gap: 12 },
   infoBox: {
     flex: 1,
     backgroundColor: "#f8fafc",
@@ -97,10 +80,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     textTransform: "uppercase",
   },
-  infoValue: {
-    fontSize: 9,
-    color: "#0f172a",
-  },
+  infoValue: { fontSize: 9, color: "#0f172a" },
   table: {
     borderWidth: 1,
     borderColor: "#cbd5e1",
@@ -112,33 +92,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#0070c4",
     color: "#ffffff",
     fontWeight: 700,
-    fontSize: 7,
+    fontSize: 6,
     paddingVertical: 6,
-    paddingHorizontal: 4,
+    paddingHorizontal: 3,
   },
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: 1,
     borderBottomColor: "#e2e8f0",
     paddingVertical: 5,
-    paddingHorizontal: 4,
-    fontSize: 7,
+    paddingHorizontal: 3,
+    fontSize: 6,
   },
-  tableRowAlt: {
-    backgroundColor: "#f8fafc",
-  },
-  colProduct: { width: "28%" },
-  colPackage: { width: "12%" },
-  colQty: { width: "8%", textAlign: "right" },
-  colUnit: { width: "12%", textAlign: "right" },
-  colDisc: { width: "8%", textAlign: "right" },
-  colIcms: { width: "8%", textAlign: "right" },
-  colIpi: { width: "8%", textAlign: "right" },
-  colTotal: { width: "16%", textAlign: "right" },
+  tableRowAlt: { backgroundColor: "#f8fafc" },
+  colProduct: { width: "22%" },
+  colPackage: { width: "10%" },
+  colQty: { width: "7%", textAlign: "right" },
+  colMin: { width: "10%", textAlign: "right" },
+  colMax: { width: "10%", textAlign: "right" },
+  colUnitUsd: { width: "10%", textAlign: "right" },
+  colUnitBrl: { width: "10%", textAlign: "right" },
+  colTotalUsd: { width: "10%", textAlign: "right" },
+  colTotalBrl: { width: "11%", textAlign: "right" },
   totalsBox: {
     marginTop: 10,
     alignSelf: "flex-end",
-    width: "42%",
+    width: "48%",
     borderWidth: 1,
     borderColor: "#cbd5e1",
     borderRadius: 4,
@@ -204,12 +183,30 @@ function companyLine(company: CompanyProfile | null): string {
   return parts.join(" — ");
 }
 
+function formatMinMax(
+  item: QuoteDetail["items"][number],
+  kind: "min" | "max"
+): string {
+  if (item.pricing_currency === "USD") {
+    const usd = kind === "min" ? item.min_price_usd : item.max_price_usd;
+    return usd != null ? formatCurrency(usd, "USD") : "—";
+  }
+  const brl = kind === "min" ? item.min_price : item.max_price;
+  return brl != null ? formatCurrency(brl, "BRL") : "—";
+}
+
 export function QuotePdfDocument({
   quote,
   company,
   payment,
 }: QuotePdfDocumentProps) {
   const tradeName = company?.trade_name ?? "tcQUÍMICA - Tavares Companhia Química";
+  const ptax = quote.metadata.ptax;
+  const totalUsd = quote.items.reduce((sum, item) => {
+    if (item.unit_price_usd == null) return sum;
+    return sum + lineTotalUsd(item.unit_price_usd, item.quantity);
+  }, 0);
+  const hasUsdItems = quote.items.some((item) => item.unit_price_usd != null);
 
   return (
     <Document title={`Cotação ${quote.quote_number}`}>
@@ -227,14 +224,6 @@ export function QuotePdfDocument({
                 .filter(Boolean)
                 .join(" | ")}
             </Text>
-            {company?.cnpj ? (
-              <Text style={styles.brandSub}>
-                CNPJ {company.cnpj}
-                {company.state_registration
-                  ? ` | IE ${company.state_registration}`
-                  : ""}
-              </Text>
-            ) : null}
           </View>
 
           <View style={styles.quoteMeta}>
@@ -249,7 +238,7 @@ export function QuotePdfDocument({
               </Text>
             ) : null}
             <Text style={styles.metaLine}>
-              PTAX: {formatCurrency(quote.metadata.ptax, "BRL")}/USD
+              PTAX: {formatCurrency(ptax, "BRL")}/USD
             </Text>
           </View>
         </View>
@@ -260,11 +249,6 @@ export function QuotePdfDocument({
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>Razão social</Text>
               <Text style={styles.infoValue}>{quote.customer.company_name}</Text>
-              {quote.customer.trade_name ? (
-                <Text style={[styles.infoValue, { marginTop: 2, color: "#64748b" }]}>
-                  {quote.customer.trade_name}
-                </Text>
-              ) : null}
             </View>
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>Localidade</Text>
@@ -273,35 +257,25 @@ export function QuotePdfDocument({
                   .filter(Boolean)
                   .join(" / ") || "—"}
               </Text>
-              {quote.customer.document ? (
-                <Text style={[styles.infoValue, { marginTop: 2 }]}>
-                  Doc: {quote.customer.document}
-                </Text>
-              ) : null}
-            </View>
-            <View style={styles.infoBox}>
-              <Text style={styles.infoLabel}>Contato</Text>
-              <Text style={styles.infoValue}>
-                {[quote.customer.email, quote.customer.phone]
-                  .filter(Boolean)
-                  .join(" | ") || "—"}
-              </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Itens cotados</Text>
+          <Text style={styles.sectionTitle}>
+            Itens cotados — preços/kg com ICMS {QUOTE_ICMS_RATE}%
+          </Text>
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <Text style={styles.colProduct}>Produto</Text>
-              <Text style={styles.colPackage}>Embalagem</Text>
-              <Text style={styles.colQty}>Qtd</Text>
-              <Text style={styles.colUnit}>Unit. BRL</Text>
-              <Text style={styles.colDisc}>Desc.</Text>
-              <Text style={styles.colIcms}>ICMS</Text>
-              <Text style={styles.colIpi}>IPI</Text>
-              <Text style={styles.colTotal}>Total BRL</Text>
+              <Text style={styles.colPackage}>Emb.</Text>
+              <Text style={styles.colQty}>Qtd kg</Text>
+              <Text style={styles.colMin}>Mín</Text>
+              <Text style={styles.colMax}>Máx</Text>
+              <Text style={styles.colUnitUsd}>USD/kg</Text>
+              <Text style={styles.colUnitBrl}>BRL/kg</Text>
+              <Text style={styles.colTotalUsd}>Total USD</Text>
+              <Text style={styles.colTotalBrl}>Total BRL</Text>
             </View>
 
             {quote.items.map((item, index) => (
@@ -311,23 +285,31 @@ export function QuotePdfDocument({
               >
                 <View style={styles.colProduct}>
                   <Text>{item.product_name}</Text>
-                  <Text style={{ color: "#64748b", fontSize: 6, marginTop: 1 }}>
+                  <Text style={{ color: "#64748b", fontSize: 5, marginTop: 1 }}>
                     {item.product_code}
                   </Text>
                 </View>
                 <Text style={styles.colPackage}>{item.package_name ?? "—"}</Text>
                 <Text style={styles.colQty}>{formatQuantity(item.quantity)}</Text>
-                <Text style={styles.colUnit}>
+                <Text style={styles.colMin}>{formatMinMax(item, "min")}</Text>
+                <Text style={styles.colMax}>{formatMinMax(item, "max")}</Text>
+                <Text style={styles.colUnitUsd}>
+                  {item.unit_price_usd != null
+                    ? formatCurrency(item.unit_price_usd, "USD")
+                    : "—"}
+                </Text>
+                <Text style={styles.colUnitBrl}>
                   {formatCurrency(item.unit_price, "BRL")}
                 </Text>
-                <Text style={styles.colDisc}>
-                  {formatPercent(item.discount_percent)}
+                <Text style={styles.colTotalUsd}>
+                  {item.unit_price_usd != null
+                    ? formatCurrency(
+                        lineTotalUsd(item.unit_price_usd, item.quantity),
+                        "USD"
+                      )
+                    : "—"}
                 </Text>
-                <Text style={styles.colIcms}>
-                  {formatPercent(item.icms_rate)}
-                </Text>
-                <Text style={styles.colIpi}>{formatPercent(item.ipi_rate)}</Text>
-                <Text style={styles.colTotal}>
+                <Text style={styles.colTotalBrl}>
                   {formatCurrency(item.line_total, "BRL")}
                 </Text>
               </View>
@@ -335,26 +317,14 @@ export function QuotePdfDocument({
           </View>
 
           <View style={styles.totalsBox}>
-            <View style={styles.totalRow}>
-              <Text>Subtotal (sem impostos)</Text>
-              <Text>{formatCurrency(quote.subtotal, "BRL")}</Text>
-            </View>
-            <View style={styles.totalRow}>
-              <Text>IPI</Text>
-              <Text>{formatCurrency(quote.ipi_total, "BRL")}</Text>
-            </View>
-            <View style={styles.totalRow}>
-              <Text>ICMS</Text>
-              <Text>{formatCurrency(quote.icms_total, "BRL")}</Text>
-            </View>
-            {quote.discount_total > 0 ? (
+            {hasUsdItems ? (
               <View style={styles.totalRow}>
-                <Text>Descontos</Text>
-                <Text>{formatCurrency(quote.discount_total, "BRL")}</Text>
+                <Text>Total USD</Text>
+                <Text>{formatCurrency(Math.round(totalUsd * 100) / 100, "USD")}</Text>
               </View>
             ) : null}
             <View style={styles.totalRowFinal}>
-              <Text>TOTAL</Text>
+              <Text>TOTAL BRL</Text>
               <Text>{formatCurrency(quote.total, "BRL")}</Text>
             </View>
           </View>
@@ -374,7 +344,7 @@ export function QuotePdfDocument({
             <View style={styles.infoBox}>
               <Text style={styles.infoLabel}>PTAX referência</Text>
               <Text style={styles.infoValue}>
-                {formatCurrency(quote.metadata.ptax, "BRL")}/USD
+                {formatCurrency(ptax, "BRL")}/USD
               </Text>
             </View>
           </View>
@@ -387,31 +357,13 @@ export function QuotePdfDocument({
         ) : null}
 
         <View style={styles.footer}>
-          {payment ? (
-            <>
-              <Text style={styles.footerText}>
-                Dados bancários: {payment.bank_name ?? "Banco"} — Ag.{" "}
-                {payment.agency ?? "—"} — CC {payment.account_number ?? "—"}
-              </Text>
-              {payment.pix_key ? (
-                <Text style={styles.footerText}>PIX: {payment.pix_key}</Text>
-              ) : null}
-              {payment.holder_name ? (
-                <Text style={styles.footerText}>
-                  Titular: {payment.holder_name}
-                  {payment.holder_document
-                    ? ` — ${payment.holder_document}`
-                    : ""}
-                </Text>
-              ) : null}
-            </>
+          {payment?.pix_key ? (
+            <Text style={styles.footerText}>PIX: {payment.pix_key}</Text>
           ) : null}
           <Text style={styles.footerText}>
-            Preços em reais calculados com PTAX de referência. Impostos conforme
-            legislação vigente e UF do cliente ({quote.customer_state ?? quote.customer.state ?? "—"}).
-          </Text>
-          <Text style={[styles.footerText, { marginTop: 4 }]}>
-            Documento gerado pelo ConectaInsumos — {tradeName}
+            Valores por kg com ICMS {QUOTE_ICMS_RATE}% incluso. Conversão BRL pela
+            PTAX de referência ({formatCurrency(ptax, "BRL")}/USD). Produtos em
+            dólar: referência comercial em USD.
           </Text>
         </View>
       </Page>

@@ -67,6 +67,7 @@ export async function createRouteAction(
       throw new Error(stopsError.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/rotas");
     return { success: "Rota criada com sucesso.", routeId: route.id };
   } catch (error) {
@@ -93,6 +94,7 @@ export async function updateRouteStatusAction(
 
     if (error) throw new Error(error.message);
 
+    revalidatePath("/");
     revalidatePath("/rotas");
     revalidatePath(`/rotas/${routeId}`);
 

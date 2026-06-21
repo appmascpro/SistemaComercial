@@ -124,6 +124,7 @@ export async function createOrderFromQuoteAction(
       .update({ status: "aprovada" })
       .eq("id", quoteId);
 
+    revalidatePath("/");
     revalidatePath("/pedidos");
     revalidatePath("/cotacoes");
     revalidatePath(`/cotacoes/${quoteId}`);
@@ -162,6 +163,7 @@ export async function updateOrderStatusAction(
 
     if (error) throw new Error(error.message);
 
+    revalidatePath("/");
     revalidatePath("/pedidos");
     revalidatePath(`/pedidos/${orderId}`);
 
@@ -256,6 +258,7 @@ export async function updateOrderAction(
 
     if (itemsError) throw new Error(itemsError.message);
 
+    revalidatePath("/");
     revalidatePath("/pedidos");
     revalidatePath(`/pedidos/${orderId}`);
 

@@ -67,6 +67,7 @@ export async function createSampleAction(
       throw new Error(itemsError.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/amostras");
     return {
       success: `Amostra ${sampleNumber} registrada.`,
@@ -139,6 +140,7 @@ export async function updateSampleAction(
 
     if (itemsError) throw new Error(itemsError.message);
 
+    revalidatePath("/");
     revalidatePath("/amostras");
     revalidatePath(`/amostras/${sampleId}`);
 
@@ -180,6 +182,7 @@ export async function updateSampleStatusAction(
 
     if (error) throw new Error(error.message);
 
+    revalidatePath("/");
     revalidatePath("/amostras");
     revalidatePath(`/amostras/${sampleId}`);
 
