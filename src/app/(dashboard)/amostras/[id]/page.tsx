@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FileDown } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { SampleStatusSelect } from "@/components/samples/sample-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  formatCustomerAddress,
+  formatDocumentLabel,
+} from "@/lib/pdf/format-address";
 import { getSampleById } from "@/lib/samples/queries";
 import { formatDate, formatQuantity } from "@/lib/utils";
 
@@ -18,13 +23,30 @@ export default async function AmostraDetailPage({
 
   if (!sample) notFound();
 
+  const shippingAddress = formatCustomerAddress(sample.customer);
+  const documentLine = formatDocumentLabel(
+    sample.customer.document,
+    sample.customer.document_type
+  );
+
   return (
     <div>
       <PageHeader
         title={sample.sample_number ?? "Amostra"}
         description={`Cliente: ${sample.customer.company_name}`}
         action={
-          <SampleStatusSelect sampleId={sample.id} currentStatus={sample.status} />
+          <div className="flex flex-wrap gap-2">
+            <SampleStatusSelect sampleId={sample.id} currentStatus={sample.status} />
+            <a
+              href={`/api/samples/${sample.id}/pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+            >
+              <FileDown className="h-4 w-4" />
+              Baixar PDF
+            </a>
+          </div>
         }
       />
 
@@ -98,23 +120,36 @@ export default async function AmostraDetailPage({
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Cliente</CardTitle>
+              <CardTitle>Cliente e entrega</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
+            <CardContent className="space-y-3 text-sm">
               <Link
                 href={`/clientes/${sample.customer.id}`}
                 className="font-medium text-brand-600 hover:underline"
               >
                 {sample.customer.company_name}
               </Link>
-              <p className="text-slate-600">
-                {[sample.customer.city, sample.customer.state]
-                  .filter(Boolean)
-                  .join(" / ") || "—"}
-              </p>
+              {sample.customer.trade_name ? (
+                <p className="text-slate-600">{sample.customer.trade_name}</p>
+              ) : null}
+              {documentLine ? (
+                <p className="text-slate-600">{documentLine}</p>
+              ) : null}
+              {sample.customer.segment ? (
+                <p className="text-slate-600">Segmento: {sample.customer.segment}</p>
+              ) : null}
+              {sample.customer.email ? (
+                <p className="text-slate-600">{sample.customer.email}</p>
+              ) : null}
               {sample.customer.phone ? (
                 <p className="text-slate-600">{sample.customer.phone}</p>
               ) : null}
+              <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-3">
+                <p className="text-xs font-medium uppercase text-blue-800">
+                  Endereço de entrega
+                </p>
+                <p className="mt-1 text-slate-700">{shippingAddress}</p>
+              </div>
             </CardContent>
           </Card>
 

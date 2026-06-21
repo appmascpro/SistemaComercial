@@ -65,12 +65,22 @@ export function SamplesTable({ samples }: { samples: SampleListItem[] }) {
                 </span>
               </td>
               <td className="px-3 py-2 text-right">
-                <Link
-                  href={`/amostras/${sample.id}`}
-                  className="text-xs font-medium text-brand-600 hover:underline"
-                >
-                  Ver
-                </Link>
+                <div className="flex justify-end gap-2">
+                  <Link
+                    href={`/amostras/${sample.id}`}
+                    className="text-xs font-medium text-brand-600 hover:underline"
+                  >
+                    Ver
+                  </Link>
+                  <a
+                    href={`/api/samples/${sample.id}/pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-medium text-slate-600 hover:underline"
+                  >
+                    PDF
+                  </a>
+                </div>
               </td>
             </tr>
           ))}

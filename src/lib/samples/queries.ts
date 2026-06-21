@@ -72,10 +72,19 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
       customers (
         id,
         company_name,
+        trade_name,
+        document,
+        document_type,
+        segment,
         city,
         state,
         email,
-        phone
+        phone,
+        address_line,
+        address_number,
+        address_complement,
+        neighborhood,
+        zip_code
       ),
       sample_items (
         id,
@@ -135,11 +144,30 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
     customer: {
       id: customer?.id ?? "",
       company_name: customer?.company_name ?? "—",
+      trade_name: customer?.trade_name ?? null,
+      document: customer?.document ?? null,
+      document_type: customer?.document_type ?? null,
+      segment: customer?.segment ?? null,
       city: customer?.city ?? null,
       state: customer?.state ?? null,
       email: customer?.email ?? null,
       phone: customer?.phone ?? null,
+      address_line: customer?.address_line ?? null,
+      address_number: customer?.address_number ?? null,
+      address_complement: customer?.address_complement ?? null,
+      neighborhood: customer?.neighborhood ?? null,
+      zip_code: customer?.zip_code ?? null,
     },
     items,
   };
+}
+
+export async function getSampleForPdf(id: string) {
+  const sample = await getSampleById(id);
+  if (!sample) return null;
+
+  const { getCompanyProfile } = await import("@/lib/company/get-company");
+  const { company, payment } = await getCompanyProfile();
+
+  return { sample, company, payment };
 }

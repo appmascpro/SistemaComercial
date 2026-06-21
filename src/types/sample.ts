@@ -46,10 +46,19 @@ export interface SampleDetail {
   customer: {
     id: string;
     company_name: string;
-    city: string | null;
-    state: string | null;
+    trade_name: string | null;
+    document: string | null;
+    document_type: string | null;
+    segment: string | null;
     email: string | null;
     phone: string | null;
+    address_line: string | null;
+    address_number: string | null;
+    address_complement: string | null;
+    neighborhood: string | null;
+    city: string | null;
+    state: string | null;
+    zip_code: string | null;
   };
   items: SampleItemDetail[];
 }
