@@ -59,3 +59,65 @@ export async function getActivePtaxRate(): Promise<PtaxRate> {
     source: "default",
   };
 }
+
+export interface PtaxHistoryItem {
+  rate: number;
+  valid_from: string;
+  status: string;
+}
+
+export async function getPtaxHistory(limit = 8): Promise<PtaxHistoryItem[]> {
+  const { supabase } = await createTenantClient();
+
+  const { data } = await supabase
+    .from("exchange_rates")
+    .select("rate, valid_from, status")
+    .eq("from_currency", "USD")
+    .eq("to_currency", "BRL")
+    .order("valid_from", { ascending: false })
+    .limit(limit);
+
+  return (data ?? []).map((row) => ({
+    rate: Number(row.rate),
+    valid_from: row.valid_from,
+    status: row.status,
+  }));
+}
+
+export async function updateActivePtaxRate(
+  rate: number,
+  validFrom?: string
+): Promise<void> {
+  if (!Number.isFinite(rate) || rate <= 0) {
+    throw new Error("Informe uma PTAX válida (maior que zero).");
+  }
+
+  const { supabase, tenantId } = await createTenantClient();
+  const valid_from = validFrom ?? new Date().toISOString().slice(0, 10);
+
+  const { error: deactivateError } = await supabase
+    .from("exchange_rates")
+    .update({ status: "inativo" })
+    .eq("tenant_id", tenantId)
+    .eq("from_currency", "USD")
+    .eq("to_currency", "BRL")
+    .eq("status", "ativo");
+
+  if (deactivateError) {
+    throw new Error(deactivateError.message);
+  }
+
+  const { error: insertError } = await supabase.from("exchange_rates").insert({
+    tenant_id: tenantId,
+    from_currency: "USD",
+    to_currency: "BRL",
+    rate,
+    valid_from,
+    valid_until: null,
+    status: "ativo",
+  });
+
+  if (insertError) {
+    throw new Error(insertError.message);
+  }
+}

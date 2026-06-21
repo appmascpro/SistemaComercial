@@ -1,8 +1,10 @@
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PtaxForm } from "@/components/settings/ptax-form";
 import { getCompanyProfile } from "@/lib/company/get-company";
 import { seedTavaresCompany } from "@/lib/company/seed-tavares-company";
 import { getRequiredTenantId } from "@/lib/auth/tenant";
+import { getActivePtaxRate, getPtaxHistory } from "@/lib/pricing/ptax";
 
 export const dynamic = "force-dynamic";
 
@@ -15,14 +17,28 @@ export default async function ConfiguracoesPage() {
     companyData = await getCompanyProfile();
   }
 
+  const [ptax, ptaxHistory] = await Promise.all([
+    getActivePtaxRate(),
+    getPtaxHistory(),
+  ]);
+
   const { company, payment } = companyData;
 
   return (
     <div>
       <PageHeader
         title="Configurações"
-        description="Dados da empresa, pagamento e informações para cotações e ficha cadastral."
+        description="Dados da empresa, PTAX venda e informações para cotações."
       />
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Cotação PTAX venda (USD → BRL)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PtaxForm current={ptax} history={ptaxHistory} />
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
