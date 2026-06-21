@@ -21,14 +21,16 @@ const TYPE_META: Record<
   customer: { icon: Users, label: "Cliente" },
 };
 
-/** Altura fixa da área de conteúdo — mantém as duas caixas alinhadas na base. */
+/** Área de conteúdo com altura fixa e rolagem vertical interna. */
 const PANEL_BODY_CLASS =
-  "h-[280px] overflow-hidden rounded-lg border border-slate-200";
+  "scrollbar-thin h-[280px] w-full min-w-0 overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200";
 
 function DashboardPanelEmpty({ message }: { message: string }) {
   return (
-    <div className="flex h-full items-center justify-center border-dashed bg-slate-50">
-      <p className="px-4 text-center text-sm text-slate-400">{message}</p>
+    <div className="flex h-full min-w-0 items-center justify-center border-dashed bg-slate-50 px-4">
+      <p className="text-center text-sm leading-snug text-balance text-slate-400">
+        {message}
+      </p>
     </div>
   );
 }
@@ -47,27 +49,30 @@ export function DashboardRecentActivity({
   }
 
   return (
-    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100 overflow-y-auto`}>
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100`}>
       {items.map((item) => {
         const meta = TYPE_META[item.type];
         const Icon = meta.icon;
 
         return (
-          <li key={`${item.type}-${item.id}`}>
+          <li key={`${item.type}-${item.id}`} className="min-w-0">
             <Link
               href={item.href}
-              className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-50"
+              className="flex min-w-0 items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-50"
             >
               <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
                 <Icon className="h-4 w-4" />
               </div>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 overflow-hidden">
                 <p className="truncate text-sm font-medium text-slate-900">
                   {item.title}
                 </p>
                 <p className="truncate text-xs text-slate-500">{item.subtitle}</p>
+                <span className="mt-1 block text-xs text-slate-400 sm:hidden">
+                  {formatDate(item.created_at)}
+                </span>
               </div>
-              <span className="shrink-0 text-xs text-slate-400">
+              <span className="hidden shrink-0 text-xs text-slate-400 sm:inline">
                 {formatDate(item.created_at)}
               </span>
             </Link>
@@ -92,14 +97,14 @@ export function DashboardAgenda({
   }
 
   return (
-    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100 overflow-y-auto`}>
+    <ul className={`${PANEL_BODY_CLASS} divide-y divide-slate-100`}>
       {items.map((item) => (
-        <li key={`${item.kind}-${item.id}`}>
+        <li key={`${item.kind}-${item.id}`} className="min-w-0">
           <Link
             href={item.href}
-            className="flex items-start justify-between gap-3 px-4 py-3 transition-colors hover:bg-slate-50"
+            className="flex min-w-0 items-start justify-between gap-3 px-4 py-3 transition-colors hover:bg-slate-50"
           >
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1 overflow-hidden">
               <p className="truncate text-sm font-medium text-slate-900">
                 {item.title}
               </p>

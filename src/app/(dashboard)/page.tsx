@@ -73,13 +73,13 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div>
+    <div className="min-w-0 max-w-full">
       <PageHeader
         title="Dashboard"
         description="Visão geral da operação comercial da sua empresa."
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -109,8 +109,8 @@ export default async function DashboardPage() {
         })}
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-2 lg:items-stretch">
-        <Card className="flex flex-col lg:h-full">
+      <div className="mt-6 grid min-w-0 gap-4 lg:grid-cols-2 lg:items-stretch">
+        <Card className="flex min-w-0 flex-col overflow-hidden lg:h-full">
           <CardHeader className="min-h-[6.75rem] shrink-0">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 shrink-0 text-brand-600" />
@@ -120,12 +120,12 @@ export default async function DashboardPage() {
               Últimas cotações, pedidos, amostras e clientes
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto shrink-0 p-6 pt-0">
+          <CardContent className="mt-auto min-w-0 shrink-0 p-6 pt-0">
             <DashboardRecentActivity items={activity} />
           </CardContent>
         </Card>
 
-        <Card className="flex flex-col lg:h-full">
+        <Card className="flex min-w-0 flex-col overflow-hidden lg:h-full">
           <CardHeader className="min-h-[6.75rem] shrink-0">
             <div className="flex items-center gap-2">
               <MapPin className="h-5 w-5 shrink-0 text-brand-600" />
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
               Rotas, visitas e follow-up nos próximos 7 dias
             </CardDescription>
           </CardHeader>
-          <CardContent className="mt-auto shrink-0 p-6 pt-0">
+          <CardContent className="mt-auto min-w-0 shrink-0 p-6 pt-0">
             <DashboardAgenda items={agenda} />
           </CardContent>
         </Card>
