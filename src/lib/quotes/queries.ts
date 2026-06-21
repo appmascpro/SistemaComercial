@@ -1,6 +1,12 @@
 import "server-only";
 
 import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
+import { resolveProductDescription } from "@/lib/products/description";
+import {
+  buildProductSearchOrFilter,
+  productMatchesAllTokens,
+  tokenizeSearchQuery,
+} from "@/lib/products/search";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { parseMetadata } from "@/lib/quotes/build-items";
 import type {
@@ -205,7 +211,7 @@ export async function getQuoteById(id: string): Promise<QuoteDetail | null> {
 export async function searchProducts(query: string): Promise<ProductSearchResult[]> {
   const { supabase } = await createTenantClient();
   const ptax = await getActivePtaxRate();
-  const term = query.trim();
+  const tokens = tokenizeSearchQuery(query);
 
   let builder = supabase
     .from("products")
@@ -214,6 +220,9 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
       id,
       internal_code,
       commercial_name,
+      inci_name,
+      description,
+      technical_notes,
       unit,
       product_prices (
         price_usd,
@@ -230,18 +239,21 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
     )
     .eq("status", "ativo")
     .order("commercial_name", { ascending: true })
-    .limit(20);
+    .limit(tokens.length > 0 ? 80 : 20);
 
-  if (term) {
-    builder = builder.or(
-      `commercial_name.ilike.%${term}%,internal_code.ilike.%${term}%`
-    );
+  const orFilter = buildProductSearchOrFilter(tokens);
+  if (orFilter) {
+    builder = builder.or(orFilter);
   }
 
   const { data, error } = await builder;
   if (error) throw new Error(error.message);
 
-  return (data ?? []).map((product) => {
+  const filtered = (data ?? []).filter((product) =>
+    productMatchesAllTokens(product, tokens)
+  );
+
+  return filtered.slice(0, 20).map((product) => {
     const activePrice = (product.product_prices ?? []).find(
       (p: { status: string }) => p.status === "ativo"
     );
@@ -252,6 +264,11 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
       id: product.id,
       internal_code: product.internal_code,
       commercial_name: product.commercial_name,
+      description: resolveProductDescription(
+        product.description,
+        product.technical_notes
+      ),
+      inci_name: product.inci_name,
       unit: product.unit,
       price_brl_display:
         priceBrl ??

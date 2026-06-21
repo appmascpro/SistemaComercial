@@ -91,6 +91,8 @@ export interface ProductSearchResult {
   id: string;
   internal_code: string;
   commercial_name: string;
+  description: string | null;
+  inci_name: string | null;
   unit: string;
   price_brl_display: number | null;
   pricing_currency: "USD" | "BRL";

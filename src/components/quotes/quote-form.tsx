@@ -5,6 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { Plus, Search, Trash2 } from "lucide-react";
 import {
   createCustomerQuickAction,
+  getCustomerForQuoteAction,
   searchCustomersAction,
   searchProductsAction,
 } from "@/app/actions/customers";
@@ -32,7 +33,7 @@ function defaultValidUntil(): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function QuoteForm() {
+export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -54,6 +55,14 @@ export function QuoteForm() {
   const [items, setItems] = useState<DraftItem[]>([]);
   const [validUntil, setValidUntil] = useState(defaultValidUntil());
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    if (!initialCustomerId || selectedCustomer) return;
+
+    getCustomerForQuoteAction(initialCustomerId).then((customer) => {
+      if (customer) setSelectedCustomer(customer);
+    });
+  }, [initialCustomerId, selectedCustomer]);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
@@ -293,7 +302,7 @@ export function QuoteForm() {
             <input
               value={productQuery}
               onChange={(e) => setProductQuery(e.target.value)}
-              placeholder="Buscar produto por nome ou código..."
+              placeholder="Buscar por produto, descrição ou INCI..."
               className="h-10 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none ring-brand-500 focus:ring-2"
             />
           </div>
@@ -307,14 +316,19 @@ export function QuoteForm() {
                     onClick={() => addProduct(product)}
                     className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-50"
                   >
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <p className="font-medium">{product.commercial_name}</p>
                       <p className="text-xs text-slate-500">
                         {product.internal_code}
-                        {product.packages.length
-                          ? ` · ${product.packages.length} emb.`
+                        {product.description
+                          ? ` · ${product.description}`
                           : ""}
                       </p>
+                      {product.inci_name ? (
+                        <p className="truncate text-xs text-slate-400">
+                          INCI: {product.inci_name}
+                        </p>
+                      ) : null}
                     </div>
                     <span className="shrink-0 text-xs font-medium text-brand-700">
                       {product.price_brl_display != null

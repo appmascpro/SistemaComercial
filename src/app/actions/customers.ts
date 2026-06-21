@@ -1,40 +1,61 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireProfile } from "@/lib/auth/session";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
+import type { CustomerFormInput } from "@/types/customer";
 import type { CustomerSearchResult } from "@/types/quote";
 
 export interface CustomerActionState {
   error?: string;
+  success?: string;
+  customerId?: string;
   customer?: CustomerSearchResult;
 }
 
-export async function createCustomerQuickAction(input: {
-  company_name: string;
-  state?: string;
-  city?: string;
-  email?: string;
-}): Promise<CustomerActionState> {
+function normalizeCustomerInput(input: CustomerFormInput) {
   const companyName = input.company_name.trim();
-
   if (!companyName) {
-    return { error: "Informe o nome do cliente." };
+    throw new Error("Informe o nome ou razão social do cliente.");
   }
 
+  return {
+    company_name: companyName,
+    trade_name: input.trade_name?.trim() || null,
+    document: input.document?.trim() || null,
+    document_type: input.document_type || null,
+    segment: input.segment?.trim() || null,
+    purchase_potential: input.purchase_potential?.trim() || null,
+    email: input.email?.trim() || null,
+    phone: input.phone?.trim() || null,
+    address_line: input.address_line?.trim() || null,
+    address_number: input.address_number?.trim() || null,
+    address_complement: input.address_complement?.trim() || null,
+    neighborhood: input.neighborhood?.trim() || null,
+    city: input.city?.trim() || null,
+    state: input.state?.trim().toUpperCase() || null,
+    zip_code: input.zip_code?.trim() || null,
+    notes: input.notes?.trim() || null,
+    status: input.status ?? "ativo",
+  };
+}
+
+export async function createCustomerAction(
+  input: CustomerFormInput
+): Promise<CustomerActionState> {
   try {
+    const profile = await requireProfile();
     const { supabase, tenantId } = await createTenantClient();
+    const payload = normalizeCustomerInput(input);
 
     const { data, error } = await supabase
       .from("customers")
       .insert({
         tenant_id: tenantId,
-        company_name: companyName,
-        state: input.state?.trim().toUpperCase() || null,
-        city: input.city?.trim() || null,
-        email: input.email?.trim() || null,
-        status: "ativo",
+        seller_id: profile.id,
+        ...payload,
       })
-      .select("id, company_name, city, state, document")
+      .select("id")
       .single();
 
     if (error || !data) {
@@ -44,13 +65,89 @@ export async function createCustomerQuickAction(input: {
     revalidatePath("/clientes");
     revalidatePath("/cotacoes");
 
-    return { customer: data };
+    return {
+      success: "Cliente cadastrado com sucesso.",
+      customerId: data.id,
+    };
   } catch (error) {
     return {
       error:
         error instanceof Error ? error.message : "Não foi possível cadastrar o cliente.",
     };
   }
+}
+
+export async function updateCustomerAction(
+  id: string,
+  input: CustomerFormInput
+): Promise<CustomerActionState> {
+  try {
+    const payload = normalizeCustomerInput(input);
+    const { supabase } = await createTenantClient();
+
+    const { error } = await supabase
+      .from("customers")
+      .update(payload)
+      .eq("id", id);
+
+    if (error) throw new Error(error.message);
+
+    revalidatePath("/clientes");
+    revalidatePath(`/clientes/${id}`);
+    revalidatePath("/cotacoes");
+
+    return { success: "Cliente atualizado.", customerId: id };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "Não foi possível atualizar o cliente.",
+    };
+  }
+}
+
+export async function createCustomerQuickAction(input: {
+  company_name: string;
+  state?: string;
+  city?: string;
+  email?: string;
+}): Promise<CustomerActionState> {
+  const result = await createCustomerAction({
+    company_name: input.company_name,
+    state: input.state,
+    city: input.city,
+    email: input.email,
+  });
+
+  if (result.error || !result.customerId) {
+    return { error: result.error };
+  }
+
+  const { searchCustomers } = await import("@/lib/quotes/queries");
+  const customers = await searchCustomers(input.company_name);
+  const customer = customers.find((c) => c.id === result.customerId);
+
+  return {
+    customer: customer ?? {
+      id: result.customerId,
+      company_name: input.company_name.trim(),
+      city: input.city?.trim() || null,
+      state: input.state?.trim().toUpperCase() || null,
+      document: null,
+    },
+  };
+}
+
+export async function getCustomerForQuoteAction(customerId: string) {
+  const { getCustomerById } = await import("@/lib/customers/queries");
+  const customer = await getCustomerById(customerId);
+  if (!customer) return null;
+  return {
+    id: customer.id,
+    company_name: customer.company_name,
+    city: customer.city,
+    state: customer.state,
+    document: customer.document,
+  };
 }
 
 export async function searchCustomersAction(

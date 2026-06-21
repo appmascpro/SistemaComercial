@@ -1,25 +1,39 @@
-import { PageHeader } from "@/components/layout/page-header";
-import { EmptyModule } from "@/components/layout/empty-module";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Plus } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { CustomersTable } from "@/components/customers/customers-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getCustomersForTenant } from "@/lib/customers/queries";
 
-export default function ClientesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ClientesPage() {
+  const { customers, total } = await getCustomersForTenant();
+
   return (
     <div>
       <PageHeader
         title="Clientes"
-        description="Cadastro de clientes, contatos, endereços, segmento e potencial de compra."
+        description={`Base com ${total} cliente(s). Cadastro completo para cotações e pedidos.`}
         action={
-          <Button size="sm">
+          <Link
+            href="/clientes/novo"
+            className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+          >
             <Plus className="h-4 w-4" />
             Novo cliente
-          </Button>
+          </Link>
         }
       />
-      <EmptyModule
-        title="Base de Clientes"
-        description="Gerencie CNPJ/CPF, contatos, endereços, cidade, UF, segmento e histórico comercial."
-      />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Base de clientes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CustomersTable customers={customers} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
