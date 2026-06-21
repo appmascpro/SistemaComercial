@@ -1,12 +1,12 @@
 import type { MetadataRoute } from "next";
+import { APP_DESCRIPTION, APP_NAME } from "@/config/brand";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "ConectaInsumos",
-    short_name: "ConectaInsumos",
-    description:
-      "Plataforma comercial para insumos, matérias-primas e produtos químicos.",
+    name: APP_NAME,
+    short_name: APP_NAME,
+    description: APP_DESCRIPTION,
     start_url: "/",
     scope: "/",
     display: "standalone",

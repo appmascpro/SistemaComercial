@@ -1,9 +1,10 @@
-const CACHE = "conecta-insumos-v2";
-const STATIC_CACHE = "conecta-insumos-static-v2";
+const CACHE = "faro-v1";
+const STATIC_CACHE = "faro-static-v1";
 const OFFLINE_URL = "/offline";
 
 const PRECACHE = [
   OFFLINE_URL,
+  "/logo-faro.png",
   "/icon-192.png",
   "/icon-512.png",
   "/icon-maskable-512.png",

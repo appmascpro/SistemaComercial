@@ -4,8 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, Bell, Search } from "lucide-react";
 import { UserMenu } from "@/components/auth/user-menu";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { MobileAppMenu } from "@/components/layout/mobile-app-menu";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { getPageTitle, isDashboardPath } from "@/config/navigation";
 import type { UserProfile } from "@/types/auth";
 
@@ -16,7 +18,8 @@ interface HeaderProps {
 export function Header({ user }: HeaderProps) {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
-  const showBack = !isDashboardPath(pathname);
+  const onDashboard = isDashboardPath(pathname);
+  const showBack = !onDashboard;
 
   return (
     <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-slate-200 bg-white/90 px-3 backdrop-blur-md sm:h-16 sm:gap-4 sm:px-6 lg:bg-white/80">
@@ -32,11 +35,25 @@ export function Header({ user }: HeaderProps) {
           </Link>
         )}
 
+        {onDashboard ? (
+          <BrandLogo variant="header" className="shrink-0 lg:hidden" />
+        ) : null}
+
         <div className="min-w-0">
-          <h1 className="truncate text-base font-semibold text-slate-900 sm:text-lg">
+          <h1
+            className={cn(
+              "truncate text-base font-semibold text-slate-900 sm:text-lg",
+              onDashboard && "hidden lg:block"
+            )}
+          >
             {title}
           </h1>
-          <p className="hidden text-xs text-slate-500 sm:block">
+          <p
+            className={cn(
+              "text-xs text-slate-500",
+              onDashboard ? "block" : "hidden sm:block"
+            )}
+          >
             Bem-vindo, {user.full_name.split(" ")[0]}
           </p>
         </div>

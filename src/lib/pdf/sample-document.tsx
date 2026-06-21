@@ -330,7 +330,7 @@ export function SamplePdfDocument({
             </Text>
           ) : null}
           <Text style={styles.disclaimer}>
-            Documento gerado pelo ConectaInsumos. Amostras enviadas sem ônus
+            Documento gerado pelo FARO. Amostras enviadas sem ônus
             comercial, sujeitas à disponibilidade de estoque. Confirmar recebimento
             e informar feedback até{" "}
             {sample.follow_up_date

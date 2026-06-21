@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import {
   mainNavigation,
   settingsNavigation,
   usersNavigation,
   type NavItem,
 } from "@/config/navigation";
-import { ChevronLeft, ChevronRight, Hexagon } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import type { UserProfile } from "@/types/auth";
 
@@ -60,19 +61,15 @@ export function Sidebar({ user }: { user: Pick<UserProfile, "role"> }) {
         collapsed ? "w-[72px]" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-600">
-          <Hexagon className="h-5 w-5 text-white" />
-        </div>
-        {!collapsed && (
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-sidebar-foreground">
-              ConectaInsumos
-            </p>
-            <p className="truncate text-xs text-sidebar-muted">
-              Plataforma Comercial
-            </p>
-          </div>
+      <div className="flex h-16 items-center border-b border-sidebar-border px-4">
+        {collapsed ? (
+          <Link href="/" title="FARO" className="mx-auto">
+            <BrandLogo variant="sidebar-collapsed" />
+          </Link>
+        ) : (
+          <Link href="/" className="min-w-0" title="FARO">
+            <BrandLogo variant="sidebar" />
+          </Link>
         )}
       </div>
 

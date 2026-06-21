@@ -1,4 +1,4 @@
-# ConectaInsumos
+# FARO
 
 Plataforma comercial SaaS multi-tenant para empresas que vendem insumos, matérias-primas e produtos químicos.
 

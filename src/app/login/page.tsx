@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/auth/login-form";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LoginPageProps {
@@ -13,11 +14,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-brand-50/40 p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-lg font-bold text-white">
-            CI
+          <div className="mx-auto mb-4 flex justify-center">
+            <BrandLogo variant="login" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">ConectaInsumos</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-500">
             Acesse sua conta para continuar
           </p>
         </div>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { PwaRegister } from "@/components/pwa/pwa-register";
+import { APP_DESCRIPTION, APP_NAME } from "@/config/brand";
 import "./globals.css";
 
 const inter = Inter({
@@ -10,17 +11,16 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "ConectaInsumos",
-    template: "%s | ConectaInsumos",
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
   },
-  description:
-    "Plataforma comercial para empresas de insumos, matérias-primas e produtos químicos.",
-  applicationName: "ConectaInsumos",
+  description: APP_DESCRIPTION,
+  applicationName: APP_NAME,
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ConectaInsumos",
+    title: APP_NAME,
   },
   formatDetection: {
     telephone: false,

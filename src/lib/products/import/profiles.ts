@@ -117,7 +117,7 @@ export const TAVARES_IGNORED_HEADER_PATTERNS: RegExp[] = [
 /** Perfil padrão para novas empresas do SaaS */
 export const standardProfile: ImportProfile = {
   id: "standard",
-  label: "Padrão ConectaInsumos",
+  label: "Padrão FARO",
   description: "Colunas essenciais para qualquer tenant do sistema.",
   columns: STANDARD_COLUMNS,
 };

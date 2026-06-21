@@ -12,6 +12,7 @@ import {
   UserCog,
   type LucideIcon,
 } from "lucide-react";
+import { APP_NAME } from "@/config/brand";
 
 export interface NavItem {
   title: string;
@@ -158,7 +159,7 @@ export function getPageTitle(pathname: string): string {
   const match = allNav.find((item) =>
     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
   );
-  return match?.title ?? "ConectaInsumos";
+  return match?.title ?? APP_NAME;
 }
 
 export function isDashboardPath(pathname: string): boolean {

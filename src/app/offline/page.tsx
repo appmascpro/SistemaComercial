@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 export default function OfflinePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-6 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-600 text-xl font-bold text-white">
-        CI
+      <div className="mb-4">
+        <BrandLogo variant="login" className="h-20" />
       </div>
       <h1 className="text-xl font-semibold text-slate-900">Você está offline</h1>
       <p className="mt-2 max-w-sm text-sm text-slate-600">
