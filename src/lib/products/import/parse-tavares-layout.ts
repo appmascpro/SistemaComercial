@@ -64,24 +64,24 @@ export function detectTavaresColumns(matrix: unknown[][]): TavaresColumnMap | nu
     "preco net",
     "preço net",
     "sem imposto",
-  ]) ?? 16;
+  ]);
   const minPrice = findColInRow(matrix, headerRowIndex, [
     "preco minimo",
     "preço mínimo",
     "preco min",
     "preço min",
+    "minimo 18",
     "minimo",
     "mínimo",
-    "min",
   ]);
   const maxPrice = findColInRow(matrix, headerRowIndex, [
     "preco maximo",
     "preço máximo",
     "preco max",
     "preço max",
+    "maximo 18",
     "maximo",
     "máximo",
-    "max",
   ]);
   const inci =
     findColInRow(matrix, headerRowIndex, ["inci name", "inci"]) ?? 27;
@@ -176,6 +176,16 @@ function extractPackages(
   return packages;
 }
 
+function isImportableTavaresRow(row: ParsedProductRow): boolean {
+  if (!row.commercial_name) return false;
+  return (
+    row.price_brl !== null ||
+    row.price_usd !== null ||
+    row.min_price !== null ||
+    row.max_price !== null
+  );
+}
+
 export function parseTavaresLayout(
   fileName: string,
   matrix: unknown[][],
@@ -221,13 +231,8 @@ export function parseTavaresLayout(
       colMap.descricao !== null ? parseString(line[colMap.descricao]) : null;
     const ncm = colMap.ncm !== null ? parseString(line[colMap.ncm]) : null;
     const moedaCell = colMap.moeda !== null ? line[colMap.moeda] : null;
-    const netPriceCell = colMap.netPrice !== null ? line[colMap.netPrice] : null;
-    const currency = inferCurrencyFromCells(moedaCell, netPriceCell);
-    const net_price =
-      colMap.netPrice !== null
-        ? parseTavaresDecimal(line[colMap.netPrice], "price")
-        : null;
-    const prices = resolvePricesFromCurrency(currency, net_price);
+    const netPriceCell =
+      colMap.netPrice !== null ? line[colMap.netPrice] : null;
     const ipi_rate =
       colMap.ipi !== null
         ? parseTavaresDecimal(line[colMap.ipi], "percent")
@@ -249,6 +254,22 @@ export function parseTavaresLayout(
     const max_price =
       maxGross != null ? netFromGross(maxGross, ipiForNet) : null;
 
+    let net_price =
+      colMap.netPrice !== null
+        ? parseTavaresDecimal(line[colMap.netPrice], "price")
+        : null;
+
+    if (net_price === null) {
+      net_price = max_price ?? min_price ?? null;
+    }
+
+    const priceHintCell =
+      netPriceCell ??
+      (colMap.maxPrice !== null ? line[colMap.maxPrice] : null) ??
+      (colMap.minPrice !== null ? line[colMap.minPrice] : null);
+    const currency = inferCurrencyFromCells(moedaCell, priceHintCell);
+    const prices = resolvePricesFromCurrency(currency, net_price);
+
     let packages = extractPackages(line, colMap.embalagemCols);
 
     if (packages.length === 0) {
@@ -260,10 +281,14 @@ export function parseTavaresLayout(
       });
     }
 
-    if (net_price === null) {
+    if (
+      net_price === null &&
+      min_price === null &&
+      max_price === null
+    ) {
       issues.push({
         rowNumber,
-        message: `Linha ${rowNumber}: sem PREÇO NET — ignorada na importação.`,
+        message: `Linha ${rowNumber}: sem PREÇO NET, MÍNIMO ou MÁXIMO — ignorada na importação.`,
         severity: "warning",
       });
     }
@@ -301,9 +326,7 @@ export function parseTavaresLayout(
     });
   }
 
-  const importableCount = rows.filter(
-    (r) => r.commercial_name && (r.price_brl !== null || r.price_usd !== null)
-  ).length;
+  const importableCount = rows.filter(isImportableTavaresRow).length;
 
   const skippedCount = rows.length - importableCount;
 
@@ -315,9 +338,25 @@ export function parseTavaresLayout(
     });
   }
 
+  if (colMap.netPrice === null && colMap.minPrice === null && colMap.maxPrice === null) {
+    issues.unshift({
+      rowNumber: 0,
+      message:
+        'Nenhuma coluna de preço detectada (PREÇO NET, PREÇO MÍNIMO ou PREÇO MÁXIMO).',
+      severity: "error",
+    });
+  } else if (colMap.netPrice === null && (colMap.minPrice !== null || colMap.maxPrice !== null)) {
+    issues.unshift({
+      rowNumber: 0,
+      message:
+        "Planilha sem PREÇO NET — preços serão lidos de MÍNIMO/MÁXIMO com ICMS 18% (bruto convertido para líquido).",
+      severity: "warning",
+    });
+  }
+
   issues.unshift({
     rowNumber: 0,
-    message: `Planilha Tavares detectada: ${rows.length} produtos, colunas MOEDA=${colMap.moeda}, PREÇO NET=${colMap.netPrice}, INCI=${colMap.inci}.`,
+    message: `Planilha Tavares detectada: ${rows.length} produtos, MOEDA=${colMap.moeda ?? "?"}, PREÇO NET=${colMap.netPrice ?? "—"}, MÍN=${colMap.minPrice ?? "—"}, MÁX=${colMap.maxPrice ?? "—"}, INCI=${colMap.inci ?? "?"}.`,
     severity: "warning",
   });
 
@@ -340,9 +379,9 @@ export function parseTavaresLayout(
       ncm: "NCM",
       currency: "MOEDA",
       ipi_rate: "IPI%",
-      net_price: "PREÇO NET",
-      min_price: "PREÇO MÍNIMO",
-      max_price: "PREÇO MÁXIMO",
+      ...(colMap.netPrice !== null ? { net_price: "PREÇO NET" } : {}),
+      ...(colMap.minPrice !== null ? { min_price: "PREÇO MÍNIMO" } : {}),
+      ...(colMap.maxPrice !== null ? { max_price: "PREÇO MÁXIMO" } : {}),
       inci_name: "INCI NAME",
     },
     ignoredHeaders: [

@@ -37,10 +37,11 @@ export function mapRowsFromSpreadsheet(
   });
 
   const issues = validateMappedRows(rows, mappedFields, profile);
-  const importableCount = rows.filter(
-    (r) =>
-      r.commercial_name && (r.price_brl !== null || r.price_usd !== null)
-  ).length;
+  const importableCount = rows.filter((row) => {
+    if (!row.commercial_name) return false;
+    if (row.price_brl !== null || row.price_usd !== null) return true;
+    return row.min_price !== null || row.max_price !== null;
+  }).length;
 
   return {
     profileId: profile.id,
@@ -80,11 +81,19 @@ function validateMappedRows(
   }
 
   if (isTavares) {
-    if (!mappedFields.net_price) {
+    if (!mappedFields.net_price && !mappedFields.min_price && !mappedFields.max_price) {
+      issues.push({
+        rowNumber: 0,
+        message:
+          'Nenhuma coluna de preço detectada (PREÇO NET, PREÇO MÍNIMO ou PREÇO MÁXIMO).',
+        severity: colMissingSeverity,
+      });
+    } else if (!mappedFields.net_price) {
       issues.push({
         rowNumber: 0,
         field: "net_price",
-        message: 'Coluna "PREÇO NET" não detectada — tentando leitura por posição.',
+        message:
+          'Coluna "PREÇO NET" não detectada — preços serão lidos de MÍNIMO/MÁXIMO com ICMS 18%.',
         severity: "warning",
       });
     }
@@ -135,7 +144,11 @@ function validateMappedRows(
     }
 
     if (isTavares) {
-      if (row.net_price === null) {
+      if (
+        row.net_price === null &&
+        row.min_price === null &&
+        row.max_price === null
+      ) {
         continue;
       }
 
@@ -201,8 +214,8 @@ export function toPersistRows(rows: ParsedProductRow[]): ImportPersistRow[] {
   return rows
     .filter((row) => {
       if (!row.commercial_name) return false;
-      if (row.price_brl === null && row.price_usd === null) return false;
-      return true;
+      if (row.price_brl !== null || row.price_usd !== null) return true;
+      return row.min_price !== null || row.max_price !== null;
     })
     .map((row) => {
       const packages =

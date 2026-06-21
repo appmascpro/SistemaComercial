@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 type BrandLogoVariant = "login" | "sidebar" | "sidebar-collapsed" | "header";
 
 const rectHeights: Record<Exclude<BrandLogoVariant, "sidebar-collapsed">, string> = {
-  login: "h-24 sm:h-28",
-  sidebar: "h-10",
-  header: "h-8",
+  login: "h-32 w-full max-w-[min(100%,340px)] sm:h-36 sm:max-w-[380px]",
+  sidebar: "h-11 w-full max-w-[220px] sm:h-12",
+  header: "h-11 w-auto max-w-[min(72vw,280px)] sm:h-12",
 };
 
 export function BrandLogo({
@@ -30,11 +30,7 @@ export function BrandLogo({
     <img
       src={BRAND_LOGO_RECT}
       alt={APP_NAME}
-      className={cn(
-        "w-auto max-w-full object-contain",
-        rectHeights[variant],
-        className
-      )}
+      className={cn("object-contain object-left", rectHeights[variant], className)}
     />
   );
 }

@@ -381,6 +381,12 @@ export function ProductImportWizard() {
                             Preço NET
                           </th>
                           <th className="px-3 py-2 text-right font-medium text-slate-600">
+                            Mín (liq.)
+                          </th>
+                          <th className="px-3 py-2 text-right font-medium text-slate-600">
+                            Máx (liq.)
+                          </th>
+                          <th className="px-3 py-2 text-right font-medium text-slate-600">
                             IPI%
                           </th>
                           <th className="px-3 py-2 text-left font-medium text-slate-600">
@@ -418,6 +424,16 @@ export function ProductImportWizard() {
                               <td className="px-3 py-2">{row.currency ?? "—"}</td>
                               <td className="px-3 py-2 text-right">
                                 {row.net_price?.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
+                                }) ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                {row.min_price?.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
+                                }) ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                {row.max_price?.toLocaleString("pt-BR", {
                                   minimumFractionDigits: 2,
                                 }) ?? "—"}
                               </td>

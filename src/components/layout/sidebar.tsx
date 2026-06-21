@@ -61,7 +61,7 @@ export function Sidebar({ user }: { user: Pick<UserProfile, "role"> }) {
         collapsed ? "w-[72px]" : "w-64"
       )}
     >
-      <div className="flex h-16 items-center border-b border-sidebar-border px-4">
+      <div className="flex h-[4.5rem] items-center border-b border-sidebar-border px-3 sm:h-16 sm:px-4">
         {collapsed ? (
           <Link href="/" title="FARO" className="mx-auto">
             <BrandLogo variant="sidebar-collapsed" />

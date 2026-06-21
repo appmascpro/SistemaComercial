@@ -44,9 +44,9 @@ const styles = StyleSheet.create({
   },
   brandBlock: { maxWidth: "58%" },
   logo: {
-    height: 52,
-    width: 220,
-    marginBottom: 6,
+    height: 56,
+    width: 240,
+    marginBottom: 8,
     objectFit: "contain",
     objectPosition: "left",
   },

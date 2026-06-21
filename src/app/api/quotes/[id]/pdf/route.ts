@@ -13,11 +13,13 @@ export async function GET(
       documentTitle: isOrder ? "PEDIDO CONFIRMADO" : "PROPOSTA COMERCIAL",
     });
     const filePrefix = isOrder ? "pedido" : "cotacao";
+    const asDownload = searchParams.get("download") === "1";
+    const disposition = asDownload ? "attachment" : "inline";
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="${filePrefix}-${id}.pdf"`,
+        "Content-Disposition": `${disposition}; filename="${filePrefix}-${id}.pdf"`,
         "Cache-Control": "no-store",
       },
     });

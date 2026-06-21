@@ -12,12 +12,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-brand-50/40 p-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex justify-center">
+      <div className="w-full max-w-lg">
+        <div className="mb-5 text-center">
+          <div className="mx-auto flex justify-center px-1">
             <BrandLogo variant="login" />
           </div>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-slate-500">
             Acesse sua conta para continuar
           </p>
         </div>
