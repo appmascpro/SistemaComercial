@@ -2,6 +2,7 @@ import "server-only";
 
 import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
 import { tavaresCompanyData } from "@/lib/company/tavares-company";
+import { resolvePriceBounds } from "@/lib/quotes/markup";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { calculateQuoteLine, sumQuoteTotals } from "@/lib/quotes/calculate";
 import { resolveIcmsRegion } from "@/lib/quotes/icms-region";
@@ -55,7 +56,11 @@ function resolveUnitPrice(
   prices: ProductPriceRow[],
   packageId: string | null,
   ptaxRate: number
-): { unitPrice: number; minPrice: number | null; maxPrice: number | null } {
+): {
+  listPrice: number;
+  minPrice: number;
+  maxPrice: number;
+} {
   const active = prices.filter((p) => p.status === "ativo");
   const match =
     (packageId
@@ -66,20 +71,26 @@ function resolveUnitPrice(
     throw new Error("Produto sem preço ativo.");
   }
 
-  const unitPrice =
+  const listPrice =
     match.price_brl ??
     (match.price_usd != null
       ? calculateBrlFromUsd(Number(match.price_usd), ptaxRate)
       : null);
 
-  if (unitPrice == null) {
+  if (listPrice == null) {
     throw new Error("Não foi possível calcular o preço do produto.");
   }
 
+  const bounds = resolvePriceBounds(
+    listPrice,
+    match.min_price != null ? Number(match.min_price) : null,
+    match.max_price != null ? Number(match.max_price) : null
+  );
+
   return {
-    unitPrice,
-    minPrice: match.min_price != null ? Number(match.min_price) : null,
-    maxPrice: match.max_price != null ? Number(match.max_price) : null,
+    listPrice: bounds.list,
+    minPrice: bounds.min,
+    maxPrice: bounds.max,
   };
 }
 
@@ -184,19 +195,20 @@ export async function buildQuoteItems(
       packages.find((p) => p.status === "ativo")?.name ??
       null;
 
-    const { unitPrice, minPrice, maxPrice } = resolveUnitPrice(
+    const { listPrice, minPrice, maxPrice } = resolveUnitPrice(
       prices,
       packageId,
       ptax.rate
     );
     const { icmsRate, ipiRate } = resolveTaxRates(rules, customer.state);
 
+    const chosenUnitPrice = item.unit_price;
+
     const calculated = calculateQuoteLine({
       quantity: item.quantity,
-      unitPrice,
+      unitPrice: chosenUnitPrice,
+      listPrice,
       minPrice,
-      maxPrice,
-      discountPercent: item.discount_percent,
       icmsRate,
       ipiRate,
     });
@@ -211,7 +223,7 @@ export async function buildQuoteItems(
       unit_price: calculated.unitPriceAfterDiscount,
       min_price: minPrice,
       max_price: maxPrice,
-      discount_percent: item.discount_percent,
+      discount_percent: calculated.discountPercent,
       discount_amount: calculated.discountAmount,
       icms_rate: icmsRate,
       icms_amount: calculated.icmsAmount,

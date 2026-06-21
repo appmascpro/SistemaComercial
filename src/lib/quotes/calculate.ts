@@ -1,9 +1,10 @@
 export interface LineCalculationInput {
   quantity: number;
+  /** Preço unitário final escolhido na cotação */
   unitPrice: number;
+  /** Preço de tabela (referência para desconto) */
+  listPrice: number;
   minPrice: number | null;
-  maxPrice: number | null;
-  discountPercent: number;
   icmsRate: number;
   ipiRate: number;
 }
@@ -11,6 +12,7 @@ export interface LineCalculationInput {
 export interface LineCalculationResult {
   unitPriceAfterDiscount: number;
   discountAmount: number;
+  discountPercent: number;
   lineSubtotal: number;
   ipiAmount: number;
   icmsAmount: number;
@@ -29,9 +31,11 @@ export function calculateQuoteLine(
     throw new Error("Quantidade inválida.");
   }
 
-  const discountPercent = Math.max(0, input.discountPercent);
-  const discountAmount = roundMoney(input.unitPrice * (discountPercent / 100));
-  const unitPriceAfterDiscount = roundMoney(input.unitPrice - discountAmount);
+  if (!Number.isFinite(input.unitPrice) || input.unitPrice <= 0) {
+    throw new Error("Informe um preço unitário válido.");
+  }
+
+  const unitPriceAfterDiscount = roundMoney(input.unitPrice);
 
   if (input.minPrice != null && unitPriceAfterDiscount < input.minPrice) {
     throw new Error(
@@ -39,11 +43,11 @@ export function calculateQuoteLine(
     );
   }
 
-  if (input.maxPrice != null && unitPriceAfterDiscount > input.maxPrice) {
-    throw new Error(
-      `Preço unitário R$ ${unitPriceAfterDiscount.toFixed(2)} acima do máximo R$ ${input.maxPrice.toFixed(2)}.`
-    );
-  }
+  const listPrice = roundMoney(input.listPrice);
+  const discountPerUnit = roundMoney(Math.max(0, listPrice - unitPriceAfterDiscount));
+  const discountAmount = roundMoney(discountPerUnit * quantity);
+  const discountPercent =
+    listPrice > 0 ? roundMoney((discountPerUnit / listPrice) * 100) : 0;
 
   const lineSubtotal = roundMoney(unitPriceAfterDiscount * quantity);
   const ipiAmount = roundMoney(lineSubtotal * (input.ipiRate / 100));
@@ -53,7 +57,8 @@ export function calculateQuoteLine(
 
   return {
     unitPriceAfterDiscount,
-    discountAmount: roundMoney(discountAmount * quantity),
+    discountAmount,
+    discountPercent,
     lineSubtotal,
     ipiAmount,
     icmsAmount,

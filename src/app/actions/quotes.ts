@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireProfile } from "@/lib/auth/session";
 import { buildQuoteItems } from "@/lib/quotes/build-items";
 import { generateQuoteNumber } from "@/lib/quotes/numbering";
+import { getProductQuotePricing } from "@/lib/quotes/product-pricing";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import type { QuoteFormInput } from "@/types/quote";
 
@@ -96,6 +97,13 @@ export async function createQuoteAction(
         error instanceof Error ? error.message : "Não foi possível salvar a cotação.",
     };
   }
+}
+
+export async function getProductQuotePricingAction(
+  productId: string,
+  packageId: string | null
+) {
+  return getProductQuotePricing(productId, packageId);
 }
 
 export async function deleteQuoteAction(id: string): Promise<QuoteActionState> {

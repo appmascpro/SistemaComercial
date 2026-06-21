@@ -6,6 +6,7 @@ import { ConvertQuoteButton } from "@/components/orders/convert-quote-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrderByQuoteId } from "@/lib/orders/queries";
 import { getQuoteById } from "@/lib/quotes/queries";
+import { calculateMarkup, formatMarkupPercent } from "@/lib/quotes/markup";
 import {
   formatCurrency,
   formatDate,
@@ -27,6 +28,19 @@ export default async function CotacaoDetailPage({
   ]);
 
   if (!quote) notFound();
+
+  const totalMarkupBrl = quote.items.reduce((sum, item) => {
+    if (item.min_price == null || item.max_price == null) return sum;
+    return (
+      sum +
+      calculateMarkup(
+        item.unit_price,
+        item.min_price,
+        item.max_price,
+        item.quantity
+      ).markupBrlLine
+    );
+  }, 0);
 
   return (
     <div>
@@ -53,7 +67,7 @@ export default async function CotacaoDetailPage({
         }
       />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardContent className="pt-5">
             <p className="text-xs text-slate-500">Total</p>
@@ -80,6 +94,14 @@ export default async function CotacaoDetailPage({
         </Card>
         <Card>
           <CardContent className="pt-5">
+            <p className="text-xs text-slate-500">Markup total</p>
+            <p className="text-xl font-semibold text-emerald-700">
+              {formatCurrency(totalMarkupBrl, "BRL")}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-5">
             <p className="text-xs text-slate-500">Status</p>
             <p className="text-xl font-semibold capitalize text-slate-900">
               {quote.status}
@@ -101,15 +123,29 @@ export default async function CotacaoDetailPage({
                     <th className="px-3 py-2">Produto</th>
                     <th className="px-3 py-2">Emb.</th>
                     <th className="px-3 py-2 text-right">Qtd</th>
+                    <th className="px-3 py-2 text-right">Mín</th>
+                    <th className="px-3 py-2 text-right">Máx</th>
                     <th className="px-3 py-2 text-right">Unit.</th>
-                    <th className="px-3 py-2 text-right">Desc.</th>
+                    <th className="px-3 py-2 text-right">Markup %</th>
+                    <th className="px-3 py-2 text-right">Markup R$</th>
                     <th className="px-3 py-2 text-right">ICMS</th>
                     <th className="px-3 py-2 text-right">IPI</th>
                     <th className="px-3 py-2 text-right">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {quote.items.map((item) => (
+                  {quote.items.map((item) => {
+                    const markup =
+                      item.min_price != null && item.max_price != null
+                        ? calculateMarkup(
+                            item.unit_price,
+                            item.min_price,
+                            item.max_price,
+                            item.quantity
+                          )
+                        : null;
+
+                    return (
                     <tr key={item.id}>
                       <td className="px-3 py-2">
                         <p className="font-medium">{item.product_name}</p>
@@ -121,11 +157,26 @@ export default async function CotacaoDetailPage({
                       <td className="px-3 py-2 text-right">
                         {formatQuantity(item.quantity)}
                       </td>
+                      <td className="px-3 py-2 text-right text-xs text-emerald-700">
+                        {item.min_price != null
+                          ? formatCurrency(item.min_price, "BRL")
+                          : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-right text-xs text-blue-700">
+                        {item.max_price != null
+                          ? formatCurrency(item.max_price, "BRL")
+                          : "—"}
+                      </td>
                       <td className="px-3 py-2 text-right">
                         {formatCurrency(item.unit_price, "BRL")}
                       </td>
+                      <td className="px-3 py-2 text-right font-medium text-brand-700">
+                        {markup ? formatMarkupPercent(markup.markupPercent) : "—"}
+                      </td>
                       <td className="px-3 py-2 text-right">
-                        {formatPercent(item.discount_percent)}
+                        {markup
+                          ? formatCurrency(markup.markupBrlLine, "BRL")
+                          : "—"}
                       </td>
                       <td className="px-3 py-2 text-right">
                         {formatPercent(item.icms_rate)}
@@ -137,7 +188,8 @@ export default async function CotacaoDetailPage({
                         {formatCurrency(item.line_total, "BRL")}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

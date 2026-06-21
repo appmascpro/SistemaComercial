@@ -18,7 +18,8 @@ export interface QuoteItemInput {
   product_id: string;
   package_id?: string | null;
   quantity: number;
-  discount_percent: number;
+  /** Preço unitário escolhido na cotação (pode ser acima do máximo) */
+  unit_price: number;
 }
 
 export interface QuoteFormInput {
@@ -95,6 +96,8 @@ export interface ProductSearchResult {
   inci_name: string | null;
   unit: string;
   price_brl_display: number | null;
+  min_price: number | null;
+  max_price: number | null;
   pricing_currency: "USD" | "BRL";
   packages: Array<{
     id: string;

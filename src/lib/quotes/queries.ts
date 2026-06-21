@@ -7,6 +7,7 @@ import {
   productMatchesAllTokens,
   tokenizeSearchQuery,
 } from "@/lib/products/search";
+import { resolvePriceBounds } from "@/lib/quotes/markup";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { parseMetadata } from "@/lib/quotes/build-items";
 import type {
@@ -227,6 +228,9 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
       product_prices (
         price_usd,
         price_brl,
+        min_price,
+        max_price,
+        package_id,
         status
       ),
       product_packages (
@@ -254,11 +258,31 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
   );
 
   return filtered.slice(0, 20).map((product) => {
-    const activePrice = (product.product_prices ?? []).find(
+    const activePrices = (product.product_prices ?? []).filter(
       (p: { status: string }) => p.status === "ativo"
     );
+    const activePrice =
+      activePrices.find((p: { package_id: string | null }) => !p.package_id) ??
+      activePrices[0];
     const priceUsd = activePrice?.price_usd ?? null;
     const priceBrl = activePrice?.price_brl ?? null;
+    const listPrice =
+      priceBrl ??
+      (priceUsd != null
+        ? calculateBrlFromUsd(Number(priceUsd), ptax.rate)
+        : null);
+    const bounds =
+      listPrice != null
+        ? resolvePriceBounds(
+            listPrice,
+            activePrice?.min_price != null
+              ? Number(activePrice.min_price)
+              : null,
+            activePrice?.max_price != null
+              ? Number(activePrice.max_price)
+              : null
+          )
+        : null;
 
     return {
       id: product.id,
@@ -270,11 +294,9 @@ export async function searchProducts(query: string): Promise<ProductSearchResult
       ),
       inci_name: product.inci_name,
       unit: product.unit,
-      price_brl_display:
-        priceBrl ??
-        (priceUsd != null
-          ? calculateBrlFromUsd(Number(priceUsd), ptax.rate)
-          : null),
+      price_brl_display: listPrice,
+      min_price: bounds?.min ?? null,
+      max_price: bounds?.max ?? null,
       pricing_currency: priceUsd != null ? "USD" : "BRL",
       packages: (product.product_packages ?? [])
         .filter((p: { status: string }) => p.status === "ativo")

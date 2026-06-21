@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Plus, Search, Trash2 } from "lucide-react";
 import {
   createCustomerQuickAction,
@@ -9,9 +9,13 @@ import {
   searchCustomersAction,
   searchProductsAction,
 } from "@/app/actions/customers";
-import { createQuoteAction } from "@/app/actions/quotes";
+import {
+  createQuoteAction,
+  getProductQuotePricingAction,
+} from "@/app/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { calculateMarkup, formatMarkupPercent } from "@/lib/quotes/markup";
 import { formatCurrency } from "@/lib/utils";
 import type {
   CustomerSearchResult,
@@ -24,13 +28,25 @@ interface DraftItem {
   product: ProductSearchResult;
   package_id: string | null;
   quantity: number;
-  discount_percent: number;
+  unit_price: number;
+  list_price: number;
+  min_price: number;
+  max_price: number;
 }
 
 function defaultValidUntil(): string {
   const date = new Date();
   date.setDate(date.getDate() + 30);
   return date.toISOString().slice(0, 10);
+}
+
+function getItemMarkup(item: DraftItem) {
+  return calculateMarkup(
+    item.unit_price,
+    item.min_price,
+    item.max_price,
+    item.quantity
+  );
 }
 
 export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string }) {
@@ -56,9 +72,16 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
   const [validUntil, setValidUntil] = useState(defaultValidUntil());
   const [notes, setNotes] = useState("");
 
+  const markupSummary = useMemo(() => {
+    let totalMarkupBrl = 0;
+    for (const item of items) {
+      totalMarkupBrl += getItemMarkup(item).markupBrlLine;
+    }
+    return { totalMarkupBrl: Math.round(totalMarkupBrl * 100) / 100 };
+  }, [items]);
+
   useEffect(() => {
     if (!initialCustomerId || selectedCustomer) return;
-
     getCustomerForQuoteAction(initialCustomerId).then((customer) => {
       if (customer) setSelectedCustomer(customer);
     });
@@ -80,9 +103,19 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
     return () => clearTimeout(timer);
   }, [productQuery]);
 
-  function addProduct(product: ProductSearchResult) {
+  async function addProduct(product: ProductSearchResult) {
     const defaultPackage =
       product.packages.find((p) => p.is_default) ?? product.packages[0] ?? null;
+
+    const pricing = await getProductQuotePricingAction(
+      product.id,
+      defaultPackage?.id ?? null
+    );
+
+    if (!pricing) {
+      setError("Produto sem preço cadastrado para esta embalagem.");
+      return;
+    }
 
     setItems((current) => [
       ...current,
@@ -91,11 +124,38 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
         product,
         package_id: defaultPackage?.id ?? null,
         quantity: 1,
-        discount_percent: 0,
+        unit_price: pricing.max_price,
+        list_price: pricing.list_price,
+        min_price: pricing.min_price,
+        max_price: pricing.max_price,
       },
     ]);
     setProductQuery("");
     setProducts([]);
+    setError(null);
+  }
+
+  async function changePackage(key: string, productId: string, packageId: string | null) {
+    const pricing = await getProductQuotePricingAction(productId, packageId);
+    if (!pricing) {
+      setError("Preço não encontrado para esta embalagem.");
+      return;
+    }
+
+    setItems((current) =>
+      current.map((item) =>
+        item.key === key
+          ? {
+              ...item,
+              package_id: packageId,
+              list_price: pricing.list_price,
+              min_price: pricing.min_price,
+              max_price: pricing.max_price,
+              unit_price: pricing.max_price,
+            }
+          : item
+      )
+    );
   }
 
   function updateItem(key: string, patch: Partial<DraftItem>) {
@@ -135,6 +195,15 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
       return;
     }
 
+    for (const item of items) {
+      if (item.unit_price < item.min_price) {
+        setError(
+          `Preço de "${item.product.commercial_name}" abaixo do mínimo (${formatCurrency(item.min_price, "BRL")}).`
+        );
+        return;
+      }
+    }
+
     const payload: QuoteFormInput = {
       customer_id: selectedCustomer.id,
       valid_until: validUntil,
@@ -143,7 +212,7 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
         product_id: item.product.id,
         package_id: item.package_id,
         quantity: item.quantity,
-        discount_percent: item.discount_percent,
+        unit_price: item.unit_price,
       })),
     };
 
@@ -207,7 +276,7 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
               </div>
 
               {customers.length > 0 ? (
-                <ul className="max-h-48 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+                <ul className="max-h-48 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
                   {customers.map((customer) => (
                     <li key={customer.id}>
                       <button
@@ -236,7 +305,9 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
                 onClick={() => setShowNewCustomer((v) => !v)}
                 className="text-sm font-medium text-brand-600 hover:underline"
               >
-                {showNewCustomer ? "Cancelar cadastro rápido" : "+ Cadastrar cliente rápido"}
+                {showNewCustomer
+                  ? "Cancelar cadastro rápido"
+                  : "+ Cadastrar cliente rápido"}
               </button>
 
               {showNewCustomer ? (
@@ -297,6 +368,11 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
           <CardTitle>Produtos</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <p className="text-xs text-slate-500">
+            Markup: 0% no preço mínimo · 100% no preço máximo · acima do máximo
+            continua subindo (101%, 102%…).
+          </p>
+
           <div className="relative">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -308,7 +384,7 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
           </div>
 
           {products.length > 0 ? (
-            <ul className="max-h-56 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+            <ul className="max-h-56 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
               {products.map((product) => (
                 <li key={product.id}>
                   <button
@@ -320,15 +396,10 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
                       <p className="font-medium">{product.commercial_name}</p>
                       <p className="text-xs text-slate-500">
                         {product.internal_code}
-                        {product.description
-                          ? ` · ${product.description}`
+                        {product.min_price != null && product.max_price != null
+                          ? ` · Mín ${formatCurrency(product.min_price, "BRL")} · Máx ${formatCurrency(product.max_price, "BRL")}`
                           : ""}
                       </p>
-                      {product.inci_name ? (
-                        <p className="truncate text-xs text-slate-400">
-                          INCI: {product.inci_name}
-                        </p>
-                      ) : null}
                     </div>
                     <span className="shrink-0 text-xs font-medium text-brand-700">
                       {product.price_brl_display != null
@@ -346,96 +417,145 @@ export function QuoteForm({ initialCustomerId }: { initialCustomerId?: string })
               Busque e adicione produtos à cotação.
             </p>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-slate-200">
-              <table className="min-w-full text-sm">
-                <thead className="bg-slate-50 text-left text-xs text-slate-600">
-                  <tr>
-                    <th className="px-3 py-2">Produto</th>
-                    <th className="px-3 py-2">Embalagem</th>
-                    <th className="px-3 py-2">Qtd</th>
-                    <th className="px-3 py-2">Desc. %</th>
-                    <th className="px-3 py-2">Ref. BRL</th>
-                    <th className="px-3 py-2"></th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {items.map((item) => (
-                    <tr key={item.key}>
-                      <td className="px-3 py-2">
-                        <p className="font-medium">{item.product.commercial_name}</p>
-                        <p className="text-xs text-slate-500">
-                          {item.product.internal_code}
-                        </p>
-                      </td>
-                      <td className="px-3 py-2">
-                        {item.product.packages.length > 0 ? (
-                          <select
-                            value={item.package_id ?? ""}
-                            onChange={(e) =>
-                              updateItem(item.key, {
-                                package_id: e.target.value || null,
-                              })
-                            }
-                            className="h-8 w-full min-w-[120px] rounded border border-slate-200 px-2 text-xs"
-                          >
-                            {item.product.packages.map((pkg) => (
-                              <option key={pkg.id} value={pkg.id}>
-                                {pkg.name}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <span className="text-slate-400">Padrão</span>
-                        )}
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          min="0.0001"
-                          step="any"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateItem(item.key, {
-                              quantity: Number(e.target.value),
-                            })
-                          }
-                          className="h-8 w-20 rounded border border-slate-200 px-2 text-xs"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value={item.discount_percent}
-                          onChange={(e) =>
-                            updateItem(item.key, {
-                              discount_percent: Number(e.target.value),
-                            })
-                          }
-                          className="h-8 w-20 rounded border border-slate-200 px-2 text-xs"
-                        />
-                      </td>
-                      <td className="px-3 py-2 text-xs text-slate-600">
-                        {item.product.price_brl_display != null
-                          ? formatCurrency(item.product.price_brl_display, "BRL")
-                          : "—"}
-                      </td>
-                      <td className="px-3 py-2">
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.key)}
-                          className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </td>
+            <>
+              <div className="overflow-x-auto rounded-lg border border-slate-200">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-slate-50 text-left text-xs text-slate-600">
+                    <tr>
+                      <th className="px-2 py-2">Produto</th>
+                      <th className="px-2 py-2">Emb.</th>
+                      <th className="px-2 py-2 text-right">Qtd</th>
+                      <th className="px-2 py-2 text-right">Mín</th>
+                      <th className="px-2 py-2 text-right">Máx</th>
+                      <th className="px-2 py-2 text-right">Preço unit.</th>
+                      <th className="px-2 py-2 text-right">Markup %</th>
+                      <th className="px-2 py-2 text-right">Markup R$</th>
+                      <th className="px-2 py-2"></th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {items.map((item) => {
+                      const markup = getItemMarkup(item);
+                      const aboveMax = item.unit_price > item.max_price;
+
+                      return (
+                        <tr key={item.key}>
+                          <td className="px-2 py-2">
+                            <p className="max-w-[140px] truncate font-medium">
+                              {item.product.commercial_name}
+                            </p>
+                            <p className="text-[10px] text-slate-500">
+                              {item.product.internal_code}
+                            </p>
+                          </td>
+                          <td className="px-2 py-2">
+                            {item.product.packages.length > 0 ? (
+                              <select
+                                value={item.package_id ?? ""}
+                                onChange={(e) =>
+                                  changePackage(
+                                    item.key,
+                                    item.product.id,
+                                    e.target.value || null
+                                  )
+                                }
+                                className="h-8 w-full min-w-[100px] rounded border border-slate-200 px-1 text-xs"
+                              >
+                                {item.product.packages.map((pkg) => (
+                                  <option key={pkg.id} value={pkg.id}>
+                                    {pkg.name}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <span className="text-slate-400">Padrão</span>
+                            )}
+                          </td>
+                          <td className="px-2 py-2">
+                            <input
+                              type="number"
+                              min="0.0001"
+                              step="any"
+                              value={item.quantity}
+                              onChange={(e) =>
+                                updateItem(item.key, {
+                                  quantity: Number(e.target.value),
+                                })
+                              }
+                              className="h-8 w-16 rounded border border-slate-200 px-1 text-right text-xs"
+                            />
+                          </td>
+                          <td className="px-2 py-2 text-right text-xs text-emerald-700">
+                            {formatCurrency(item.min_price, "BRL")}
+                          </td>
+                          <td className="px-2 py-2 text-right text-xs text-blue-700">
+                            {formatCurrency(item.max_price, "BRL")}
+                          </td>
+                          <td className="px-2 py-2">
+                            <input
+                              type="number"
+                              min={item.min_price}
+                              step="0.01"
+                              value={item.unit_price}
+                              onChange={(e) =>
+                                updateItem(item.key, {
+                                  unit_price: Number(e.target.value),
+                                })
+                              }
+                              className={`h-8 w-24 rounded border px-1 text-right text-xs font-medium ${
+                                aboveMax
+                                  ? "border-amber-300 bg-amber-50 text-amber-900"
+                                  : item.unit_price <= item.min_price
+                                    ? "border-emerald-200 bg-emerald-50"
+                                    : "border-slate-200"
+                              }`}
+                            />
+                          </td>
+                          <td
+                            className={`px-2 py-2 text-right text-xs font-semibold ${
+                              markup.markupPercent > 100
+                                ? "text-amber-700"
+                                : markup.markupPercent > 0
+                                  ? "text-brand-700"
+                                  : "text-slate-500"
+                            }`}
+                          >
+                            {formatMarkupPercent(markup.markupPercent)}
+                          </td>
+                          <td className="px-2 py-2 text-right text-xs font-medium text-slate-700">
+                            {formatCurrency(markup.markupBrlLine, "BRL")}
+                          </td>
+                          <td className="px-2 py-2">
+                            <button
+                              type="button"
+                              onClick={() => removeItem(item.key)}
+                              className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50/60 px-4 py-3">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-emerald-800">
+                    Markup total da cotação
+                  </p>
+                  <p className="text-lg font-semibold text-emerald-900">
+                    {formatCurrency(markupSummary.totalMarkupBrl, "BRL")}
+                  </p>
+                </div>
+                <p className="text-xs text-emerald-700">
+                  Soma do markup positivo de todas as linhas (preço − mínimo) ×
+                  quantidade
+                </p>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
