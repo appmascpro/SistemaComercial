@@ -66,15 +66,13 @@ export default async function CotacaoDetailPage({
               existingOrderId={linkedOrder?.id}
               existingOrderNumber={linkedOrder?.order_number}
             />
-            <a
-              href={`/api/quotes/${quote.id}/pdf`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={`/cotacoes/${quote.id}/pdf`}
               className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
             >
               <FileDown className="h-4 w-4" />
-              Baixar PDF
-            </a>
+              Ver PDF
+            </Link>
           </div>
         }
       />

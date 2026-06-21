@@ -75,14 +75,12 @@ export function QuotesTable({ quotes }: { quotes: QuoteListItem[] }) {
                   >
                     Ver
                   </Link>
-                  <a
-                    href={`/api/quotes/${quote.id}/pdf`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/cotacoes/${quote.id}/pdf`}
                     className="text-xs font-medium text-slate-600 hover:underline"
                   >
                     PDF
-                  </a>
+                  </Link>
                 </div>
               </td>
             </tr>
