@@ -1,25 +1,39 @@
-import { PageHeader } from "@/components/layout/page-header";
-import { EmptyModule } from "@/components/layout/empty-module";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Plus } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { SamplesTable } from "@/components/samples/samples-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSamplesForTenant } from "@/lib/samples/queries";
 
-export default function AmostrasPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AmostrasPage() {
+  const samples = await getSamplesForTenant();
+
   return (
     <div>
       <PageHeader
         title="Amostras"
-        description="Controle envio de amostras, status, feedback e follow-up automático."
+        description="Envio de amostras por cliente, follow-up e feedback comercial."
         action={
-          <Button size="sm">
+          <Link
+            href="/amostras/nova"
+            className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+          >
             <Plus className="h-4 w-4" />
             Nova amostra
-          </Button>
+          </Link>
         }
       />
-      <EmptyModule
-        title="Gestão de Amostras"
-        description="Registre amostras enviadas por cliente e produto, acompanhe status e feedback."
-      />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Amostras recentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SamplesTable samples={samples} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

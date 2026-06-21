@@ -13,14 +13,16 @@ export default async function PedidosPage() {
     <div>
       <PageHeader
         title="Pedidos"
-        description="Pedidos gerados a partir de cotações aprovadas. Acompanhe status e faturamento."
+        description="Pedidos gerados a partir de cotações. Acompanhe status até o faturamento."
         action={
-          <Link
-            href="/cotacoes"
-            className="inline-flex h-8 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            Ver cotações
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href="/cotacoes"
+              className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+            >
+              Converter cotação
+            </Link>
+          </div>
         }
       />
 
