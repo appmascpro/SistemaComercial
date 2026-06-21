@@ -1,7 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { updateActivePtaxRate } from "@/lib/pricing/ptax";
+import {
+  syncPtaxFromBcbForCurrentTenant,
+  updateActivePtaxRate,
+} from "@/lib/pricing/ptax";
 
 export interface PtaxActionState {
   error?: string;
@@ -23,9 +26,12 @@ export async function updatePtaxAction(
   }
 
   try {
-    await updateActivePtaxRate(rate, validFrom || undefined);
+    await updateActivePtaxRate(rate, validFrom || undefined, {
+      source: "manual",
+    });
     revalidatePath("/configuracoes");
     revalidatePath("/produtos");
+    revalidatePath("/cotacoes");
     return {
       success: `PTAX atualizada para R$ ${rate.toFixed(4)}/USD.`,
     };
@@ -33,6 +39,23 @@ export async function updatePtaxAction(
     return {
       error:
         error instanceof Error ? error.message : "Não foi possível salvar a PTAX.",
+    };
+  }
+}
+
+export async function syncPtaxFromBcbAction(): Promise<PtaxActionState> {
+  try {
+    const result = await syncPtaxFromBcbForCurrentTenant();
+    revalidatePath("/configuracoes");
+    revalidatePath("/produtos");
+    revalidatePath("/cotacoes");
+    return { success: result.message };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Não foi possível consultar o BCB.",
     };
   }
 }

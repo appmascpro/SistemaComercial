@@ -1,7 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
-import { updatePtaxAction, type PtaxActionState } from "@/app/actions/ptax";
+import { useActionState, useState, useTransition } from "react";
+import {
+  syncPtaxFromBcbAction,
+  updatePtaxAction,
+  type PtaxActionState,
+} from "@/app/actions/ptax";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import type { PtaxHistoryItem, PtaxRate } from "@/lib/pricing/ptax";
@@ -11,12 +15,45 @@ interface PtaxFormProps {
   history: PtaxHistoryItem[];
 }
 
+function sourceLabel(source: PtaxRate["source"]): string {
+  switch (source) {
+    case "bcb":
+      return "BCB (automático)";
+    case "manual":
+      return "cadastro manual";
+    case "tenant_settings":
+      return "padrão do tenant";
+    case "default":
+      return "padrão Tavares";
+    default:
+      return "tabela de câmbio";
+  }
+}
+
+function historySourceLabel(source: string | null): string | null {
+  if (source === "bcb") return "BCB";
+  if (source === "manual") return "Manual";
+  return null;
+}
+
 export function PtaxForm({ current, history }: PtaxFormProps) {
   const today = new Date().toISOString().slice(0, 10);
   const [state, formAction, pending] = useActionState<PtaxActionState, FormData>(
     updatePtaxAction,
     {}
   );
+  const [bcbPending, startBcbSync] = useTransition();
+  const [bcbState, setBcbState] = useState<PtaxActionState>({});
+
+  async function handleBcbSync() {
+    startBcbSync(async () => {
+      const result = await syncPtaxFromBcbAction();
+      setBcbState(result);
+    });
+  }
+
+  const feedback = bcbState.success || bcbState.error || state.success || state.error;
+  const feedbackIsError = Boolean(bcbState.error || state.error);
 
   return (
     <div className="space-y-4">
@@ -31,12 +68,39 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
         <p className="mt-0.5 text-xs text-brand-700/70">
           Vigência:{" "}
           {new Date(current.validFrom + "T12:00:00").toLocaleDateString("pt-BR")}
-          {current.source === "tenant_settings" && " (padrão do tenant)"}
-          {current.source === "default" && " (padrão Tavares)"}
+          {" · "}
+          {sourceLabel(current.source)}
+          {current.bcbReferenceDate
+            ? ` · ref. BCB ${new Date(current.bcbReferenceDate + "T12:00:00").toLocaleDateString("pt-BR")}`
+            : null}
         </p>
       </div>
 
+      <div className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-3">
+        <p className="text-sm font-medium text-slate-800">
+          Atualização automática BCB
+        </p>
+        <p className="mt-1 text-xs text-slate-600">
+          Consulta a API Olinda/PTAX do Banco Central (PTAX venda). Horários
+          agendados: <strong>07h00</strong> e <strong>13h30</strong> (dias úteis,
+          horário de Brasília). Produtos em USD recalculam na listagem; cada
+          cotação guarda a PTAX usada no momento da criação.
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-3"
+          disabled={bcbPending || pending}
+          onClick={handleBcbSync}
+        >
+          {bcbPending ? "Consultando BCB..." : "Atualizar dólar agora"}
+        </Button>
+      </div>
+
       <form action={formAction} className="space-y-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          Ajuste manual
+        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label
@@ -72,19 +136,20 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
           </div>
         </div>
 
-        {state.error && (
-          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-            {state.error}
+        {feedback ? (
+          <p
+            className={`rounded-lg px-3 py-2 text-sm ${
+              feedbackIsError
+                ? "bg-red-50 text-red-700"
+                : "bg-emerald-50 text-emerald-700"
+            }`}
+          >
+            {feedback}
           </p>
-        )}
-        {state.success && (
-          <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-            {state.success}
-          </p>
-        )}
+        ) : null}
 
-        <Button type="submit" disabled={pending}>
-          {pending ? "Salvando..." : "Atualizar PTAX do dia"}
+        <Button type="submit" disabled={pending || bcbPending}>
+          {pending ? "Salvando..." : "Salvar PTAX manual"}
         </Button>
       </form>
 
@@ -94,33 +159,43 @@ export function PtaxForm({ current, history }: PtaxFormProps) {
             Histórico recente
           </p>
           <ul className="divide-y divide-slate-300 rounded-lg border border-slate-300">
-            {history.map((item) => (
-              <li
-                key={`${item.valid_from}-${item.rate}`}
-                className="flex items-center justify-between px-3 py-2 text-sm"
-              >
-                <span className="text-slate-600">
-                  {new Date(item.valid_from + "T12:00:00").toLocaleDateString(
-                    "pt-BR"
-                  )}
-                </span>
-                <span className="font-medium text-slate-900">
-                  {formatCurrency(item.rate, "BRL")}
-                  {item.status === "ativo" && (
-                    <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
-                      ativa
-                    </span>
-                  )}
-                </span>
-              </li>
-            ))}
+            {history.map((item) => {
+              const tag = historySourceLabel(item.source);
+              return (
+                <li
+                  key={`${item.valid_from}-${item.rate}-${item.source}`}
+                  className="flex items-center justify-between px-3 py-2 text-sm"
+                >
+                  <span className="text-slate-600">
+                    {new Date(item.valid_from + "T12:00:00").toLocaleDateString(
+                      "pt-BR"
+                    )}
+                    {tag ? (
+                      <span className="ml-2 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                        {tag}
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="font-medium text-slate-900">
+                    {formatCurrency(item.rate, "BRL")}
+                    {item.status === "ativo" && (
+                      <span className="ml-2 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+                        ativa
+                      </span>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
 
       <p className="text-xs text-slate-500">
-        Produtos em dólar têm o preço BRL recalculado automaticamente com esta
-        cotação na listagem e nas cotações.
+        Configure o cron no Supabase com o arquivo{" "}
+        <code className="rounded bg-slate-100 px-1">setup_ptax_cron.sql</code>{" "}
+        após definir <code className="rounded bg-slate-100 px-1">CRON_SECRET</code>{" "}
+        no Vercel e a URL pública do app.
       </p>
     </div>
   );
