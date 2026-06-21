@@ -1,0 +1,11 @@
+Pasta para planilhas de importação (uso local).
+
+Como usar:
+1. Baixe a planilha do SharePoint como .xlsx
+2. Salve aqui como: planilha-tavares.xlsx ou planilha-tavares.csv
+3. Avise no chat para calibrarmos o importador
+
+Caminho completo:
+SistemaComercial/data/planilha-tavares.xlsx
+
+Nota: arquivos .xlsx não são enviados ao git por padrão (.gitignore).
