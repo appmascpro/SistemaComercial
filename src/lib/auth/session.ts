@@ -1,4 +1,3 @@
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { UserProfile, UserRole } from "@/types/auth";
 
@@ -22,16 +21,12 @@ export async function getCurrentUser() {
   return user;
 }
 
-/**
- * Busca o profile via service role (bypass RLS) apenas para o usuário da sessão.
- * Necessário enquanto RLS não tiver policies na tabela profiles.
- */
 export async function getCurrentProfile(): Promise<UserProfile | null> {
   const user = await getCurrentUser();
   if (!user) return null;
 
-  const admin = createAdminClient();
-  const { data, error } = await admin
+  const supabase = await createClient();
+  const { data, error } = await supabase
     .from("profiles")
     .select("id, tenant_id, email, full_name, role, avatar_url, is_active")
     .eq("id", user.id)
@@ -47,4 +42,12 @@ export async function getCurrentProfile(): Promise<UserProfile | null> {
     role: parseRole(data.role),
     avatar_url: data.avatar_url ?? undefined,
   };
+}
+
+export async function requireProfile(): Promise<UserProfile> {
+  const profile = await getCurrentProfile();
+  if (!profile) {
+    throw new Error("Perfil não encontrado para o usuário autenticado.");
+  }
+  return profile;
 }

@@ -1,6 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { tavaresCompanyData } from "@/lib/company/tavares-company";
-import { getTenantId } from "@/lib/products/import/persist-import";
 
 export interface PtaxRate {
   rate: number;
@@ -13,14 +12,12 @@ export function calculateBrlFromUsd(priceUsd: number, ptax: number): number {
 }
 
 export async function getActivePtaxRate(): Promise<PtaxRate> {
-  const admin = createAdminClient();
-  const tenantId = await getTenantId();
+  const { supabase, tenantId } = await createTenantClient();
   const today = new Date().toISOString().slice(0, 10);
 
-  const { data: rateRow } = await admin
+  const { data: rateRow } = await supabase
     .from("exchange_rates")
     .select("rate, valid_from")
-    .eq("tenant_id", tenantId)
     .eq("from_currency", "USD")
     .eq("to_currency", "BRL")
     .eq("status", "ativo")
@@ -38,7 +35,7 @@ export async function getActivePtaxRate(): Promise<PtaxRate> {
     };
   }
 
-  const { data: tenant } = await admin
+  const { data: tenant } = await supabase
     .from("tenants")
     .select("settings")
     .eq("id", tenantId)

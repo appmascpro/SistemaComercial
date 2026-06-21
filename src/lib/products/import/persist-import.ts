@@ -1,5 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/admin";
-import { getCurrentProfile } from "@/lib/auth/session";
+import { getRequiredTenantId } from "@/lib/auth/tenant";
+import { createClient } from "@/lib/supabase/server";
 import {
   assignInternalCodes,
   normalizeProductName,
@@ -14,35 +14,13 @@ import type {
 
 const BATCH_SIZE = 50;
 
+/** @deprecated import from @/lib/auth/tenant */
+export { getTenantId, getRequiredTenantId } from "@/lib/auth/tenant";
+
 function packageLabel(pkg: ImportPersistRow["packages"][number]): string {
   if (pkg.type === "fracionada") return `${pkg.name} (fracionada)`;
   if (pkg.type === "industrial") return `${pkg.name} (industrial)`;
   return pkg.name;
-}
-
-export async function getTenantId(): Promise<string> {
-  const profile = await getCurrentProfile();
-  if (profile?.tenant_id) return profile.tenant_id;
-
-  const fromEnv = process.env.DEFAULT_TENANT_ID?.trim();
-  if (fromEnv) return fromEnv;
-
-  const admin = createAdminClient();
-  const { data, error } = await admin
-    .from("tenants")
-    .select("id")
-    .eq("is_active", true)
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-
-  if (error || !data?.id) {
-    throw new Error(
-      "Tenant não encontrado. Crie um tenant no Supabase ou defina DEFAULT_TENANT_ID no .env.local."
-    );
-  }
-
-  return data.id;
 }
 
 function chunk<T>(items: T[], size: number): T[][] {
@@ -56,13 +34,13 @@ function chunk<T>(items: T[], size: number): T[][] {
 export async function persistProductImport(
   payload: ImportPersistPayload
 ): Promise<ImportPersistResult> {
-  const admin = createAdminClient();
-  const tenantId = await getTenantId();
+  const supabase = await createClient();
+  const tenantId = await getRequiredTenantId();
   const totalRows = payload.rows.length;
   const errors: Array<{ rowNumber: number; message: string }> = [];
   const validFrom = new Date().toISOString().slice(0, 10);
 
-  const { data: importRecord, error: importError } = await admin
+  const { data: importRecord, error: importError } = await supabase
     .from("product_imports")
     .insert({
       tenant_id: tenantId,
@@ -97,7 +75,7 @@ export async function persistProductImport(
     const profile = getImportProfile(payload.profileId);
     const codePrefix = profile.codePrefix ?? "PRD";
 
-    const { data: existingProducts, error: existingError } = await admin
+    const { data: existingProducts, error: existingError } = await supabase
       .from("products")
       .select("id, internal_code, commercial_name")
       .eq("tenant_id", tenantId);
@@ -156,20 +134,20 @@ export async function persistProductImport(
       }));
 
     for (const batch of chunk(productsToInsert, BATCH_SIZE)) {
-      const { error } = await admin.from("products").insert(batch);
+      const { error } = await supabase.from("products").insert(batch);
       if (error) throw new Error(`Produtos: ${error.message}`);
     }
 
     for (const batch of chunk(productsToUpdate, BATCH_SIZE)) {
       await Promise.all(
         batch.map(({ id, payload }) =>
-          admin.from("products").update(payload).eq("id", id)
+          supabase.from("products").update(payload).eq("id", id)
         )
       );
     }
 
     const internalCodes = prepared.map((p) => p.internalCode);
-    const { data: products, error: productsError } = await admin
+    const { data: products, error: productsError } = await supabase
       .from("products")
       .select("id, internal_code")
       .eq("tenant_id", tenantId)
@@ -186,21 +164,21 @@ export async function persistProductImport(
     const productIds = [...productIdByCode.values()];
 
     if (productIds.length > 0) {
-      await admin
+      await supabase
         .from("product_prices")
         .update({ status: "inativo" })
         .eq("tenant_id", tenantId)
         .in("product_id", productIds)
         .eq("status", "ativo");
 
-      await admin
+      await supabase
         .from("tax_rules")
         .delete()
         .eq("tenant_id", tenantId)
         .in("product_id", productIds);
     }
 
-    const { data: existingPackages } = await admin
+    const { data: existingPackages } = await supabase
       .from("product_packages")
       .select("id, product_id, name")
       .eq("tenant_id", tenantId)
@@ -290,7 +268,7 @@ export async function persistProductImport(
     }
 
     for (const batch of chunk(packagesToInsert, BATCH_SIZE)) {
-      const { data, error } = await admin
+      const { data, error } = await supabase
         .from("product_packages")
         .insert(batch)
         .select("id, product_id, name");
@@ -303,7 +281,7 @@ export async function persistProductImport(
     for (const batch of chunk(packagesToUpdate, BATCH_SIZE)) {
       await Promise.all(
         batch.map(({ id, payload }) =>
-          admin.from("product_packages").update(payload).eq("id", id)
+          supabase.from("product_packages").update(payload).eq("id", id)
         )
       );
     }
@@ -332,12 +310,12 @@ export async function persistProductImport(
     }
 
     for (const batch of chunk(pricesToInsert, BATCH_SIZE)) {
-      const { error } = await admin.from("product_prices").insert(batch);
+      const { error } = await supabase.from("product_prices").insert(batch);
       if (error) throw new Error(`Preços: ${error.message}`);
     }
 
     for (const batch of chunk(taxRulesToInsert, BATCH_SIZE)) {
-      const { error } = await admin.from("tax_rules").insert(batch);
+      const { error } = await supabase.from("tax_rules").insert(batch);
       if (error) throw new Error(`Impostos: ${error.message}`);
     }
 
@@ -345,7 +323,7 @@ export async function persistProductImport(
     const finalStatus =
       successRows === 0 ? "falhou" : errorRows > 0 ? "parcial" : "concluido";
 
-    await admin
+    await supabase
       .from("product_imports")
       .update({
         success_rows: successRows,
@@ -372,7 +350,7 @@ export async function persistProductImport(
     const message =
       error instanceof Error ? error.message : "Erro desconhecido na importação";
 
-    await admin
+    await supabase
       .from("product_imports")
       .update({
         status: "falhou",

@@ -1,7 +1,6 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createTenantClient } from "@/lib/supabase/tenant-db";
 import { calculateBrlFromUsd, getActivePtaxRate } from "@/lib/pricing/ptax";
 import { resolveProductDescription } from "@/lib/products/description";
-import { getTenantId } from "@/lib/products/import/persist-import";
 
 export interface ProductListItem {
   id: string;
@@ -24,16 +23,14 @@ export async function getProductsForTenant(
   total: number;
   ptax: Awaited<ReturnType<typeof getActivePtaxRate>>;
 }> {
-  const admin = createAdminClient();
-  const tenantId = await getTenantId();
+  const { supabase } = await createTenantClient();
   const ptax = await getActivePtaxRate();
 
-  const { count } = await admin
+  const { count } = await supabase
     .from("products")
-    .select("*", { count: "exact", head: true })
-    .eq("tenant_id", tenantId);
+    .select("*", { count: "exact", head: true });
 
-  const { data, error } = await admin
+  const { data, error } = await supabase
     .from("products")
     .select(
       `
@@ -51,7 +48,6 @@ export async function getProductsForTenant(
       )
     `
     )
-    .eq("tenant_id", tenantId)
     .order("internal_code", { ascending: true })
     .limit(limit);
 
@@ -119,24 +115,21 @@ export async function getCompanyProfile(): Promise<{
   company: CompanyProfile | null;
   payment: PaymentAccountProfile | null;
 }> {
-  const admin = createAdminClient();
-  const tenantId = await getTenantId();
+  const { supabase } = await createTenantClient();
 
-  const { data: company } = await admin
+  const { data: company } = await supabase
     .from("companies")
     .select(
       "legal_name, trade_name, cnpj, state_registration, municipal_registration, email, phone, website, address_line, neighborhood, city, state, zip_code"
     )
-    .eq("tenant_id", tenantId)
     .eq("is_default", true)
     .maybeSingle();
 
-  const { data: payment } = await admin
+  const { data: payment } = await supabase
     .from("payment_accounts")
     .select(
       "name, bank_name, agency, account_number, pix_key, holder_name, holder_document"
     )
-    .eq("tenant_id", tenantId)
     .eq("is_default", true)
     .maybeSingle();
 

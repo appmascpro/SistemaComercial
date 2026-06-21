@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getCurrentProfile } from "@/lib/auth/session";
 import { persistProductImport } from "@/lib/products/import/persist-import";
 import type { ImportPersistPayload } from "@/lib/products/import/types";
 
@@ -6,6 +7,14 @@ export const maxDuration = 300;
 
 export async function POST(request: Request) {
   try {
+    const profile = await getCurrentProfile();
+    if (!profile) {
+      return NextResponse.json(
+        { success: false, message: "Não autenticado." },
+        { status: 401 }
+      );
+    }
+
     const payload = (await request.json()) as ImportPersistPayload;
 
     if (!payload?.rows?.length) {

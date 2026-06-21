@@ -2,7 +2,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCompanyProfile } from "@/lib/company/get-company";
 import { seedTavaresCompany } from "@/lib/company/seed-tavares-company";
-import { getTenantId } from "@/lib/products/import/persist-import";
+import { getRequiredTenantId } from "@/lib/auth/tenant";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export default async function ConfiguracoesPage() {
   let companyData = await getCompanyProfile();
 
   if (!companyData.company) {
-    const tenantId = await getTenantId();
+    const tenantId = await getRequiredTenantId();
     await seedTavaresCompany(tenantId);
     companyData = await getCompanyProfile();
   }
