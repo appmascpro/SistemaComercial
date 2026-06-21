@@ -14,3 +14,19 @@ export function formatCurrency(
     currency,
   }).format(value);
 }
+
+export function formatDate(value: string | Date): string {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return date.toLocaleDateString("pt-BR");
+}
+
+export function formatPercent(value: number): string {
+  return `${value.toFixed(2).replace(".", ",")}%`;
+}
+
+export function formatQuantity(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  }).format(value);
+}

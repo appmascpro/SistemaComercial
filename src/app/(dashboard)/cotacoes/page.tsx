@@ -1,25 +1,39 @@
-import { PageHeader } from "@/components/layout/page-header";
-import { EmptyModule } from "@/components/layout/empty-module";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Plus } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { QuotesTable } from "@/components/quotes/quotes-table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getQuotesForTenant } from "@/lib/quotes/queries";
 
-export default function CotacoesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CotacoesPage() {
+  const quotes = await getQuotesForTenant();
+
   return (
     <div>
       <PageHeader
         title="Cotações"
-        description="Crie propostas comerciais com cálculo de preços, impostos e geração de PDF."
+        description="Propostas comerciais com cálculo de preços, impostos e PDF tcQUÍMICA."
         action={
-          <Button size="sm">
+          <Link
+            href="/cotacoes/nova"
+            className="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-600 px-3 text-xs font-medium text-white hover:bg-brand-700"
+          >
             <Plus className="h-4 w-4" />
             Nova cotação
-          </Button>
+          </Link>
         }
       />
-      <EmptyModule
-        title="Módulo de Cotações"
-        description="Pesquise produtos, selecione tamanhos, aplique descontos dentro da faixa permitida e gere PDF da proposta."
-      />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Propostas recentes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QuotesTable quotes={quotes} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
