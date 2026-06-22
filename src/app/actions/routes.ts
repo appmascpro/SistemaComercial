@@ -15,6 +15,11 @@ export interface RouteActionState {
   routeId?: string;
 }
 
+function normalizeStopPriority(value?: string): "A" | "B" | "C" {
+  if (value === "A" || value === "B" || value === "C") return value;
+  return "B";
+}
+
 export async function createRouteAction(
   input: RouteFormInput
 ): Promise<RouteActionState> {
@@ -29,6 +34,16 @@ export async function createRouteAction(
     const profile = await requireProfile();
     const { supabase, tenantId } = await createTenantClient();
 
+    const customerIds = [...new Set(input.stops.map((s) => s.customer_id))];
+    const { data: customerRows } = await supabase
+      .from("customers")
+      .select("id, city, state")
+      .in("id", customerIds);
+
+    const customerMap = new Map(
+      (customerRows ?? []).map((row) => [row.id, row] as const)
+    );
+
     const { data: route, error: routeError } = await supabase
       .from("routes")
       .insert({
@@ -38,8 +53,9 @@ export async function createRouteAction(
         polo: input.polo?.trim() || null,
         city: input.city?.trim() || null,
         state: input.state?.trim().toUpperCase() || null,
+        week_number: input.week_number ?? null,
         planned_date: input.planned_date || null,
-        priority: input.priority ?? "normal",
+        priority: "normal",
         status: "planejada",
         notes: input.notes?.trim() || null,
       })
@@ -50,15 +66,21 @@ export async function createRouteAction(
       throw new Error(routeError?.message ?? "Erro ao criar rota.");
     }
 
-    const stops = input.stops.map((stop) => ({
-      tenant_id: tenantId,
-      route_id: route.id,
-      customer_id: stop.customer_id,
-      stop_order: stop.stop_order,
-      priority: stop.priority ?? "normal",
-      status: "pendente" as const,
-      notes: stop.notes?.trim() || null,
-    }));
+    const stops = input.stops.map((stop) => {
+      const customer = customerMap.get(stop.customer_id);
+      return {
+        tenant_id: tenantId,
+        route_id: route.id,
+        customer_id: stop.customer_id,
+        stop_order: stop.stop_order,
+        priority: normalizeStopPriority(stop.priority),
+        status: "planejado" as const,
+        planned_at: stop.planned_at || null,
+        city: customer?.city ?? null,
+        state: customer?.state ?? null,
+        notes: stop.notes?.trim() || null,
+      };
+    });
 
     const { error: stopsError } = await supabase.from("route_stops").insert(stops);
 
@@ -69,6 +91,7 @@ export async function createRouteAction(
 
     revalidatePath("/");
     revalidatePath("/rotas");
+    revalidatePath("/rotas/hoje");
     return { success: "Rota criada com sucesso.", routeId: route.id };
   } catch (error) {
     return {
@@ -96,6 +119,7 @@ export async function updateRouteStatusAction(
 
     revalidatePath("/");
     revalidatePath("/rotas");
+    revalidatePath("/rotas/hoje");
     revalidatePath(`/rotas/${routeId}`);
 
     return { success: "Status da rota atualizado." };
@@ -119,6 +143,10 @@ export async function updateRouteStopStatusAction(
     if (status === "visitado") {
       patch.completed_at = new Date().toISOString();
     }
+    if (status === "planejado" || status === "reagendar") {
+      patch.completed_at = null;
+      patch.visit_id = null;
+    }
 
     const { error } = await supabase
       .from("route_stops")
@@ -128,11 +156,56 @@ export async function updateRouteStopStatusAction(
     if (error) throw new Error(error.message);
 
     revalidatePath(`/rotas/${routeId}`);
+    revalidatePath("/rotas/hoje");
     return { success: "Parada atualizada." };
   } catch (error) {
     return {
       error:
         error instanceof Error ? error.message : "Não foi possível atualizar a parada.",
+    };
+  }
+}
+
+export async function rescheduleRouteStopAction(
+  stopId: string,
+  routeId: string,
+  nextDate: string
+): Promise<RouteActionState> {
+  try {
+    const { supabase } = await createTenantClient();
+
+    const { data: stop, error: stopError } = await supabase
+      .from("route_stops")
+      .select("customer_id")
+      .eq("id", stopId)
+      .maybeSingle();
+
+    if (stopError || !stop) {
+      return { error: "Parada não encontrada." };
+    }
+
+    await supabase
+      .from("route_stops")
+      .update({
+        status: "reagendar",
+        planned_at: `${nextDate}T09:00:00`,
+      })
+      .eq("id", stopId);
+
+    await supabase
+      .from("customers")
+      .update({ next_visit_at: nextDate })
+      .eq("id", stop.customer_id);
+
+    revalidatePath(`/rotas/${routeId}`);
+    revalidatePath("/rotas/hoje");
+    revalidatePath(`/clientes/${stop.customer_id}`);
+
+    return { success: "Visita reagendada." };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "Não foi possível reagendar.",
     };
   }
 }

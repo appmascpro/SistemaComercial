@@ -71,8 +71,8 @@ export function VisitsPageClient({
 
       {tab === "cadastrar" ? (
         <VisitForm
-          onSuccess={() => {
-            router.push("/visitas?aba=relatorio&periodo=hoje");
+          onSuccess={(customerId) => {
+            router.push(`/clientes/${customerId}`);
           }}
         />
       ) : tab === "followups" ? (

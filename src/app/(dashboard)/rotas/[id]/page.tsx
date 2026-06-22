@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
+import { RouteExecutionView } from "@/components/routes/route-execution-view";
 import { RouteStatusSelect } from "@/components/routes/route-status-select";
-import { RouteStopStatusButton } from "@/components/routes/route-stop-status-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getRouteById } from "@/lib/routes/queries";
 import { formatDate } from "@/lib/utils";
@@ -26,10 +26,26 @@ export default async function RotaDetailPage({
       <PageHeader
         title={route.name}
         description={
-          [route.polo, route.city, route.state].filter(Boolean).join(" · ") ||
-          "Rota comercial"
+          [
+            route.polo,
+            route.city,
+            route.state,
+            route.week_number ? `Semana ${route.week_number}` : null,
+          ]
+            .filter(Boolean)
+            .join(" · ") || "Rota comercial"
         }
-        action={<RouteStatusSelect routeId={route.id} currentStatus={route.status} />}
+        action={
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/rotas/hoje"
+              className="inline-flex h-8 items-center rounded-lg border border-slate-300 bg-white px-3 text-xs font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Rota de hoje
+            </Link>
+            <RouteStatusSelect routeId={route.id} currentStatus={route.status} />
+          </div>
+        }
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-4">
@@ -57,63 +73,26 @@ export default async function RotaDetailPage({
         </Card>
         <Card>
           <CardContent className="pt-5">
-            <p className="text-xs text-slate-500">Prioridade</p>
-            <p className="text-lg font-semibold capitalize">{route.priority}</p>
+            <p className="text-xs text-slate-500">Semana</p>
+            <p className="text-lg font-semibold">
+              {route.week_number ? `Semana ${route.week_number}` : "—"}
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Ordem de visitas</CardTitle>
+          <CardTitle>Executar rota</CardTitle>
         </CardHeader>
         <CardContent>
-          {route.stops.length === 0 ? (
-            <p className="text-sm text-slate-500">Nenhuma parada cadastrada.</p>
-          ) : (
-            <ol className="space-y-3">
-              {route.stops.map((stop) => (
-                <li
-                  key={stop.id}
-                  className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-300 p-4"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-bold text-brand-700">
-                    {stop.stop_order}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/clientes/${stop.customer.id}`}
-                      className="font-medium text-brand-600 hover:underline"
-                    >
-                      {stop.customer.company_name}
-                    </Link>
-                    <p className="text-xs text-slate-500">
-                      {[stop.customer.city, stop.customer.state]
-                        .filter(Boolean)
-                        .join(" / ")}
-                      {stop.customer.phone ? ` · ${stop.customer.phone}` : ""}
-                    </p>
-                    {stop.notes ? (
-                      <p className="mt-1 text-xs text-slate-600">{stop.notes}</p>
-                    ) : null}
-                  </div>
-                  <RouteStopStatusButton
-                    stopId={stop.id}
-                    routeId={route.id}
-                    currentStatus={stop.status}
-                  />
-                </li>
-              ))}
-            </ol>
-          )}
-
-          {route.notes ? (
-            <p className="mt-4 rounded-lg bg-slate-50 p-3 text-sm text-slate-600">
-              {route.notes}
-            </p>
-          ) : null}
+          <RouteExecutionView route={route} />
         </CardContent>
       </Card>
+
+      {route.notes ? (
+        <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">{route.notes}</p>
+      ) : null}
     </div>
   );
 }

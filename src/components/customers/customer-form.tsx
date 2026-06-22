@@ -7,7 +7,7 @@ import {
   updateCustomerAction,
 } from "@/app/actions/customers";
 import { Button } from "@/components/ui/button";
-import { BRAZILIAN_STATES, type CustomerDetail, type CustomerFormInput } from "@/types/customer";
+import { BRAZILIAN_STATES, CUSTOMER_TYPE_LABELS, LEAD_STATUS_LABELS, PAIN_POINT_SUGGESTIONS, PRODUCT_INTEREST_SUGGESTIONS, SEGMENT_SUGGESTIONS, type CustomerDetail, type CustomerFormInput } from "@/types/customer";
 
 const inputClass =
   "h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none ring-brand-500 focus:ring-2";
@@ -27,7 +27,15 @@ export function CustomerForm({ customer }: CustomerFormProps) {
     document: customer?.document ?? "",
     document_type: customer?.document_type ?? "",
     segment: customer?.segment ?? "",
+    customer_type: customer?.customer_type ?? "",
+    lead_status: customer?.lead_status ?? "",
     purchase_potential: customer?.purchase_potential ?? "",
+    potential_volume: customer?.potential_volume ?? "",
+    products_of_interest: customer?.products_of_interest ?? "",
+    current_supplier: customer?.current_supplier ?? "",
+    pain_point: customer?.pain_point ?? "",
+    buyer_name: customer?.buyer_name ?? "",
+    buyer_phone: customer?.buyer_phone ?? "",
     email: customer?.email ?? "",
     phone: customer?.phone ?? "",
     address_line: customer?.address_line ?? "",
@@ -120,31 +128,138 @@ export function CustomerForm({ customer }: CustomerFormProps) {
           </label>
           <label className="block text-sm">
             <span className="mb-1 block text-slate-600">Segmento</span>
-            <input
-              value={form.segment}
-              onChange={(e) => updateField("segment", e.target.value)}
-              placeholder="Cosméticos, Pet, Bebidas..."
-              className={inputClass}
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">Potencial de compra</span>
             <select
-              value={form.purchase_potential ?? ""}
-              onChange={(e) => updateField("purchase_potential", e.target.value)}
+              value={form.segment ?? ""}
+              onChange={(e) => updateField("segment", e.target.value)}
               className={inputClass}
             >
               <option value="">Selecione</option>
-              <option value="alto">Alto</option>
-              <option value="medio">Médio</option>
-              <option value="baixo">Baixo</option>
+              {SEGMENT_SUGGESTIONS.map((segment) => (
+                <option key={segment} value={segment}>
+                  {segment}
+                </option>
+              ))}
             </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Tipo de cliente</span>
+            <select
+              value={form.customer_type ?? ""}
+              onChange={(e) =>
+                updateField(
+                  "customer_type",
+                  e.target.value as CustomerFormInput["customer_type"]
+                )
+              }
+              className={inputClass}
+            >
+              <option value="">Selecione</option>
+              {(Object.entries(CUSTOMER_TYPE_LABELS) as [keyof typeof CUSTOMER_TYPE_LABELS, string][]).map(
+                ([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Status comercial</span>
+            <select
+              value={form.lead_status ?? ""}
+              onChange={(e) =>
+                updateField(
+                  "lead_status",
+                  e.target.value as CustomerFormInput["lead_status"]
+                )
+              }
+              className={inputClass}
+            >
+              <option value="">Selecione</option>
+              {(Object.entries(LEAD_STATUS_LABELS) as [keyof typeof LEAD_STATUS_LABELS, string][]).map(
+                ([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">Volume potencial</span>
+            <input
+              value={form.potential_volume}
+              onChange={(e) => updateField("potential_volume", e.target.value)}
+              placeholder="10L, 50L, 200L/mês"
+              className={inputClass}
+            />
           </label>
         </div>
       </section>
 
       <section className="rounded-xl border border-slate-300 bg-white p-5">
-        <h3 className="mb-4 text-sm font-semibold text-slate-900">Contato</h3>
+        <h3 className="mb-4 text-sm font-semibold text-slate-900">Perfil comercial</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Comprador</span>
+            <input
+              value={form.buyer_name}
+              onChange={(e) => updateField("buyer_name", e.target.value)}
+              className={inputClass}
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">WhatsApp / telefone do comprador</span>
+            <input
+              value={form.buyer_phone}
+              onChange={(e) => updateField("buyer_phone", e.target.value)}
+              className={inputClass}
+            />
+          </label>
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">Produtos de interesse</span>
+            <input
+              value={form.products_of_interest}
+              onChange={(e) => updateField("products_of_interest", e.target.value)}
+              list="customer-product-interests"
+              placeholder="álcool, essência, base, laurel..."
+              className={inputClass}
+            />
+            <datalist id="customer-product-interests">
+              {PRODUCT_INTEREST_SUGGESTIONS.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
+          </label>
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">Fornecedor atual</span>
+            <input
+              value={form.current_supplier}
+              onChange={(e) => updateField("current_supplier", e.target.value)}
+              placeholder="Quem vende hoje para o cliente"
+              className={inputClass}
+            />
+          </label>
+          <label className="block text-sm sm:col-span-2">
+            <span className="mb-1 block text-slate-600">Dor / necessidade</span>
+            <input
+              value={form.pain_point}
+              onChange={(e) => updateField("pain_point", e.target.value)}
+              list="customer-pain-points"
+              placeholder="preço, prazo, qualidade, falta de suporte..."
+              className={inputClass}
+            />
+            <datalist id="customer-pain-points">
+              {PAIN_POINT_SUGGESTIONS.map((item) => (
+                <option key={item} value={item} />
+              ))}
+            </datalist>
+          </label>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-300 bg-white p-5">
+        <h3 className="mb-4 text-sm font-semibold text-slate-900">Contato da empresa</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">
             <span className="mb-1 block text-slate-600">E-mail</span>

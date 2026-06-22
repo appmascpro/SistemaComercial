@@ -10,12 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ServiceCityWithRegion } from "@/lib/service-cities/queries";
 import type { MicroRegion } from "@/lib/service-cities/micro-regions";
 import type { CustomerSearchResult } from "@/types/quote";
-import type { RouteFormInput, RoutePriority } from "@/types/route";
+import type { RouteFormInput, RouteStopPriority } from "@/types/route";
+import { ROUTE_POLO_OPTIONS, ROUTE_STOP_PRIORITY_LABELS } from "@/types/route";
 
 interface DraftStop {
   key: string;
   customer: CustomerSearchResult;
-  priority: RoutePriority;
+  priority: RouteStopPriority;
+  plannedTime: string;
   notes: string;
 }
 
@@ -38,7 +40,7 @@ export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
   const [city, setCity] = useState("");
   const [state, setState] = useState("SP");
   const [plannedDate, setPlannedDate] = useState("");
-  const [priority, setPriority] = useState<RoutePriority>("normal");
+  const [weekNumber, setWeekNumber] = useState<number | "">("");
   const [notes, setNotes] = useState("");
 
   const [customerQuery, setCustomerQuery] = useState("");
@@ -122,7 +124,8 @@ export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
       {
         key: `${customer.id}-${Date.now()}`,
         customer,
-        priority: "normal",
+        priority: "B",
+        plannedTime: "",
         notes: "",
       },
     ]);
@@ -143,13 +146,17 @@ export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
       polo: polo || selectedMicroRegion?.name || "",
       city,
       state,
+      week_number: weekNumber === "" ? null : Number(weekNumber),
       planned_date: plannedDate || undefined,
-      priority,
       notes,
       stops: stops.map((stop, index) => ({
         customer_id: stop.customer.id,
         stop_order: index + 1,
         priority: stop.priority,
+        planned_at:
+          plannedDate && stop.plannedTime
+            ? `${plannedDate}T${stop.plannedTime}:00`
+            : undefined,
         notes: stop.notes || undefined,
       })),
     };
@@ -230,23 +237,34 @@ export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
 
           <label className="block text-sm">
             <span className="mb-1 block text-slate-600">Polo</span>
-            <input
+            <select
               value={polo}
               onChange={(e) => setPolo(e.target.value)}
-              placeholder="Preenchido pela micro-região"
-              className={inputClass}
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">Prioridade</span>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as RoutePriority)}
               className={inputClass}
             >
-              <option value="baixa">Baixa</option>
-              <option value="normal">Normal</option>
-              <option value="alta">Alta</option>
+              <option value="">Selecione ou use micro-região</option>
+              {ROUTE_POLO_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Semana do ciclo</span>
+            <select
+              value={weekNumber}
+              onChange={(e) =>
+                setWeekNumber(e.target.value ? Number(e.target.value) : "")
+              }
+              className={inputClass}
+            >
+              <option value="">Selecione</option>
+              {Array.from({ length: 8 }, (_, i) => i + 1).map((week) => (
+                <option key={week} value={week}>
+                  Semana {week}
+                </option>
+              ))}
             </select>
           </label>
           <label className="block text-sm">
@@ -323,28 +341,79 @@ export function RouteForm({ serviceCities, microRegions }: RouteFormProps) {
               {stops.map((stop, index) => (
                 <li
                   key={stop.key}
-                  className="flex items-start gap-3 rounded-lg border border-slate-300 p-3"
+                  className="rounded-lg border border-slate-300 p-3"
                 >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">
-                    {index + 1}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium">{stop.customer.company_name}</p>
-                    <p className="text-xs text-slate-500">
-                      {[stop.customer.city, stop.customer.state]
-                        .filter(Boolean)
-                        .join(" / ")}
-                    </p>
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium">{stop.customer.company_name}</p>
+                      <p className="text-xs text-slate-500">
+                        {[stop.customer.city, stop.customer.state]
+                          .filter(Boolean)
+                          .join(" / ")}
+                      </p>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        <label className="block text-xs">
+                          <span className="mb-1 block text-slate-500">Prioridade</span>
+                          <select
+                            value={stop.priority}
+                            onChange={(e) =>
+                              setStops((list) =>
+                                list.map((s) =>
+                                  s.key === stop.key
+                                    ? {
+                                        ...s,
+                                        priority: e.target.value as RouteStopPriority,
+                                      }
+                                    : s
+                                )
+                              )
+                            }
+                            className={inputClass}
+                          >
+                            {(Object.entries(ROUTE_STOP_PRIORITY_LABELS) as [
+                              RouteStopPriority,
+                              string,
+                            ][]).map(([value, label]) => (
+                              <option key={value} value={value}>
+                                {label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="block text-xs">
+                          <span className="mb-1 block text-slate-500">
+                            Horário visita
+                          </span>
+                          <input
+                            type="time"
+                            value={stop.plannedTime}
+                            onChange={(e) =>
+                              setStops((list) =>
+                                list.map((s) =>
+                                  s.key === stop.key
+                                    ? { ...s, plannedTime: e.target.value }
+                                    : s
+                                )
+                              )
+                            }
+                            className={inputClass}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setStops((list) => list.filter((s) => s.key !== stop.key))
+                      }
+                      className="text-slate-400 hover:text-red-600"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setStops((list) => list.filter((s) => s.key !== stop.key))
-                    }
-                    className="text-slate-400 hover:text-red-600"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
                 </li>
               ))}
             </ol>

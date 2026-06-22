@@ -25,7 +25,15 @@ function normalizeCustomerInput(input: CustomerFormInput) {
     document: input.document?.trim() || null,
     document_type: input.document_type || null,
     segment: input.segment?.trim() || null,
+    customer_type: input.customer_type || null,
+    lead_status: input.lead_status || null,
     purchase_potential: input.purchase_potential?.trim() || null,
+    potential_volume: input.potential_volume?.trim() || null,
+    products_of_interest: input.products_of_interest?.trim() || null,
+    current_supplier: input.current_supplier?.trim() || null,
+    pain_point: input.pain_point?.trim() || null,
+    buyer_name: input.buyer_name?.trim() || null,
+    buyer_phone: input.buyer_phone?.trim() || null,
     email: input.email?.trim() || null,
     phone: input.phone?.trim() || null,
     address_line: input.address_line?.trim() || null,
@@ -151,6 +159,29 @@ export async function getCustomerForQuoteAction(customerId: string) {
     city: customer.city,
     state: customer.state,
     document: customer.document,
+  };
+}
+
+export async function getCustomerVisitDefaultsAction(customerId: string) {
+  const { getCustomerById } = await import("@/lib/customers/queries");
+  const customer = await getCustomerById(customerId);
+  if (!customer) return null;
+
+  return {
+    company_name: customer.company_name,
+    city: customer.city,
+    state: customer.state,
+    segment: customer.segment,
+    customer_type: customer.customer_type,
+    buyer_name: customer.buyer_name,
+    buyer_phone: customer.buyer_phone ?? customer.phone,
+    products_of_interest: customer.products_of_interest,
+    pain_point: customer.pain_point,
+    current_supplier: customer.current_supplier,
+    potential_volume: customer.potential_volume,
+    lead_status: customer.lead_status,
+    last_visit_at: customer.last_visit_at,
+    next_visit_at: customer.next_visit_at,
   };
 }
 

@@ -2,6 +2,21 @@ export type VisitContactType = "presencial" | "whatsapp";
 
 export type VisitReportPeriod = "hoje" | "7d" | "15d" | "mes";
 
+export const VISIT_NEXT_ACTIONS = [
+  "Cotar",
+  "Visitar",
+  "Ligar",
+  "Enviar amostra",
+  "Enviar cotação",
+  "Retornar WhatsApp",
+] as const;
+
+export type VisitResult =
+  | "cotou"
+  | "pediu"
+  | "pediu_amostra"
+  | "sem_interesse";
+
 export interface VisitFormInput {
   customer_id: string;
   contact_type: VisitContactType;
@@ -10,6 +25,15 @@ export interface VisitFormInput {
   contact_person_name: string;
   contact_person_phone: string;
   next_action_date: string;
+  products_of_interest?: string;
+  pain_point?: string;
+  current_supplier?: string;
+  potential_volume?: string;
+  next_action?: string;
+  lead_status?: "frio" | "morno" | "quente" | "cliente" | "";
+  visit_result?: VisitResult | "";
+  route_id?: string;
+  route_stop_id?: string;
   notes?: string;
 }
 

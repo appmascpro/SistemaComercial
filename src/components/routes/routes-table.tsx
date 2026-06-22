@@ -9,12 +9,6 @@ const statusStyles: Record<string, string> = {
   cancelada: "bg-red-50 text-red-700",
 };
 
-const priorityStyles: Record<string, string> = {
-  baixa: "text-slate-500",
-  normal: "text-slate-700",
-  alta: "text-amber-700 font-medium",
-};
-
 export function RoutesTable({ routes }: { routes: RouteListItem[] }) {
   if (routes.length === 0) {
     return (
@@ -34,9 +28,9 @@ export function RoutesTable({ routes }: { routes: RouteListItem[] }) {
           <tr>
             <th className="px-3 py-2 text-left font-medium text-slate-600">Rota</th>
             <th className="px-3 py-2 text-left font-medium text-slate-600">Polo / Local</th>
+            <th className="px-3 py-2 text-left font-medium text-slate-600">Semana</th>
             <th className="px-3 py-2 text-left font-medium text-slate-600">Data</th>
-            <th className="px-3 py-2 text-left font-medium text-slate-600">Paradas</th>
-            <th className="px-3 py-2 text-left font-medium text-slate-600">Prioridade</th>
+            <th className="px-3 py-2 text-left font-medium text-slate-600">Progresso</th>
             <th className="px-3 py-2 text-left font-medium text-slate-600">Status</th>
             <th className="px-3 py-2 text-right font-medium text-slate-600">Ações</th>
           </tr>
@@ -50,11 +44,13 @@ export function RoutesTable({ routes }: { routes: RouteListItem[] }) {
                   "—"}
               </td>
               <td className="px-3 py-2 text-slate-600">
+                {route.week_number ? `Sem. ${route.week_number}` : "—"}
+              </td>
+              <td className="px-3 py-2 text-slate-600">
                 {route.planned_date ? formatDate(route.planned_date) : "—"}
               </td>
-              <td className="px-3 py-2">{route.stops_count}</td>
-              <td className={`px-3 py-2 capitalize ${priorityStyles[route.priority] ?? ""}`}>
-                {route.priority}
+              <td className="px-3 py-2 text-slate-600">
+                {route.visited_count}/{route.stops_count}
               </td>
               <td className="px-3 py-2">
                 <span
@@ -70,7 +66,7 @@ export function RoutesTable({ routes }: { routes: RouteListItem[] }) {
                   href={`/rotas/${route.id}`}
                   className="text-xs font-medium text-brand-600 hover:underline"
                 >
-                  Ver
+                  Executar
                 </Link>
               </td>
             </tr>
