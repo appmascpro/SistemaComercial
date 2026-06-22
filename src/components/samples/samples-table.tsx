@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
-import type { SampleListItem } from "@/types/sample";
+import {
+  SAMPLE_STATUS_LABELS,
+  type SampleListItem,
+} from "@/types/sample";
 
 const statusStyles: Record<string, string> = {
   pendente: "bg-slate-100 text-slate-600",
+  enviado: "bg-blue-50 text-blue-700",
+  recebido: "bg-cyan-50 text-cyan-700",
+  testando: "bg-purple-50 text-purple-700",
+  aprovado: "bg-emerald-50 text-emerald-700",
+  reprovado: "bg-red-50 text-red-700",
+  cancelada: "bg-slate-200 text-slate-600",
   enviada: "bg-blue-50 text-blue-700",
   entregue: "bg-emerald-50 text-emerald-700",
   feedback_recebido: "bg-purple-50 text-purple-700",
-  cancelada: "bg-red-50 text-red-700",
 };
 
 export function SamplesTable({ samples }: { samples: SampleListItem[] }) {
@@ -61,7 +69,9 @@ export function SamplesTable({ samples }: { samples: SampleListItem[] }) {
                     statusStyles[sample.status] ?? "bg-slate-100 text-slate-600"
                   }`}
                 >
-                  {sample.status.replace("_", " ")}
+                  {SAMPLE_STATUS_LABELS[
+                    sample.status as keyof typeof SAMPLE_STATUS_LABELS
+                  ] ?? sample.status.replace("_", " ")}
                 </span>
               </td>
               <td className="px-3 py-2 text-right">

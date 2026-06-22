@@ -11,6 +11,7 @@ import {
 import { createSampleAction, updateSampleAction } from "@/app/actions/samples";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { CarrierOption } from "@/lib/carriers/queries";
 import type { CustomerSearchResult } from "@/types/quote";
 import type { ProductSearchResult } from "@/types/quote";
 import type { SampleDetail, SampleFormInput } from "@/types/sample";
@@ -22,18 +23,18 @@ interface DraftItem {
   quantity: number;
 }
 
-function defaultFollowUpDate(): string {
-  const date = new Date();
-  date.setDate(date.getDate() + 7);
-  return date.toISOString().slice(0, 10);
+function todayDateInput(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 export function SampleForm({
   sample,
   initialProducts,
+  carriers = [],
 }: {
   sample?: SampleDetail;
   initialProducts?: ProductSearchResult[];
+  carriers?: CarrierOption[];
 }) {
   const isEditing = Boolean(sample);
   const router = useRouter();
@@ -48,7 +49,11 @@ export function SampleForm({
   const [productQuery, setProductQuery] = useState("");
   const [products, setProducts] = useState<ProductSearchResult[]>([]);
   const [items, setItems] = useState<DraftItem[]>([]);
-  const [followUpDate, setFollowUpDate] = useState(defaultFollowUpDate());
+  const [sentAt, setSentAt] = useState(todayDateInput());
+  const [carrierId, setCarrierId] = useState("");
+  const [carrierName, setCarrierName] = useState("");
+  const [trackingCode, setTrackingCode] = useState("");
+  const [internalCost, setInternalCost] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -75,8 +80,12 @@ export function SampleForm({
       state: sample.customer.state,
       document: sample.customer.document,
     });
-    setFollowUpDate(
-      sample.follow_up_date?.slice(0, 10) ?? defaultFollowUpDate()
+    setSentAt(sample.sent_at?.slice(0, 10) ?? todayDateInput());
+    setCarrierId(sample.carrier_id ?? "");
+    setCarrierName(sample.carrier_name ?? sample.carrier?.name ?? "");
+    setTrackingCode(sample.tracking_code ?? "");
+    setInternalCost(
+      sample.internal_cost != null ? String(sample.internal_cost) : ""
     );
     setNotes(sample.notes ?? "");
 
@@ -126,9 +135,17 @@ export function SampleForm({
       return;
     }
 
+    const cost = internalCost.trim().replace(",", ".");
+    const parsedCost = cost ? Number(cost) : null;
+
     const payload: SampleFormInput = {
       customer_id: selectedCustomer.id,
-      follow_up_date: followUpDate,
+      sent_at: sentAt || undefined,
+      carrier_id: carrierId || null,
+      carrier_name: carrierName,
+      tracking_code: trackingCode,
+      internal_cost:
+        parsedCost != null && Number.isFinite(parsedCost) ? parsedCost : null,
       notes,
       items: items.map((item) => ({
         product_id: item.product.id,
@@ -336,25 +353,84 @@ export function SampleForm({
 
       <Card>
         <CardHeader>
-          <CardTitle>Follow-up</CardTitle>
+          <CardTitle>Envio e custo</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
+          {!isEditing ? (
+            <label className="block text-sm">
+              <span className="mb-1 block text-slate-600">Data de envio</span>
+              <input
+                type="date"
+                value={sentAt}
+                onChange={(e) => setSentAt(e.target.value)}
+                className="h-9 w-full rounded-lg border border-slate-300 px-3"
+              />
+              <span className="mt-1 block text-xs text-slate-500">
+                Ao informar a data, a amostra já entra como enviada e dispara
+                follow-ups em 2, 7 e 15 dias.
+              </span>
+            </label>
+          ) : null}
+
           <label className="block text-sm">
-            <span className="mb-1 block text-slate-600">Data de follow-up</span>
+            <span className="mb-1 block text-slate-600">Transportadora</span>
+            {carriers.length > 0 ? (
+              <select
+                value={carrierId}
+                onChange={(e) => {
+                  setCarrierId(e.target.value);
+                  const selected = carriers.find((c) => c.id === e.target.value);
+                  if (selected) setCarrierName(selected.name);
+                }}
+                className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
+              >
+                <option value="">Outra / informar abaixo</option>
+                {carriers.map((carrier) => (
+                  <option key={carrier.id} value={carrier.id}>
+                    {carrier.name}
+                    {[carrier.city, carrier.state].filter(Boolean).join(" / ")
+                      ? ` — ${[carrier.city, carrier.state].filter(Boolean).join(" / ")}`
+                      : ""}
+                  </option>
+                ))}
+              </select>
+            ) : null}
             <input
-              type="date"
-              value={followUpDate}
-              onChange={(e) => setFollowUpDate(e.target.value)}
-              className="h-9 w-full rounded-lg border px-3"
+              value={carrierName}
+              onChange={(e) => setCarrierName(e.target.value)}
+              placeholder="Nome da transportadora"
+              className="mt-2 h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
             />
           </label>
+
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Rastreio</span>
+            <input
+              value={trackingCode}
+              onChange={(e) => setTrackingCode(e.target.value)}
+              placeholder="Código de rastreamento"
+              className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
+            />
+          </label>
+
+          <label className="block text-sm">
+            <span className="mb-1 block text-slate-600">Custo interno (R$)</span>
+            <input
+              value={internalCost}
+              onChange={(e) => setInternalCost(e.target.value)}
+              inputMode="decimal"
+              placeholder="0,00"
+              className="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm"
+            />
+          </label>
+
           <label className="block text-sm sm:col-span-2">
             <span className="mb-1 block text-slate-600">Observações</span>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
         </CardContent>

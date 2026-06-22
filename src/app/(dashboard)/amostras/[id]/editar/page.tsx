@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { SampleForm } from "@/components/samples/sample-form";
 import { canEditSample } from "@/lib/edit/status";
 import { getProductsByIds } from "@/lib/quotes/queries";
+import { getCarriersForSelect } from "@/lib/carriers/queries";
 import { getSampleById } from "@/lib/samples/queries";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export default async function EditarAmostraPage({
   const products = await getProductsByIds(
     sample.items.map((item) => item.product_id)
   );
+  const carriers = await getCarriersForSelect().catch(() => []);
 
   return (
     <div>
@@ -40,7 +42,7 @@ export default async function EditarAmostraPage({
           </Link>
         }
       />
-      <SampleForm sample={sample} initialProducts={products} />
+      <SampleForm sample={sample} initialProducts={products} carriers={carriers} />
     </div>
   );
 }

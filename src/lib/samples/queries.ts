@@ -20,6 +20,7 @@ export async function getSamplesForTenant(limit = 50): Promise<SampleListItem[]>
       status,
       sent_at,
       follow_up_date,
+      internal_cost,
       created_at,
       customers ( company_name, city, state ),
       sample_items ( id )
@@ -40,6 +41,8 @@ export async function getSamplesForTenant(limit = 50): Promise<SampleListItem[]>
       status: row.status,
       sent_at: row.sent_at,
       follow_up_date: row.follow_up_date,
+      internal_cost:
+        row.internal_cost != null ? Number(row.internal_cost) : null,
       created_at: row.created_at,
       customer: {
         company_name: customer?.company_name ?? "—",
@@ -67,7 +70,13 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
       feedback_at,
       follow_up_date,
       auto_follow_up,
+      followups_scheduled,
       notes,
+      carrier_id,
+      carrier_name,
+      tracking_code,
+      internal_cost,
+      next_action,
       created_at,
       customers (
         id,
@@ -85,6 +94,11 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
         address_complement,
         neighborhood,
         zip_code
+      ),
+      carriers (
+        id,
+        name,
+        phone
       ),
       sample_items (
         id,
@@ -105,6 +119,12 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
   if (!data) return null;
 
   const customer = unwrapRelation(data.customers);
+  const carrier = unwrapRelation(
+    data.carriers as
+      | { id: string; name: string; phone: string | null }
+      | { id: string; name: string; phone: string | null }[]
+      | null
+  );
 
   const items = ((data.sample_items ?? []) as Array<Record<string, unknown>>).map(
     (item) => {
@@ -141,7 +161,14 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
     feedback_at: data.feedback_at,
     follow_up_date: data.follow_up_date,
     auto_follow_up: data.auto_follow_up,
+    followups_scheduled: data.followups_scheduled ?? false,
     notes: data.notes,
+    carrier_id: data.carrier_id,
+    carrier_name: data.carrier_name,
+    tracking_code: data.tracking_code,
+    internal_cost:
+      data.internal_cost != null ? Number(data.internal_cost) : null,
+    next_action: data.next_action,
     created_at: data.created_at,
     customer: {
       id: customer?.id ?? "",
@@ -160,6 +187,9 @@ export async function getSampleById(id: string): Promise<SampleDetail | null> {
       neighborhood: customer?.neighborhood ?? null,
       zip_code: customer?.zip_code ?? null,
     },
+    carrier: carrier
+      ? { id: carrier.id, name: carrier.name, phone: carrier.phone }
+      : null,
     items,
   };
 }

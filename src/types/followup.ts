@@ -24,6 +24,28 @@ export interface OrderFollowupItem {
   };
 }
 
+export interface SampleFollowupItem {
+  id: string;
+  title: string | null;
+  notes: string | null;
+  status: FollowupStatus;
+  due_at: string;
+  completed_at: string | null;
+  created_at: string;
+  sample: {
+    id: string;
+    sample_number: string | null;
+    status: string;
+  };
+  customer: {
+    id: string;
+    company_name: string;
+    city: string | null;
+    state: string | null;
+    phone: string | null;
+  };
+}
+
 export interface FollowupDayGroup {
   date: string;
   items: OrderFollowupItem[];

@@ -290,7 +290,7 @@ export async function getDashboardAgenda(
         customers ( company_name )
       `
       )
-      .in("status", ["enviada", "entregue"])
+      .in("status", ["enviado", "recebido", "testando"])
       .gte("follow_up_date", today)
       .lte("follow_up_date", weekEnd)
       .order("follow_up_date", { ascending: true })
@@ -312,8 +312,8 @@ export async function getDashboardAgenda(
       .limit(limit),
     supabase
       .from("followups")
-      .select("id, title, due_at, status, related_id")
-      .eq("related_type", "order")
+      .select("id, title, due_at, status, related_id, related_type")
+      .in("related_type", ["order", "sample"])
       .eq("status", "pendente")
       .gte("due_at", `${today}T00:00:00`)
       .lte("due_at", `${weekEnd}T23:59:59`)
@@ -370,13 +370,16 @@ export async function getDashboardAgenda(
 
   for (const row of orderFollowups.data ?? []) {
     if (!row.due_at) continue;
+    const isSample = row.related_type === "sample";
     items.push({
       id: row.id,
-      kind: "order_followup",
-      title: row.title ?? "Follow-up pedido",
-      subtitle: "Acompanhamento de pedido",
+      kind: isSample ? "sample" : "order_followup",
+      title: row.title ?? (isSample ? "Follow-up amostra" : "Follow-up pedido"),
+      subtitle: isSample ? "Acompanhamento de amostra" : "Acompanhamento de pedido",
       date: String(row.due_at).slice(0, 10),
-      href: "/visitas?aba=followups&periodo=15d",
+      href: isSample
+        ? `/amostras/${row.related_id}`
+        : "/visitas?aba=followups&periodo=15d",
     });
   }
 
