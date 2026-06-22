@@ -9,6 +9,7 @@ import {
   getOrderByQuoteId,
   getQuoteForConversion,
 } from "@/lib/orders/queries";
+import { syncCommissionForOrder } from "@/lib/commissions/sync";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 import type { OrderStatus, OrderFormInput } from "@/types/order";
 
@@ -16,6 +17,21 @@ export interface OrderActionState {
   error?: string;
   success?: string;
   orderId?: string;
+}
+
+async function loadOrderForCommission(
+  supabase: Awaited<ReturnType<typeof createTenantClient>>["supabase"],
+  orderId: string
+) {
+  const { data } = await supabase
+    .from("orders")
+    .select(
+      "id, quote_id, seller_id, status, subtotal, discount_total, total, invoiced_amount"
+    )
+    .eq("id", orderId)
+    .maybeSingle();
+
+  return data;
 }
 
 export async function createOrderFromQuoteAction(
@@ -141,11 +157,27 @@ export async function createOrderFromQuoteAction(
       .update({ status: "aprovada" })
       .eq("id", quoteId);
 
+    const orderRow = await loadOrderForCommission(supabase, order.id);
+    if (orderRow) {
+      await syncCommissionForOrder(supabase, tenantId, {
+        ...orderRow,
+        subtotal: Number(orderRow.subtotal),
+        discount_total: Number(orderRow.discount_total),
+        total: Number(orderRow.total),
+        invoiced_amount: orderRow.invoiced_amount
+          ? Number(orderRow.invoiced_amount)
+          : null,
+        status: orderRow.status as OrderStatus,
+      });
+    }
+
     revalidatePath("/");
     revalidatePath("/pedidos");
     revalidatePath("/cotacoes");
     revalidatePath("/visitas");
+    revalidatePath("/comissoes");
     revalidatePath(`/cotacoes/${quoteId}`);
+    revalidatePath(`/pedidos/${order.id}`);
 
     return {
       success: `Pedido ${orderNumber} criado a partir da cotação ${quote.quote_number}.`,
@@ -161,14 +193,28 @@ export async function createOrderFromQuoteAction(
 
 export async function updateOrderStatusAction(
   orderId: string,
-  status: OrderStatus
+  status: OrderStatus,
+  options?: { invoicedAmount?: number }
 ): Promise<OrderActionState> {
   try {
-    const { supabase } = await createTenantClient();
+    const { supabase, tenantId } = await createTenantClient();
     const patch: Record<string, unknown> = { status };
 
     if (status === "faturado") {
+      const { data: order } = await supabase
+        .from("orders")
+        .select("total")
+        .eq("id", orderId)
+        .maybeSingle();
       patch.invoiced_at = new Date().toISOString();
+      patch.invoiced_amount = order?.total ?? null;
+    }
+    if (status === "parcial") {
+      const invoicedAmount = options?.invoicedAmount;
+      if (invoicedAmount == null || invoicedAmount <= 0) {
+        return { error: "Informe o valor faturado para pedido parcial." };
+      }
+      patch.invoiced_amount = invoicedAmount;
     }
     if (status === "cancelado") {
       patch.cancelled_at = new Date().toISOString();
@@ -181,8 +227,23 @@ export async function updateOrderStatusAction(
 
     if (error) throw new Error(error.message);
 
+    const orderRow = await loadOrderForCommission(supabase, orderId);
+    if (orderRow) {
+      await syncCommissionForOrder(supabase, tenantId, {
+        ...orderRow,
+        subtotal: Number(orderRow.subtotal),
+        discount_total: Number(orderRow.discount_total),
+        total: Number(orderRow.total),
+        invoiced_amount: orderRow.invoiced_amount
+          ? Number(orderRow.invoiced_amount)
+          : null,
+        status: orderRow.status as OrderStatus,
+      });
+    }
+
     revalidatePath("/");
     revalidatePath("/pedidos");
+    revalidatePath("/comissoes");
     revalidatePath(`/pedidos/${orderId}`);
 
     return { success: "Status do pedido atualizado." };
@@ -276,8 +337,23 @@ export async function updateOrderAction(
 
     if (itemsError) throw new Error(itemsError.message);
 
+    const orderRow = await loadOrderForCommission(supabase, orderId);
+    if (orderRow && (orderRow.status === "criado" || orderRow.status === "confirmado")) {
+      await syncCommissionForOrder(supabase, tenantId, {
+        ...orderRow,
+        subtotal: totals.subtotal,
+        discount_total: totals.discountTotal,
+        total: totals.total,
+        invoiced_amount: orderRow.invoiced_amount
+          ? Number(orderRow.invoiced_amount)
+          : null,
+        status: orderRow.status as OrderStatus,
+      });
+    }
+
     revalidatePath("/");
     revalidatePath("/pedidos");
+    revalidatePath("/comissoes");
     revalidatePath(`/pedidos/${orderId}`);
 
     return {

@@ -75,7 +75,7 @@ export default async function DashboardPage() {
     {
       title: "Comissões Previstas",
       value: formatCurrency(stats.expectedCommissions, "BRL"),
-      description: "Comissões com status prevista",
+      description: "Previstas, pendentes e proporcionais",
       icon: Wallet,
       color: "text-rose-600 bg-rose-50",
     },

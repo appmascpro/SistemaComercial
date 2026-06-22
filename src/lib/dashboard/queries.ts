@@ -102,7 +102,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     supabase
       .from("commissions")
       .select("commission_amount")
-      .eq("status", "prevista"),
+      .in("status", ["prevista", "pendente", "proporcional"]),
     supabase
       .from("routes")
       .select("*", { count: "exact", head: true })

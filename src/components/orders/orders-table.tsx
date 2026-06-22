@@ -5,6 +5,7 @@ import type { OrderListItem } from "@/types/order";
 const statusStyles: Record<string, string> = {
   criado: "bg-blue-50 text-blue-700",
   confirmado: "bg-amber-50 text-amber-700",
+  parcial: "bg-purple-50 text-purple-700",
   faturado: "bg-emerald-50 text-emerald-700",
   cancelado: "bg-red-50 text-red-700",
 };

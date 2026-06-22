@@ -1,6 +1,7 @@
 export type OrderStatus =
   | "criado"
   | "confirmado"
+  | "parcial"
   | "faturado"
   | "cancelado";
 

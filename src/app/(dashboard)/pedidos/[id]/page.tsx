@@ -6,8 +6,10 @@ import { OrderStatusSelect } from "@/components/orders/order-status-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderFollowupsPanel } from "@/components/followups/order-followups-panel";
 import { canEditOrder } from "@/lib/edit/status";
+import { getCommissionByOrderId } from "@/lib/commissions/queries";
 import { getOrderFollowupsByOrderId } from "@/lib/followups/queries";
 import { getOrderById } from "@/lib/orders/queries";
+import { OrderCommissionPanel } from "@/components/orders/order-commission-panel";
 import {
   formatCurrency,
   formatDate,
@@ -28,6 +30,7 @@ export default async function PedidoDetailPage({
   if (!order) notFound();
 
   const followups = await getOrderFollowupsByOrderId(id);
+  const commission = await getCommissionByOrderId(id);
 
   const editable = canEditOrder(order);
 
@@ -56,7 +59,11 @@ export default async function PedidoDetailPage({
                 Ver PDF
               </Link>
             ) : null}
-            <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+            <OrderStatusSelect
+              orderId={order.id}
+              currentStatus={order.status}
+              orderTotal={order.total}
+            />
           </div>
         }
       />
@@ -208,6 +215,8 @@ export default async function PedidoDetailPage({
               </CardContent>
             </Card>
           ) : null}
+
+          <OrderCommissionPanel commission={commission} />
 
           <Card>
             <CardHeader>
