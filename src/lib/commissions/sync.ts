@@ -1,11 +1,15 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { CommissionStatus } from "@/types/commission";
-import type { OrderStatus } from "@/types/order";
 import {
   calculateCommissionAmount,
+  calculateOrderCommissionFromItems,
   commissionRateForMargin,
   estimateMarginPercent,
 } from "@/lib/commissions/calculate";
+import {
+  getDefaultCommissionRate,
+} from "@/lib/commissions/category-rates";
+import type { CommissionStatus } from "@/types/commission";
+import type { OrderStatus } from "@/types/order";
 
 interface OrderCommissionInput {
   id: string;
@@ -16,6 +20,8 @@ interface OrderCommissionInput {
   discount_total: number;
   total: number;
   invoiced_amount: number | null;
+  invoiced_at?: string | null;
+  cancelled_at?: string | null;
 }
 
 function commissionStatusForOrder(
@@ -37,6 +43,16 @@ function commissionStatusForOrder(
   }
 }
 
+function unwrapProduct(
+  value:
+    | { category: string | null; commission_rate: number | null }
+    | { category: string | null; commission_rate: number | null }[]
+    | null
+) {
+  if (value == null) return null;
+  return Array.isArray(value) ? (value[0] ?? null) : value;
+}
+
 export async function syncCommissionForOrder(
   supabase: SupabaseClient,
   tenantId: string,
@@ -48,7 +64,7 @@ export async function syncCommissionForOrder(
     subtotal: order.subtotal,
     discountTotal: order.discount_total,
   });
-  const rate = commissionRateForMargin(marginPercent);
+  const marginFallbackRate = commissionRateForMargin(marginPercent);
   const commissionStatus = commissionStatusForOrder(order.status);
 
   let ratio = 1;
@@ -57,7 +73,62 @@ export async function syncCommissionForOrder(
     ratio = order.total > 0 ? Math.min(1, invoiced / order.total) : 0;
   }
 
-  const fullAmount = calculateCommissionAmount(order.total, rate, ratio);
+  const [{ data: items }, { data: rateRows }] = await Promise.all([
+    supabase
+      .from("order_items")
+      .select(
+        `
+        line_total,
+        products ( category, commission_rate )
+      `
+      )
+      .eq("order_id", order.id),
+    supabase
+      .from("commission_category_rates")
+      .select("category, commission_rate")
+      .eq("status", "ativo"),
+  ]);
+
+  const categoryRates = new Map<string, number>();
+  for (const row of rateRows ?? []) {
+    categoryRates.set(row.category.toLowerCase(), Number(row.commission_rate));
+  }
+
+  const hasCustomRules = (rateRows ?? []).length > 0;
+  const defaultRate = getDefaultCommissionRate(categoryRates);
+
+  let rate = marginFallbackRate;
+  let fullAmount: number;
+
+  if (hasCustomRules && (items ?? []).length > 0) {
+    const calculated = calculateOrderCommissionFromItems({
+      items: (items ?? []).map((row) => {
+        const product = unwrapProduct(
+          row.products as
+            | { category: string | null; commission_rate: number | null }
+            | { category: string | null; commission_rate: number | null }[]
+            | null
+        );
+        return {
+          line_total: Number(row.line_total),
+          category: product?.category ?? null,
+          product_commission_rate:
+            product?.commission_rate != null
+              ? Number(product.commission_rate)
+              : null,
+        };
+      }),
+      categoryRates,
+      defaultRate,
+      fallbackRate: marginFallbackRate,
+      ratio,
+    });
+    rate = calculated.effectiveRate;
+    fullAmount = calculated.amount;
+  } else {
+    fullAmount = calculateCommissionAmount(order.total, rate, ratio);
+  }
+
   const now = new Date().toISOString();
 
   const { data: existing } = await supabase
@@ -85,12 +156,12 @@ export async function syncCommissionForOrder(
   };
 
   if (commissionStatus === "liberada" || commissionStatus === "proporcional") {
-    patch.released_at = now;
+    patch.released_at = order.invoiced_at ?? now;
     patch.cancelled_at = null;
   }
 
   if (commissionStatus === "cancelada") {
-    patch.cancelled_at = now;
+    patch.cancelled_at = order.cancelled_at ?? now;
     patch.released_at = null;
   }
 

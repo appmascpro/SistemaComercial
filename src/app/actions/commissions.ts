@@ -1,11 +1,49 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { requireAdminProfile } from "@/lib/auth/require-admin";
+import { backfillCommissionsForTenant } from "@/lib/commissions/backfill";
 import { createTenantClient } from "@/lib/supabase/tenant-db";
 
 export interface CommissionActionState {
   error?: string;
   success?: string;
+}
+
+export async function backfillCommissionsAction(): Promise<CommissionActionState> {
+  try {
+    await requireAdminProfile();
+
+    const result = await backfillCommissionsForTenant();
+
+    revalidatePath("/");
+    revalidatePath("/comissoes");
+    revalidatePath("/pedidos");
+
+    const parts = [
+      `${result.commissionsCreated} comissão(ões) criada(s)`,
+      result.commissionsUpdated > 0
+        ? `${result.commissionsUpdated} atualizada(s)`
+        : null,
+      result.skippedPaid > 0
+        ? `${result.skippedPaid} já paga(s) — mantida(s)`
+        : null,
+      result.skippedNoSeller > 0
+        ? `${result.skippedNoSeller} pedido(s) sem vendedor`
+        : null,
+    ].filter(Boolean);
+
+    return {
+      success: `Processados ${result.ordersProcessed} pedido(s): ${parts.join(", ")}.`,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : "Não foi possível gerar as comissões.",
+    };
+  }
 }
 
 export async function markCommissionPaidAction(

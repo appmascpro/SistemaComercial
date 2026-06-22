@@ -10,6 +10,7 @@ import {
   Wallet,
   Settings,
   UserCog,
+  Brain,
   type LucideIcon,
 } from "lucide-react";
 import { APP_NAME } from "@/config/brand";
@@ -78,6 +79,12 @@ export const mainNavigation: NavItem[] = [
     icon: Wallet,
     description: "Comissões de vendedores",
   },
+  {
+    title: "Inteligência",
+    href: "/inteligencia",
+    icon: Brain,
+    description: "Score, alertas e relatórios",
+  },
 ];
 
 export const settingsNavigation: NavItem = {
@@ -140,6 +147,11 @@ export const mobileOverflowNavigation: NavItem[] = [
     title: "Comissões",
     href: "/comissoes",
     icon: Wallet,
+  },
+  {
+    title: "Inteligência",
+    href: "/inteligencia",
+    icon: Brain,
   },
   {
     title: "Rotas",

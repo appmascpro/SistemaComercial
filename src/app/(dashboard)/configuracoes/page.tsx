@@ -2,7 +2,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PtaxForm } from "@/components/settings/ptax-form";
+import { CommissionRatesForm } from "@/components/settings/commission-rates-form";
 import { getCompanyProfile } from "@/lib/company/get-company";
+import { getCommissionRatesConfig } from "@/lib/commissions/category-rates";
 import { seedTavaresCompany } from "@/lib/company/seed-tavares-company";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { getRequiredTenantId } from "@/lib/auth/tenant";
@@ -22,9 +24,10 @@ export default async function ConfiguracoesPage() {
     companyData = await getCompanyProfile();
   }
 
-  const [ptax, ptaxHistory] = await Promise.all([
+  const [ptax, ptaxHistory, commissionRates] = await Promise.all([
     getActivePtaxRate(),
     getPtaxHistory(),
+    getCommissionRatesConfig(),
   ]);
 
   const { company, payment } = companyData;
@@ -45,6 +48,18 @@ export default async function ConfiguracoesPage() {
           ) : undefined
         }
       />
+
+      <Card className="mb-6" id="comissoes">
+        <CardHeader>
+          <CardTitle>Comissões por tipo de produto</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CommissionRatesForm
+            config={commissionRates}
+            isAdmin={Boolean(isAdmin)}
+          />
+        </CardContent>
+      </Card>
 
       <Card className="mb-6">
         <CardHeader>

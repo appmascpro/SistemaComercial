@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { BackfillCommissionsButton } from "@/components/commissions/backfill-commissions-button";
 import { CommissionsTable } from "@/components/commissions/commissions-table";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
@@ -25,10 +26,12 @@ export function CommissionsPageClient({
   status,
   summary,
   commissions,
+  isAdmin,
 }: {
   status: CommissionStatus | "all";
   summary: CommissionSummary;
   commissions: CommissionListItem[];
+  isAdmin: boolean;
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -89,6 +92,14 @@ export function CommissionsPageClient({
           );
         })}
       </div>
+
+      {isAdmin ? (
+        <Card>
+          <CardContent className="pt-4">
+            <BackfillCommissionsButton />
+          </CardContent>
+        </Card>
+      ) : null}
 
       <CommissionsTable commissions={commissions} />
     </div>

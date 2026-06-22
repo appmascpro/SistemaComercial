@@ -26,7 +26,7 @@ async function loadOrderForCommission(
   const { data } = await supabase
     .from("orders")
     .select(
-      "id, quote_id, seller_id, status, subtotal, discount_total, total, invoiced_amount"
+      "id, quote_id, seller_id, status, subtotal, discount_total, total, invoiced_amount, invoiced_at, cancelled_at"
     )
     .eq("id", orderId)
     .maybeSingle();
@@ -167,6 +167,8 @@ export async function createOrderFromQuoteAction(
         invoiced_amount: orderRow.invoiced_amount
           ? Number(orderRow.invoiced_amount)
           : null,
+        invoiced_at: orderRow.invoiced_at,
+        cancelled_at: orderRow.cancelled_at,
         status: orderRow.status as OrderStatus,
       });
     }
@@ -237,6 +239,8 @@ export async function updateOrderStatusAction(
         invoiced_amount: orderRow.invoiced_amount
           ? Number(orderRow.invoiced_amount)
           : null,
+        invoiced_at: orderRow.invoiced_at,
+        cancelled_at: orderRow.cancelled_at,
         status: orderRow.status as OrderStatus,
       });
     }
@@ -347,6 +351,8 @@ export async function updateOrderAction(
         invoiced_amount: orderRow.invoiced_amount
           ? Number(orderRow.invoiced_amount)
           : null,
+        invoiced_at: orderRow.invoiced_at,
+        cancelled_at: orderRow.cancelled_at,
         status: orderRow.status as OrderStatus,
       });
     }
